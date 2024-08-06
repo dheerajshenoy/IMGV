@@ -67,37 +67,13 @@ void IMGV::initConfigDirectory()
 
 void IMGV::initMenu()
 {
-    m_menuBar = new QMenuBar();
+
     setMenuBar(m_menuBar);
-
-    QMenu *fileMenu = m_menuBar->addMenu("&File");
-    QMenu *editMenu = m_menuBar->addMenu("&Edit");
-    QMenu *viewMenu = m_menuBar->addMenu("&View");
-
-    QAction *file__openAction = new QAction("&Open");
-    QAction *file__openRecent = new QAction("&Open Recent Files");
-    QAction *file__openSession = new QAction("&Open Session");
-    QAction *file__openNewWindowAction = new QAction("Open in new &Window");
-    QAction *file__saveSession = new QAction("Save session");
-
-    QMenu *edit__rotate = new QMenu("Rotate");
-    QMenu *edit__flip = new QMenu("Flip");
-
-    QAction *flip__vertical = new QAction("Vertical");
-    QAction *flip__horizontal = new QAction("Horizontal");
-
-    QAction *rotate__clockwise = new QAction("Clockwise");
-    QAction *rotate__anticlockwise = new QAction("Anti Clockwise");
-    QAction *rotate__custom = new QAction("Custom");
-
-    QAction *view__thumbnails = new QAction("Thumbnail Panel");
-    QAction *view__statusbar = new QAction("Statusbar");
-    QAction *view__menubar = new QAction("Menubar");
 
     fileMenu->addAction(file__openAction);
     fileMenu->addAction(file__openNewWindowAction);
-    fileMenu->addAction(file__openRecent);
-    fileMenu->addAction(file__openSession);
+    fileMenu->addMenu(file__openRecent);
+    fileMenu->addMenu(file__openSession);
     fileMenu->addAction(file__saveSession);
 
     edit__rotate->addAction(rotate__clockwise);
@@ -122,6 +98,20 @@ void IMGV::initMenu()
 
     view__menubar->setCheckable(true);
     view__menubar->setChecked(true);
+
+    auto session_files = getSessionFiles();
+
+    for(const auto &file: session_files)
+    {
+        QAction *action = new QAction(file);
+        connect(action, &QAction::triggered, this, [&]() {
+            auto filename = reinterpret_cast<QAction*>(sender())->text();
+            QString file = QString("%1%2%3").arg(m_sessions_dir_path).arg(QDir::separator()).arg(filename);
+            openSessionInNewWindow(file);
+        });
+
+        file__openSession->addAction(action);
+    }
 
     connect(file__openAction, &QAction::triggered, this, &IMGV::openImage);
     connect(file__openNewWindowAction, &QAction::triggered, this, &IMGV::openImageInNewWindow);
@@ -307,7 +297,22 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         }
 
     }
+}
 
+void IMGV::openSessionInNewWindow(QString &file)
+{
+    QString program = QCoreApplication::applicationFilePath();
 
-    
+    QStringList arguments;
+    arguments << "-s" << file;
+
+    QProcess *process = new QProcess(this);
+    process->startDetached();
+    process->start(program, arguments);
+
+    if (!process->waitForStarted())
+    {
+        qDebug() << "FAILED";
+    }
+    else {}
 }

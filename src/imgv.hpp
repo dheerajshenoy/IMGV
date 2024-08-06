@@ -47,6 +47,7 @@ private:
     void parseCommandLineArguments(argparse::ArgumentParser &);
     QStringList getSessionFiles();
     void readSessionFile(QString filepath);
+    void openSessionInNewWindow(QString &);
 
     ThumbnailWidget *m_thumbnail_widget = new ThumbnailWidget();
     ImageWidget *m_img_widget = new ImageWidget();
@@ -56,10 +57,36 @@ private:
 
     QTimer *m_slideshow_timer = new QTimer();
 
-    QMenuBar *m_menuBar;
 
     QString m_config_dir_path, m_sessions_dir_path;
     sol::state m_lua_state;
+
+    QMenuBar *m_menuBar = new QMenuBar();
+    QMenu *fileMenu = m_menuBar->addMenu("&File");
+    QMenu *editMenu = m_menuBar->addMenu("&Edit");
+    QMenu *viewMenu = m_menuBar->addMenu("&View");
+
+
+    QAction *file__openAction = new QAction("&Open");
+    QMenu *file__openRecent = new QMenu("&Open Recent Files");
+    QMenu *file__openSession = new QMenu("&Open Session");
+    QAction *file__openNewWindowAction = new QAction("Open in new &Window");
+    QAction *file__saveSession = new QAction("Save session");
+
+    QMenu *edit__rotate = new QMenu("Rotate");
+    QMenu *edit__flip = new QMenu("Flip");
+
+    QAction *flip__vertical = new QAction("Vertical");
+    QAction *flip__horizontal = new QAction("Horizontal");
+
+    QAction *rotate__clockwise = new QAction("Clockwise");
+    QAction *rotate__anticlockwise = new QAction("Anti Clockwise");
+    QAction *rotate__custom = new QAction("Custom");
+
+    QAction *view__thumbnails = new QAction("Thumbnail Panel");
+    QAction *view__statusbar = new QAction("Statusbar");
+    QAction *view__menubar = new QAction("Menubar");
+
 };
 
 

@@ -22,9 +22,13 @@ ThumbnailWidget::ThumbnailWidget(QWidget *parent)
     m_contextMenu->addAction(m_action__hide);
     m_contextMenu->addAction(m_action__show_in_explorer);
     m_contextMenu->addAction(m_action__select_all);
+    m_contextMenu->addAction(m_action__image_properties);
+
     connect(m_action__select_all, &QAction::triggered, this, [&]() {
         this->selectAll();
     });
+
+    connect(m_action__image_properties, &QAction::triggered, this, &ThumbnailWidget::showProperties);
 
     m_partialContextMenu->addAction(m_action__select_all);
 
@@ -163,5 +167,14 @@ void ThumbnailWidget::gotoPrev()
     {
         this->setCurrentRow(currentRow() - 1);
         emit fileChangeRequested(currentItem()->data(Qt::UserRole).toString());
+    }
+}
+
+void ThumbnailWidget::showProperties()
+{
+    for(const auto &item: this->selectedItems())
+    {
+        QString filepath = item->data(Qt::UserRole).toString();
+
     }
 }

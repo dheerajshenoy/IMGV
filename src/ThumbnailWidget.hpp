@@ -40,6 +40,7 @@ private:
     void removeThumbnails();
     void hideThumbnails();
     void showFilesInExplorer();
+    void showProperties();
 
     QMenu *m_contextMenu = new QMenu("Context Menu", this);
     QMenu *m_partialContextMenu = new QMenu("Partial Menu", this);
@@ -47,6 +48,7 @@ private:
     QAction *m_action__remove = new QAction("Remove");
     QAction *m_action__hide = new QAction("Hide");
     QAction *m_action__show_in_explorer = new QAction("Show in File Explorer");
+    QAction *m_action__image_properties = new QAction("Properties");
 };
 
 #endif
