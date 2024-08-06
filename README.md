@@ -1,6 +1,7 @@
 # IMGV
 
-The Image Viewer world never asked for. Written in C++.
+The Image Viewer no one asked for.
+Written in C++.
 
 # Ehh....Why ?
 
@@ -18,6 +19,11 @@ Why ? I never liked any of the image viewers existing for linux, with the except
 <a name="screenshots" />
 
 # Screenshots
+
+![commandline-arguments](https://github.com/user-attachments/assets/f2f912e8-a50b-45fd-b574-bc77c4b80f6a)
+
+![image](https://github.com/user-attachments/assets/c5f42acb-0760-45e7-a41d-11fac2570c41)
+
 
 
 <a name="introduction" />
@@ -50,15 +56,15 @@ Why ? I never liked any of the image viewers existing for linux, with the except
 
 This software depends on the following libraries.
 
-    1. Qt (GUI)
-    2. [sol2](https://github.com/ThePhD/sol2) and lua (Lua configuration support)
-    3. libwebp (for WEBP image support)
-    4. [argparser](https://github.com/p-ranav/argparse)(for commandline argument parsing)
+1. Qt (GUI)
+2. [sol2](https://github.com/ThePhD/sol2) and lua (Lua configuration support)
+3. libwebp (for WEBP image support)
+4. [argparser](https://github.com/p-ranav/argparse)(for commandline argument parsing)
 
-<a name="changelog" />
+<a name="changelogs" />
 
 # Changelogs and Bug Fixes
 
-    - 06 Aug 2024
+- 06 Aug 2024
 
-        - Add support for GIF and WEBP (libwebp) format.
+    - Add support for GIF and WEBP (libwebp) format.
