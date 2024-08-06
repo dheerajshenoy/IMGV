@@ -3,6 +3,8 @@
 The Image Viewer no one asked for.
 Written in C++.
 
+**NOTE** This is a work in progress. I'll add features as I seem fit for this software.
+
 # Ehh....Why ?
 
 Why ? I never liked any of the image viewers existing for linux, with the exception of nomacs. I did not like the super minimal approach of sxiv/nsxiv image viewer, and I did not like the full blown features of heavy image viewer. I just want something to open, click, press and it should do what I need it to do. This pretty much does the job for me.
@@ -13,8 +15,7 @@ Why ? I never liked any of the image viewers existing for linux, with the except
 2. [Introduction](#introduction)
 3. [Features](#features)
 4. [Installation](#installation)
-4. [Changelogs and Bug fixes](#changelogs)
-
+5. [Changelogs and Bug fixes](#changelogs)
 
 <a name="screenshots" />
 
@@ -24,11 +25,11 @@ Why ? I never liked any of the image viewers existing for linux, with the except
 
 ![image](https://github.com/user-attachments/assets/c5f42acb-0760-45e7-a41d-11fac2570c41)
 
-
-
 <a name="introduction" />
 
 # Introduction
+
+IMGV is an image viewer aiming for the balance between minimalism and features. The aim is simple. Display IMAGES....quickly, switch between them, do whatever the user wants it to do (through a little bit of scripting).
 
 <a name="features" />
 
