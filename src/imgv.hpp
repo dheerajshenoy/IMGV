@@ -49,6 +49,7 @@ private:
     void openSessionInNewWindow(QString &);
     void fullScreen();
     void maximizeImage(bool);
+    void closeSession();
 
     ThumbnailWidget *m_thumbnail_widget = new ThumbnailWidget();
     ImageWidget *m_img_widget = new ImageWidget();
@@ -64,6 +65,7 @@ private:
     QMenuBar *m_menuBar = new QMenuBar();
     QMenu *fileMenu = m_menuBar->addMenu("&File");
     QMenu *editMenu = m_menuBar->addMenu("&Edit");
+    QMenu *toolsMenu = m_menuBar->addMenu("&Tools");
     QMenu *viewMenu = m_menuBar->addMenu("&View");
     QMenu *helpMenu = m_menuBar->addMenu("&Help");
 
@@ -72,6 +74,8 @@ private:
     QMenu *file__openSession = new QMenu("Open Session");
     QAction *file__openNewWindowAction = new QAction("Open in new &Window");
     QAction *file__saveSession = new QAction("Save session");
+    QAction *file__closeSession = new QAction("Close session");
+    QAction *file__exit = new QAction("Exit");
 
     QAction *help__about = new QAction("About");
 
@@ -84,12 +88,16 @@ private:
     QAction *rotate__clockwise = new QAction("Clockwise");
     QAction *rotate__anticlockwise = new QAction("Anti Clockwise");
     QAction *rotate__custom = new QAction("Custom");
+    QAction *rotate__reset = new QAction("Reset");
 
     QAction *view__thumbnails = new QAction("Thumbnail Panel");
     QAction *view__statusbar = new QAction("Statusbar");
     QAction *view__menubar = new QAction("Menubar");
     QAction *view__maximize_image = new QAction("Maximize Image");
 
+    QAction *tools__manage_sessions = new QAction("Manage Sessions");
+
+    QString m_session_name;
     bool m_image_maximize_mode = false;
 };
 

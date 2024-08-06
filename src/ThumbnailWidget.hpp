@@ -11,6 +11,8 @@
 #include <qt6/QtCore/QMimeData>
 #include <qt6/QtGui/QDesktopServices>
 #include <qt6/QtCore/QProcess>
+#include <qt6/QtGui/QHideEvent>
+#include <qt6/QtGui/QShowEvent>
 #include "Thumbnail.hpp"
 #include "utils.hpp"
 
@@ -28,12 +30,15 @@ public:
 
 signals:
     void fileChangeRequested(QString);
+    void visibilityChanged(bool);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *e) override;
     void dragLeaveEvent(QDragLeaveEvent *e) override;
     void dragMoveEvent(QDragMoveEvent *e) override;
     void dropEvent(QDropEvent *e) override;
+    void hideEvent(QHideEvent *e) noexcept override;
+    void showEvent(QShowEvent *e) noexcept override;
 
 private:
     QPixmap createThumbnail(const QString &fileName, const QSize &size);

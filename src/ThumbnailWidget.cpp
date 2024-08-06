@@ -177,3 +177,13 @@ void ThumbnailWidget::showProperties()
 
     }
 }
+
+void ThumbnailWidget::hideEvent(QHideEvent *e) noexcept
+{
+    emit visibilityChanged(isVisible());
+}
+
+void ThumbnailWidget::showEvent(QShowEvent *e) noexcept
+{
+    emit visibilityChanged(isVisible());
+}

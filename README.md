@@ -85,3 +85,5 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 
     - Add support for GIF and WEBP (libwebp) format.
     - `--input` option directory as argument fix
+    - Close sessions
+    - Don't ask for save session each time after opening a session

@@ -224,3 +224,28 @@ void ImageWidget::GifLoopHandler(int frameNumber)
             m_movie->stop();
     }
 }
+
+void ImageWidget::resetRotation() noexcept
+{
+    m_rotate = 0;
+    setMatrix();
+}
+
+void ImageWidget::setScrollBarsVisibility(bool state) noexcept
+{
+    if (state)
+    {
+        this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    }
+    else {
+        this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    }
+}
+
+void ImageWidget::closeFile()
+{
+    m_pixmapItem->hide();
+    m_movieItem->hide();
+}

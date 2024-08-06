@@ -8,6 +8,8 @@ INCLUDEPATH += .
 MOC_DIR = moc/
 OBJECTS_DIR = obj/
 
+CONFIG += c++20
+
 QT += gui core widgets
 LIBS += -llua -lwebp
 

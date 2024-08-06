@@ -29,6 +29,7 @@ public:
     ~ImageWidget(){}
 
     void loadFile(QString file);
+    void closeFile();
     void zoomIn();
     void zoomOut();
     void zoomOriginal();
@@ -40,6 +41,8 @@ public:
     void rotateClockwise();
     void fitToWidth();
     void fitToHeight();
+    void resetRotation() noexcept;
+    void setScrollBarsVisibility(bool state) noexcept;
 
 signals:
     void fileLoaded(QString);

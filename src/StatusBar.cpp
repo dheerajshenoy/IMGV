@@ -14,6 +14,8 @@ StatusBar::StatusBar(QWidget *parent)
     layout->addWidget(fileSizeLabel);
     layout->addSpacing(10);
     layout->addWidget(imageDimensionsLabel);
+    layout->addSpacing(10);
+    layout->addWidget(sessionLabel);
 
     this->setContentsMargins(0, 0, 0, 0);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -21,6 +23,11 @@ StatusBar::StatusBar(QWidget *parent)
 
 
     setLayout(layout);
+}
+
+void StatusBar::setSessionName(QString sess) noexcept
+{
+    sessionLabel->setText("SESSION: " + sess);
 }
 
 void StatusBar::updateFileInfo(const QString &filePath)
@@ -48,4 +55,23 @@ void StatusBar::updateFileInfo(const QString &filePath)
         fileSizeLabel->setText("Size: N/A");
         imageDimensionsLabel->setText("Dimensions: N/A");
     }
+}
+
+
+void StatusBar::hideEvent(QHideEvent *e) noexcept
+{
+    emit visibilityChanged(isVisible());
+}
+
+void StatusBar::showEvent(QShowEvent *e) noexcept
+{
+    emit visibilityChanged(isVisible());
+}
+
+void StatusBar::clearTexts() noexcept
+{
+    this->sessionLabel->clear();
+    this->filePathLabel->clear();
+    this->fileSizeLabel->clear();
+    this->imageDimensionsLabel->clear();
 }
