@@ -28,7 +28,6 @@
 #include "sol/sol.hpp"
 #include "AboutDialog.hpp"
 
-
 class IMGV : public QMainWindow
 {
 public:
@@ -57,7 +56,7 @@ private:
 
     bool m_slideshow_mode = false;
 
-    QTimer *m_slideshow_timer = new QTimer();
+    QTimer *m_slideshow_timer;
 
     QString m_config_dir_path, m_sessions_dir_path;
     sol::state m_lua_state;

@@ -84,3 +84,4 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 - 06 Aug 2024
 
     - Add support for GIF and WEBP (libwebp) format.
+    - `--input` option directory as argument fix

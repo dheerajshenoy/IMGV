@@ -311,7 +311,15 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
     if (parser.is_used("--input") || parser.is_used("-i"))
     {
         auto files = parser.get<std::vector<std::string>>("--input");
-        m_img_widget->loadFile(QString::fromStdString(files[0]));
+        auto file = QString::fromStdString(files[0]);
+        if (QFileInfo(file).isDir())
+        {
+            auto dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
+            for(const auto &f: dirfiles)
+                m_thumbnail_widget->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));
+            return;
+        }
+        /*m_img_widget->loadFile(file);*/
 
         for(const auto &file: files)
             m_thumbnail_widget->addThumbnail(QString::fromStdString(file));
