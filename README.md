@@ -65,9 +65,8 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 1. This software depends on the following libraries. Install them first.
 
     1. Qt (GUI)
-    2. [sol2](https://github.com/ThePhD/sol2) and lua (Lua configuration support)
+    2. lua
     3. libwebp (for WEBP image support)
-    4. [argparser](https://github.com/p-ranav/argparse)(for commandline argument parsing)
 
 2. Clone this repo.
 
