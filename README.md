@@ -53,6 +53,10 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
     6. WEBP
 
 6. Command line arguments support.
+    - `-i` or `--input` takes in path to one or more image files of the supported format.
+    - `-n` or `--no-config` load the software without any lua configuration
+    - `-l` or `--list-sessions` list all the sessions
+    - `-s` or `--session` takes path to a session file. Loads all the images of that session 
 
 <a name="installation" />
 
