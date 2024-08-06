@@ -39,9 +39,12 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 2. Everything is customizable
 3. Session file support
 
-    Session files allow you to group images together to open it at a later point.
+    Session files allow you to group images together to open it at a later point. They are just plain text files with date and list of files. In the program, you can choose to open a session, and it will open all the listed images in them.
+   
+   ![image](https://github.com/user-attachments/assets/5e8e74c2-6b7a-4113-80c4-d2819ba09767)
 
-4. Image format support
+
+5. Image format support
     1. JPG/JPEG
     2. PNG
     3. BMP
@@ -49,7 +52,7 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
     5. GIF
     6. WEBP
 
-5. Command line arguments support.
+6. Command line arguments support.
 
 <a name="installation" />
 
