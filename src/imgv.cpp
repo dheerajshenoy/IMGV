@@ -295,7 +295,11 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
 
     if (parser.is_used("-l") || parser.is_used("--list-sessions"))
     {
-        // TODO: List all the session files saved in the `sessions directory`
+        auto ses_files = getSessionFiles();
+        qInfo() << "Session files found: " << ses_files.size();
+        for(const QString &file: ses_files)
+            qInfo() << file;
+        exit(0);
     }
 
     if (parser.is_used("-s") || parser.is_used("--session"))
@@ -310,9 +314,7 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         m_img_widget->loadFile(QString::fromStdString(files[0]));
 
         for(const auto &file: files)
-        {
             m_thumbnail_widget->addThumbnail(QString::fromStdString(file));
-        }
 
     }
 }
