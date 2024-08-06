@@ -6,8 +6,14 @@ ImageWidget::ImageWidget(QWidget *parent)
     m_scene = new QGraphicsScene(this);
     setScene(m_scene);
 
-    m_pixmapItem = new QGraphicsPixmapItem();
+    m_pixmapItem = new QGraphicsPixmapItem;
+    m_movieItem = new MovieItem;
     m_scene->addItem(m_pixmapItem);
+    m_scene->addItem(m_movieItem);
+    m_movie = new QMovie;
+    connect(m_movie, &QMovie::frameChanged, this, &ImageWidget::GifLoopHandler);
+    m_movie->setCacheMode(QMovie::CacheMode::CacheAll);
+    m_movieItem->setMovie(m_movie);
 
     setRenderHint(QPainter::Antialiasing, false);
     setDragMode(QGraphicsView::ScrollHandDrag);
@@ -18,20 +24,8 @@ ImageWidget::ImageWidget(QWidget *parent)
     /*setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);*/
     setInteractive(true);
     setMouseTracking(true);
-    
     setAcceptDrops(true);
 
-}
-
-void ImageWidget::setPixmap(const QString &filePath)
-{
-    QPixmap pixmap(filePath);
-
-    m_pixmapItem->setPixmap(pixmap);
-    m_pixmapItem->setTransformationMode(Qt::SmoothTransformation);
-
-    // Fit the view to the new pixmap
-    fitInView(m_pixmapItem, Qt::KeepAspectRatio);
 }
 
 void ImageWidget::zoomOriginal() {
@@ -56,6 +50,7 @@ void ImageWidget::updateView()
 {
     setTransform(QTransform::fromScale(m_zoomLevel, m_zoomLevel));
     fitInView(m_pixmapItem, Qt::KeepAspectRatio);  // Ensure the item is centered and scaled properly
+    fitInView(m_movieItem, Qt::KeepAspectRatio);  // Ensure the item is centered and scaled properly
 }
 
 qreal ImageWidget::scale() const {
@@ -94,6 +89,7 @@ void ImageWidget::zoomFit() {
     auto cr = QRect(this->viewport()->rect().center(), QSize(2, 2));
     auto cen = this->mapToScene(cr).boundingRect().center();
     this->fitInView(m_pixmapItem, m_aspect_ratio_mode);
+    this->fitInView(m_movieItem, m_aspect_ratio_mode);
 
     m_zoomLevel = int(10.0 * std::log2(scale()));
     m_fit = true;
@@ -106,11 +102,29 @@ void ImageWidget::zoomFit() {
 
 void ImageWidget::loadFile(QString file)
 {
-    m_rotate = 0.0f;
-    m_zoomLevel = 0.0f;
-    setMatrix();
-    m_pixmapItem->setPixmap(QPixmap(file));
-    m_scene->setSceneRect(m_pixmapItem->boundingRect());
+    /*m_rotate = 0.0f;*/
+    /*m_zoomLevel = 0.0f;*/
+    /*setMatrix();*/
+    QImageReader imreader(file);
+    if (imreader.supportsAnimation())
+    {
+        m_pixmapItem->hide();
+        m_movieItem->show();
+        m_movie->stop();
+        m_movie->setFileName(file);
+        m_movie->start();
+        m_scene->setSceneRect(m_movieItem->boundingRect());
+    }
+    else
+    {
+        m_movieItem->hide();
+        m_pixmapItem->show();
+        if (utils::detectImageFormat(file) == "WEBP")
+            m_pixmapItem->setPixmap(utils::decodeWebPToPixmap(file));
+        else
+            m_pixmapItem->setPixmap(QPixmap(file));
+        m_scene->setSceneRect(m_pixmapItem->boundingRect());
+    }
     emit fileLoaded(file);
 }
 
@@ -127,10 +141,6 @@ void ImageWidget::wheelEvent(QWheelEvent *e)
 void ImageWidget::dragEnterEvent(QDragEnterEvent *e)
 {
     const QMimeData *mimedata = e->mimeData();
-
-    /*if (mimedata->hasFormat("image/jpeg") ||*/
-    /*    mimedata->hasFormat("image/png") ||*/
-    /*    mimedata->hasFormat("image/bmp"))*/
     if (mimedata->hasUrls())
         e->acceptProposedAction();
 
@@ -203,4 +213,14 @@ void ImageWidget::fitToHeight()
 {
     m_aspect_ratio_mode = Qt::KeepAspectRatio;
     zoomFit();
+}
+
+void ImageWidget::GifLoopHandler(int frameNumber)
+{
+    static int loopCount = 0;
+    if(frameNumber == (m_movie->frameCount()-1)) {
+        loopCount++;
+        if(loopCount >= m_gif_max_loop_count)
+            m_movie->stop();
+    }
 }

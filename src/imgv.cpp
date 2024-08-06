@@ -1,4 +1,5 @@
 #include "imgv.hpp"
+#include "src/AboutDialog.hpp"
 
 IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     : QMainWindow(parent)
@@ -7,6 +8,13 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout();
     QSplitter *splitter = new QSplitter();
+
+    helpMenu->addAction(help__about);
+
+    connect(help__about, &QAction::triggered, this, [&]() {
+        AboutDialog *about = new AboutDialog(this);
+        about->open();
+    });
 
     centralWidget->setLayout(layout);
 
@@ -89,6 +97,9 @@ void IMGV::initMenu()
     viewMenu->addAction(view__thumbnails);
     viewMenu->addAction(view__statusbar);
     viewMenu->addAction(view__menubar);
+    viewMenu->addAction(view__maximize_image);
+
+    view__maximize_image->setCheckable(true);
 
     view__thumbnails->setCheckable(true);
     view__thumbnails->setChecked(true);
@@ -144,6 +155,8 @@ void IMGV::initMenu()
 
     connect(file__saveSession, &QAction::triggered, this, &IMGV::saveSession);
 
+    connect(view__maximize_image, &QAction::triggered, this, &IMGV::maximizeImage);
+
 }
 
 void IMGV::initKeybinds()
@@ -160,6 +173,7 @@ void IMGV::initKeybinds()
     QShortcut *kb_toggle_menubar = new QShortcut(QKeySequence("Ctrl+M"), this);
     QShortcut *kb_goto_next = new QShortcut(QKeySequence("j"), this);
     QShortcut *kb_goto_prev = new QShortcut(QKeySequence("k"), this);
+    QShortcut *kb_img_maximize = new QShortcut(QKeySequence("Shift+M"), this);
 
     connect(kb_clockwise, &QShortcut::activated, m_img_widget, &ImageWidget::rotateClockwise);
     connect(kb_anticlockwise, &QShortcut::activated, m_img_widget, &ImageWidget::rotateAnticlockwise);
@@ -176,6 +190,10 @@ void IMGV::initKeybinds()
 
     connect(kb_goto_next, &QShortcut::activated, m_thumbnail_widget, &ThumbnailWidget::gotoNext);
     connect(kb_goto_prev, &QShortcut::activated, m_thumbnail_widget, &ThumbnailWidget::gotoPrev);
+    connect(kb_img_maximize, &QShortcut::activated, this, [&]() {
+        view__maximize_image->setChecked(!m_image_maximize_mode);
+        maximizeImage(!m_image_maximize_mode);
+    });
 }
 
 void IMGV::initConnections()
@@ -192,7 +210,7 @@ void IMGV::openImageInNewWindow()
 
 void IMGV::openImage()
 {
-    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp)"));
+    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp)"));
     if (!files.isEmpty()) {
         m_thumbnail_widget->createThumbnails(files);
         m_img_widget->loadFile(files[0]);
@@ -315,4 +333,26 @@ void IMGV::openSessionInNewWindow(QString &file)
         qDebug() << "FAILED";
     }
     else {}
+}
+
+void IMGV::fullScreen()
+{
+    this->showFullScreen();
+}
+
+void IMGV::maximizeImage(bool state)
+{
+    m_image_maximize_mode = state;
+    if (m_image_maximize_mode)
+    {
+        m_thumbnail_widget->setVisible(false);
+        m_menuBar->setVisible(false);
+        m_statusbar->setVisible(false);
+    }
+    else {
+        m_thumbnail_widget->setVisible(true);
+        m_menuBar->setVisible(true);
+        m_statusbar->setVisible(true);
+    }
+
 }

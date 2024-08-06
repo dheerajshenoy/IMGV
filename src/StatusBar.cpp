@@ -16,6 +16,7 @@ StatusBar::StatusBar(QWidget *parent)
     layout->addWidget(imageDimensionsLabel);
 
     this->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(0, 0, 0, 0);
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
 

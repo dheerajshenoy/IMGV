@@ -9,7 +9,7 @@ MOC_DIR = moc/
 OBJECTS_DIR = obj/
 
 QT += gui core widgets
-LIBS += -llua
+LIBS += -llua -lwebp
 
 # Input
 HEADERS += src/ImageWidget.hpp \
@@ -17,11 +17,17 @@ HEADERS += src/ImageWidget.hpp \
            src/StatusBar.hpp \
            src/Thumbnail.hpp \
            src/ThumbnailWidget.hpp \
-           src/sol/sol.hpp
+           src/sol/sol.hpp \
+           src/AboutDialog.hpp \
+           src/MovieItem.hpp \
+           src/utils.hpp
+
 
 SOURCES += src/main.cpp \
             src/ImageWidget.cpp \
            src/imgv.cpp \
            src/StatusBar.cpp \
            src/Thumbnail.cpp \
-           src/ThumbnailWidget.cpp
+           src/ThumbnailWidget.cpp \
+           src/AboutDialog.cpp \
+           src/utils.cpp

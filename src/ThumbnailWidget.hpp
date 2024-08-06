@@ -12,6 +12,7 @@
 #include <qt6/QtGui/QDesktopServices>
 #include <qt6/QtCore/QProcess>
 #include "Thumbnail.hpp"
+#include "utils.hpp"
 
 class ThumbnailWidget : public QListWidget
 {

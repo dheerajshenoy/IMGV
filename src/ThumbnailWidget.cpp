@@ -53,13 +53,16 @@ void ThumbnailWidget::createThumbnails(const QStringList &fileNames)
 
 QPixmap ThumbnailWidget::createThumbnail(const QString &fileName, const QSize &size)
 {
-    QImage image(fileName);
-    if (image.isNull()) {
-        return QPixmap();  // Return an empty pixmap if the image fails to load
-    }
+    if (utils::detectImageFormat(fileName) != "WEBP")
+    {
+        QPixmap pixmap = QPixmap(fileName);
 
-    QPixmap pixmap = QPixmap::fromImage(image);
-    return pixmap.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        if (pixmap.isNull()) return QPixmap();
+
+        return pixmap.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+    else
+        return utils::decodeWebPToPixmap(fileName).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 
@@ -143,13 +146,9 @@ void ThumbnailWidget::hideThumbnails()
 
 void ThumbnailWidget::showFilesInExplorer()
 {
-    auto selections = this->selectedItems();
-
-    for(const auto &s : selections)
-    {
-        auto filepath = QFileInfo(s->data(Qt::UserRole).toString()).path();
-        QDesktopServices::openUrl(QUrl::fromLocalFile(filepath));
-    }
+    auto selection = this->selectedItems()[0];
+    auto filepath = QFileInfo(selection->data(Qt::UserRole).toString()).path();
+    QDesktopServices::openUrl(QUrl::fromLocalFile(filepath));
 }
 
 void ThumbnailWidget::gotoNext()

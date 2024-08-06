@@ -13,18 +13,22 @@
 #include <qt6/QtGui/QDragLeaveEvent>
 #include <qt6/QtGui/QDropEvent>
 #include <qt6/QtCore/QMimeData>
+#include <qt6/QtCore/QMimeDatabase>
+#include <qt6/QtCore/QMimeType>
+#include <qt6/QtCore/QFileInfo>
+#include "MovieItem.hpp"
+#include "utils.hpp"
 
 class ImageWidget : public QGraphicsView
 {
     Q_OBJECT
 
 public:
+
     ImageWidget(QWidget *parent = nullptr);
     ~ImageWidget(){}
 
-
     void loadFile(QString file);
-    void setPixmap(const QString &filePath);
     void zoomIn();
     void zoomOut();
     void zoomOriginal();
@@ -50,10 +54,12 @@ protected:
 private:
     QGraphicsScene *m_scene;
     QGraphicsPixmapItem *m_pixmapItem;
+    MovieItem *m_movieItem;
     qreal m_zoomLevel = 1.0f, m_zoomFactor = 2.0f;
     qreal m_rotate = 0.0f;
     void updateView();
 
+    void GifLoopHandler(int frameNumber);
     qreal scale() const;
     void setMatrix();
 
@@ -62,6 +68,9 @@ private:
     bool m_fit;
 
     bool m_horizontal_flip = false, m_vertical_flip = false;
+    QMovie *m_movie;
+
+    unsigned int m_gif_max_loop_count = 10;
 };
 
 #endif
