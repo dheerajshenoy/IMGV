@@ -19,6 +19,7 @@ private:
     QVBoxLayout *m_layout;
     QLabel *m_imageLabel;
     QLabel *m_textLabel;
+
 };
 
 #endif

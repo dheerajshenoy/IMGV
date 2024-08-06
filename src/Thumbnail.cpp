@@ -15,6 +15,7 @@ Thumbnail::Thumbnail(QWidget *parent)
     m_layout->addWidget(m_textLabel);
 
     setLayout(m_layout);
+
 }
 
 void Thumbnail::setFilename(const QString &fileName)

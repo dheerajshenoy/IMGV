@@ -9,7 +9,6 @@ ImageWidget::ImageWidget(QWidget *parent)
     m_pixmapItem = new QGraphicsPixmapItem();
     m_scene->addItem(m_pixmapItem);
 
-    // no antialiasing or filtering, we want to see the exact image content
     setRenderHint(QPainter::Antialiasing, false);
     setDragMode(QGraphicsView::ScrollHandDrag);
     setOptimizationFlags(QGraphicsView::DontSavePainterState);
@@ -19,21 +18,20 @@ ImageWidget::ImageWidget(QWidget *parent)
     /*setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);*/
     setInteractive(true);
     setMouseTracking(true);
+    
+    setAcceptDrops(true);
+
 }
 
 void ImageWidget::setPixmap(const QString &filePath)
 {
     QPixmap pixmap(filePath);
-    if (pixmap.isNull()) {
-        qWarning("Failed to load image from %s", qPrintable(filePath));
-        return;
-    }
 
     m_pixmapItem->setPixmap(pixmap);
     m_pixmapItem->setTransformationMode(Qt::SmoothTransformation);
 
     // Fit the view to the new pixmap
-    /*fitInView(m_pixmapItem, Qt::KeepAspectRatio);*/
+    fitInView(m_pixmapItem, Qt::KeepAspectRatio);
 }
 
 void ImageWidget::zoomOriginal() {
@@ -42,15 +40,14 @@ void ImageWidget::zoomOriginal() {
     setMatrix();
 }
 
-void ImageWidget::zoomIn(int level) {
-    qDebug() << "DD";
-    m_zoomLevel += level;
+void ImageWidget::zoomIn() {
+    m_zoomLevel += m_zoomFactor;
     m_fit = false;
     setMatrix();
 }
 
-void ImageWidget::zoomOut(int level) {
-    m_zoomLevel -= level;
+void ImageWidget::zoomOut() {
+    m_zoomLevel -= m_zoomFactor;
     m_fit = false;
     setMatrix();
 }
@@ -70,8 +67,18 @@ void ImageWidget::setMatrix() {
     qreal newScale = std::pow(2.0, m_zoomLevel / 10.0);
 
     QTransform mat;
-    mat.scale(newScale, newScale);
-    /*mat.rotateRadians(rotationRadians());*/
+
+    mat.rotateRadians(qDegreesToRadians(m_rotate));
+
+    if (!m_horizontal_flip && !m_vertical_flip)
+        mat.scale(newScale, newScale);
+    else
+    {
+        if (m_horizontal_flip)
+            mat.scale(-1 * newScale, newScale);
+        if (m_vertical_flip)
+            mat.scale(newScale, -1 * newScale);
+    }
 
     this->setTransform(mat);
     /*emit zoomChanged(scale());*/
@@ -99,16 +106,101 @@ void ImageWidget::zoomFit() {
 
 void ImageWidget::loadFile(QString file)
 {
+    m_rotate = 0.0f;
+    m_zoomLevel = 0.0f;
+    setMatrix();
     m_pixmapItem->setPixmap(QPixmap(file));
-    this->scene()->setSceneRect(m_pixmapItem->boundingRect());
+    m_scene->setSceneRect(m_pixmapItem->boundingRect());
+    emit fileLoaded(file);
 }
 
 void ImageWidget::wheelEvent(QWheelEvent *e)
 {
     if (e->angleDelta().y() > 0)
-        zoomIn(3);
+        zoomIn();
     else
-        zoomOut(3);
+        zoomOut();
 
     /*QGraphicsView::wheelEvent(e);*/
+}
+
+void ImageWidget::dragEnterEvent(QDragEnterEvent *e)
+{
+    const QMimeData *mimedata = e->mimeData();
+
+    /*if (mimedata->hasFormat("image/jpeg") ||*/
+    /*    mimedata->hasFormat("image/png") ||*/
+    /*    mimedata->hasFormat("image/bmp"))*/
+    if (mimedata->hasUrls())
+        e->acceptProposedAction();
+
+}
+
+void ImageWidget::dragLeaveEvent(QDragLeaveEvent *e)
+{
+    e->accept();
+}
+
+void ImageWidget::dragMoveEvent(QDragMoveEvent *e)
+{
+    e->accept();
+    e->acceptProposedAction();
+}
+
+void ImageWidget::dropEvent(QDropEvent *e)
+{
+    /*if (e->source() == this) return;*/
+    if (e->mimeData()->hasUrls())
+    {
+        QList<QUrl> urllist = e->mimeData()->urls();
+        foreach(QUrl url, urllist)
+        {
+            if (url.isLocalFile())
+            {
+                QString filepath = url.toLocalFile();
+                loadFile(filepath);
+            }
+        }
+    }
+    e->acceptProposedAction();
+}
+
+void ImageWidget::rotate(qreal degrees)
+{
+    m_rotate += degrees;
+    setMatrix();
+}
+
+void ImageWidget::rotateAnticlockwise()
+{
+    rotate(-90);
+}
+
+void ImageWidget::rotateClockwise()
+{
+    rotate(90);
+}
+
+void ImageWidget::flipVertical()
+{
+    m_vertical_flip = !m_vertical_flip;
+    setMatrix();
+}
+
+void ImageWidget::flipHorizontal()
+{
+    m_horizontal_flip = !m_horizontal_flip;
+    setMatrix();
+}
+
+void ImageWidget::fitToWidth()
+{
+    m_aspect_ratio_mode = Qt::IgnoreAspectRatio;
+    zoomFit();
+}
+
+void ImageWidget::fitToHeight()
+{
+    m_aspect_ratio_mode = Qt::KeepAspectRatio;
+    zoomFit();
 }
