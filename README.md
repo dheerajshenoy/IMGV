@@ -16,6 +16,7 @@ Why ? I never liked any of the image viewers existing for linux, with the except
 3. [Features](#features)
 4. [Installation](#installation)
 5. [Changelogs and Bug fixes](#changelogs)
+6. [Todo](#todo)
 
 <a name="screenshots" />
 
@@ -87,3 +88,9 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
     - `--input` option directory as argument fix
     - Close sessions
     - Don't ask for save session each time after opening a session
+
+<a name="todo" />
+
+# Todo
+
+1. [ ] Ability to add notes to images inside sessions
