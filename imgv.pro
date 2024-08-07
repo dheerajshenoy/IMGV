@@ -3,13 +3,15 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = ./bin/imgv
+TARGET = bin/imgv
 INCLUDEPATH += .
 MOC_DIR = moc/
 OBJECTS_DIR = obj/
 
 CONFIG += c++20
+RESOURCES += resources.qrc
 
+INCLUDEPATH += libs/
 QT += gui core widgets
 LIBS += -llua -lwebp
 

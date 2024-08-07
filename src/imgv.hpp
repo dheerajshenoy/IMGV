@@ -53,6 +53,7 @@ private:
     void maximizeImage(bool);
     void closeSession();
     void openSession(QString &);
+    void newSession() noexcept;
 
     ThumbnailWidget *m_thumbnail_widget = new ThumbnailWidget();
     ImageWidget *m_img_widget = new ImageWidget();
@@ -72,6 +73,7 @@ private:
     QMenu *viewMenu = m_menuBar->addMenu("&View");
     QMenu *helpMenu = m_menuBar->addMenu("&Help");
 
+    QAction *file__newSession = new QAction("New Session");
     QAction *file__openAction = new QAction("Open");
     QMenu *file__openRecent = new QMenu("Open Recent Files");
     QMenu *file__openSession = new QMenu("Open Session");

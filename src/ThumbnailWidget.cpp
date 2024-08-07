@@ -5,6 +5,7 @@ ThumbnailWidget::ThumbnailWidget(QWidget *parent)
     : QListWidget(parent)
 {
     
+    setWindowIcon(QIcon(":/icons/imgv.png"));
     setViewMode(QListWidget::IconMode);
     setIconSize(QSize(100, 100));  // Set the size for thumbnails
     setResizeMode(QListWidget::Adjust);
@@ -50,7 +51,8 @@ void ThumbnailWidget::createThumbnails(const QStringList &fileNames)
             qWarning("Failed to create thumbnail for %s", qPrintable(fileName));
         }
     }
-    setCurrentItem(this->item(this->count() - 1));
+    if (this->count() >= 0)
+        setCurrentItem(this->item(0));
 }
 
 QPixmap ThumbnailWidget::createThumbnail(const QString &fileName, const QSize &size)
@@ -71,10 +73,8 @@ QPixmap ThumbnailWidget::createThumbnail(const QString &fileName, const QSize &s
 void ThumbnailWidget::dragEnterEvent(QDragEnterEvent *e)
 {
     const QMimeData *mimedata = e->mimeData();
-
     if (mimedata->hasUrls())
         e->acceptProposedAction();
-
 }
 
 void ThumbnailWidget::dragLeaveEvent(QDragLeaveEvent *e)

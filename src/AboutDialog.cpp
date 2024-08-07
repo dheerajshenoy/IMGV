@@ -3,8 +3,8 @@
 AboutDialog::AboutDialog(QWidget *parent)
     : QDialog(parent)
 {
+    setWindowIcon(QIcon(":/icons/imgv.png"));
     QVBoxLayout *layout = new QVBoxLayout();
-
     QLabel *label_name = new QLabel("IMGV");
     QLabel *label_desc = new QLabel("Image Viewer no one asked for");
     QLabel *label_git_link = new QLabel("Check out this project at <a href='https://github.com/dheerajshenoy/IMGV'>link</a>");

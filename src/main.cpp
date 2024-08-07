@@ -16,6 +16,10 @@ int main (int argc, char *argv[]) {
         .nargs(argparse::nargs_pattern::at_least_one)
         .append();
 
+    parser.add_argument("-S", "--new-session")
+        .help("Open in new session")
+        .nargs(1);
+
     parser.add_argument("-n", "--no-config")
         .help("Load without any configuration")
         .flag();

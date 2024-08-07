@@ -3,6 +3,8 @@
 IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     : QMainWindow(parent)
 {
+
+    setWindowIcon(QIcon(":/icons/imgv.png"));
     // Set up the main widget and layout
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout();
@@ -86,6 +88,7 @@ void IMGV::initMenu()
     fileMenu->addAction(file__openNewWindowAction);
     fileMenu->addMenu(file__openRecent);
     fileMenu->addMenu(file__openSession);
+    fileMenu->addAction(file__newSession);
     fileMenu->addAction(file__saveSession);
     fileMenu->addAction(file__closeSession);
     fileMenu->addAction(file__exit);
@@ -134,6 +137,7 @@ void IMGV::initMenu()
         file__openSession->addAction(action);
     }
 
+    connect(file__newSession, &QAction::triggered, this, &IMGV::newSession);
     connect(file__openAction, &QAction::triggered, this, &IMGV::openImage);
     connect(file__openNewWindowAction, &QAction::triggered, this, &IMGV::openImageInNewWindow);
     connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, &StatusBar::updateFileInfo);
@@ -276,7 +280,6 @@ QStringList IMGV::getSessionFiles()
 
 void IMGV::saveSession()
 {
-
     m_statusbar->setMsg("Session Saved", 2);
 
     if (!m_session_name.isEmpty())
@@ -371,6 +374,22 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         for(const QString &file: ses_files)
             qInfo() << file;
         exit(0);
+    }
+
+    if (parser.is_used("--new-session"))
+    {
+        auto ses_files = getSessionFiles();
+        QString ses_name = QString::fromStdString(parser.get<std::string>("--new-session"));
+        if (ses_files.indexOf(ses_name) > -1)
+        {
+            qInfo() << "Session file with that name already exists. Try again with different name";
+            exit(0);
+        }
+        m_session_name = ses_name;
+        m_statusbar->setMsg("Session file is not saved. Please do it manually", 5);
+        m_statusbar->setSessionName(ses_name);
+        /*saveSession();*/
+        return;
     }
 
     if (parser.is_used("--session"))
@@ -490,4 +509,28 @@ void IMGV::openSession(QString &file)
         else
             openSessionInNewWindow(file);
     }
+}
+
+void IMGV::newSession() noexcept
+{
+    QStringList sessions = getSessionFiles();
+    QString sessionName;
+    while (true)
+    {
+        sessionName = QInputDialog::getText(this, "New Session", "Please enter a name for the session");
+        if (sessions.indexOf(sessionName + ".imgv") == -1)
+            break;
+    }
+    QString program = QCoreApplication::applicationFilePath();
+
+    QStringList arguments;
+    arguments << "-S" << sessionName;
+
+    QProcess *process = new QProcess(this);
+    process->startDetached();
+    process->start(program, arguments);
+
+    if (!process->waitForStarted())
+        qDebug() << "FAILED";
+    else {}
 }
