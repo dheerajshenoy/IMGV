@@ -1,5 +1,4 @@
 #include "imgv.hpp"
-#include "src/AboutDialog.hpp"
 
 IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     : QMainWindow(parent)
@@ -43,7 +42,6 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     initMenu();
     initConnections();
     initKeybinds();
-    qDebug() << "DD";
     this->show();
 }
 
@@ -274,7 +272,7 @@ QStringList IMGV::getSessionFiles()
 void IMGV::saveSession()
 {
 
-    QMessageBox::information(this, "DD", m_session_name);
+    m_statusbar->setMsg("Session Saved", 2);
 
     if (!m_session_name.isEmpty())
     {
@@ -356,12 +354,12 @@ void IMGV::readSessionFile(QString filename)
 void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
 {
 
-    if (!parser.is_used("-n") && !parser.is_used("--no-config"))
+    if (!parser.is_used("--no-config"))
     {
         initConfigDirectory();
     }
 
-    if (parser.is_used("-l") || parser.is_used("--list-sessions"))
+    if (parser.is_used("--list-sessions"))
     {
         auto ses_files = getSessionFiles();
         qInfo() << "Session files found: " << ses_files.size();
@@ -370,13 +368,13 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         exit(0);
     }
 
-    if (parser.is_used("-s") || parser.is_used("--session"))
+    if (parser.is_used("--session"))
     {
         readSessionFile(QString::fromStdString(parser.get<std::vector<std::string>>("--session")[0]));
         return;
     }
 
-    if (parser.is_used("--input") || parser.is_used("-i"))
+    if (parser.is_used("--input"))
     {
         auto files = parser.get<std::vector<std::string>>("--input");
         auto file = QString::fromStdString(files[0]);
@@ -391,7 +389,7 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
 
         for(const auto &file: files)
             m_thumbnail_widget->addThumbnail(QString::fromStdString(file));
-
+        return;
     }
 }
 

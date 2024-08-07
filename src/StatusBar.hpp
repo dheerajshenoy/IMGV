@@ -5,6 +5,7 @@
 #include <qt6/QtWidgets/QHBoxLayout>
 #include <qt6/QtWidgets/QLabel>
 #include <qt6/QtCore/QFileInfo>
+#include <qt6/QtCore/QTimer>
 #include <qt6/QtGui/QPixmap>
 #include <qt6/QtGui/QShowEvent>
 #include <qt6/QtGui/QHideEvent>
@@ -18,6 +19,7 @@ public:
     void updateFileInfo(const QString &filePath);
     void setSessionName(QString) noexcept;
     void clearTexts() noexcept;
+    void setMsg(QString msg, int sec = 1) noexcept;
 
 signals:
     void visibilityChanged(bool);
@@ -28,6 +30,7 @@ protected:
 
 private:
     QHBoxLayout *layout;
+    QLabel *msgLabel;
     QLabel *filePathLabel;
     QLabel *fileSizeLabel;
     QLabel *imageDimensionsLabel;

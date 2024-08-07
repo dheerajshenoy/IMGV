@@ -5,10 +5,14 @@ StatusBar::StatusBar(QWidget *parent)
 {
     layout = new QHBoxLayout(this);
 
+    msgLabel = new QLabel(this);
     filePathLabel = new QLabel(this);
     fileSizeLabel = new QLabel(this);
     imageDimensionsLabel = new QLabel(this);
 
+    msgLabel->setHidden(true);
+
+    layout->addWidget(msgLabel);
     layout->addWidget(filePathLabel);
     layout->addStretch(1);
     layout->addWidget(fileSizeLabel);
@@ -74,4 +78,14 @@ void StatusBar::clearTexts() noexcept
     this->filePathLabel->clear();
     this->fileSizeLabel->clear();
     this->imageDimensionsLabel->clear();
+}
+
+void StatusBar::setMsg(QString msg, int sec) noexcept
+{
+    msgLabel->setText(msg);
+    filePathLabel->setHidden(true);
+
+    QTimer::singleShot(sec * 1000, [&]() {
+        filePathLabel->setHidden(false);
+    });
 }

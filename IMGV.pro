@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = ./bin/IMGV
+TARGET = ./bin/imgv
 INCLUDEPATH += .
 MOC_DIR = moc/
 OBJECTS_DIR = obj/
@@ -22,8 +22,8 @@ HEADERS += src/ImageWidget.hpp \
            src/sol/sol.hpp \
            src/AboutDialog.hpp \
            src/MovieItem.hpp \
-           src/utils.hpp
-
+           src/utils.hpp \
+           src/exif.hpp
 
 SOURCES += src/main.cpp \
             src/ImageWidget.cpp \
@@ -32,4 +32,5 @@ SOURCES += src/main.cpp \
            src/Thumbnail.cpp \
            src/ThumbnailWidget.cpp \
            src/AboutDialog.cpp \
-           src/utils.cpp
+           src/utils.cpp \
+           src/exif.cpp

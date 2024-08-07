@@ -128,6 +128,14 @@ void ImageWidget::loadFile(QString file)
     emit fileLoaded(file);
 }
 
+void ImageWidget::loadPixmap(QPixmap &pix)
+{
+    m_movieItem->hide();
+    m_pixmapItem->show();
+    m_pixmapItem->setPixmap(pix);
+    m_scene->setSceneRect(m_pixmapItem->boundingRect());
+}
+
 void ImageWidget::wheelEvent(QWheelEvent *e)
 {
     if (e->angleDelta().y() > 0)

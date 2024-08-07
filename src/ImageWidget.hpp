@@ -29,6 +29,7 @@ public:
     ~ImageWidget(){}
 
     void loadFile(QString file);
+    void loadPixmap(QPixmap &pix);
     void closeFile();
     void zoomIn();
     void zoomOut();

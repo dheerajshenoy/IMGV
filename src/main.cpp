@@ -1,7 +1,5 @@
 #include "imgv.hpp"
 
-
-
 int main (int argc, char *argv[]) {
     QApplication app(argc, argv);
     argparse::ArgumentParser parser("IMGV", APP_VERSION);
@@ -25,6 +23,8 @@ int main (int argc, char *argv[]) {
     parser.add_argument("-l", "--list-sessions")
         .help("List all the session files")
         .flag();
+
+    parser.add_epilog("For more information about the program usage please check the project page at https://github.com/dheerajshenoy/IMGV");
 
     try {
         parser.parse_args(argc, argv);

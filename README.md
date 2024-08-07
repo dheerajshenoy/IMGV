@@ -17,6 +17,7 @@ Why ? I never liked any of the image viewers existing for linux, with the except
 4. [Installation](#installation)
 5. [Changelogs and Bug fixes](#changelogs)
 6. [Todo](#todo)
+7. [Thanks](#thanks)
 
 <a name="screenshots" />
 
@@ -63,7 +64,7 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 
 # Installation
 
-1. This software depends on the following libraries. Install them first.
+1. This software depends on the following programs/libraries. Install them first.
 
     1. Qt (GUI)
     2. lua
@@ -82,6 +83,10 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 
 # Changelogs and Bug Fixes
 
+- 07 Aug 2024
+
+    - EXIF Metadata support (JPEG metadata)
+
 - 06 Aug 2024
 
     - Add support for GIF and WEBP (libwebp) format.
@@ -94,5 +99,16 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 # Todo
 
 1. [ ] Ability to add notes to images inside sessions
-2. [ ] Load image from URL
+2. [ ] ~~Load image from URL~~
 3. [ ] Caching images
+
+<a name="thanks" />
+
+# Thanks
+
+I want to thank the authors of the following libraries I have integrated in this software.
+
+1. [Sol2](https://github.com/ThePhD/sol2)
+2. [ArgParse](https://github.com/p-ranav/argparse)
+3. [libwebp](https://github.com/webmproject/libwebp)
+4. [EasyEXIF](https://github.com/mayanklahiri/easyexif)

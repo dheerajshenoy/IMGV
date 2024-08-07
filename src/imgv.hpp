@@ -27,6 +27,7 @@
 #include "StatusBar.hpp"
 #include "sol/sol.hpp"
 #include "AboutDialog.hpp"
+#include "exif.hpp"
 
 class IMGV : public QMainWindow
 {
@@ -100,6 +101,7 @@ private:
 
     QString m_session_name;
     bool m_image_maximize_mode = false;
+
 };
 
 

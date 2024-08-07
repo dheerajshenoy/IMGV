@@ -2,6 +2,7 @@
 #define THUMBANIL_WIDGET_HPP
 
 #include <qt6/QtWidgets/QListWidget>
+#include <qt6/QtWidgets/QMessageBox>
 #include <qt6/QtWidgets/QMenu>
 #include <qt6/QtGui/QAction>
 #include <qt6/QtGui/QDragMoveEvent>
@@ -15,6 +16,7 @@
 #include <qt6/QtGui/QShowEvent>
 #include "Thumbnail.hpp"
 #include "utils.hpp"
+#include "exif.hpp"
 
 class ThumbnailWidget : public QListWidget
 {
