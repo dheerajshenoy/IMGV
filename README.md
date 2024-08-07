@@ -86,6 +86,7 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 - 07 Aug 2024
 
     - EXIF Metadata support (JPEG metadata)
+    - Added Image Caching support through `QPixmapCache`
 
 - 06 Aug 2024
 
