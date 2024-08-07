@@ -133,6 +133,7 @@ void IMGV::initMenu()
     connect(file__openAction, &QAction::triggered, this, &IMGV::openImage);
     connect(file__openNewWindowAction, &QAction::triggered, this, &IMGV::openImageInNewWindow);
     connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, &StatusBar::updateFileInfo);
+    connect(m_img_widget, &ImageWidget::droppedImage, m_thumbnail_widget, &ThumbnailWidget::addThumbnail);
 
     connect(file__closeSession, &QAction::triggered, this, &IMGV::closeSession);
 
@@ -391,6 +392,25 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
             m_thumbnail_widget->addThumbnail(QString::fromStdString(file));
         return;
     }
+
+    if (parser.is_used("files"))
+    {
+        auto files = parser.get<std::vector<std::string>>("files");
+        auto file = QString::fromStdString(files[0]);
+        if (QFileInfo(file).isDir())
+        {
+            auto dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
+            for(const auto &f: dirfiles)
+                m_thumbnail_widget->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));
+            return;
+        }
+        m_img_widget->loadFile(file);
+
+        for(const auto &file: files)
+            m_thumbnail_widget->addThumbnail(QString::fromStdString(file));
+        return;
+    }
+
 }
 
 void IMGV::openSessionInNewWindow(QString &file)
@@ -443,7 +463,7 @@ void IMGV::closeSession()
 
 void IMGV::openSession(QString &file)
 {
-    if (m_session_name.isEmpty())
+    if (m_session_name.isEmpty() && m_thumbnail_widget->count() == 0)
     {
         closeSession();
         readSessionFile(file);
@@ -453,7 +473,7 @@ void IMGV::openSession(QString &file)
         QMessageBox msgBox;
         QAbstractButton *thisWindowBtn = msgBox.addButton("This Window", QMessageBox::YesRole);
         QAbstractButton *newWindowBtn = msgBox.addButton("New Window", QMessageBox::NoRole);
-        msgBox.setText("There is already a session open in this window. Do you want to open the session in this window or in a new window ?");
+        msgBox.setText("There is already a session open in this window or there are images opened. Do you want to open the session in this window or in a new window ?");
         msgBox.setWindowTitle("Open Session");
         msgBox.exec();
 

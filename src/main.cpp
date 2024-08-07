@@ -24,7 +24,11 @@ int main (int argc, char *argv[]) {
         .help("List all the session files")
         .flag();
 
+    parser.add_argument("files")
+        .remaining();
+
     parser.add_epilog("For more information about the program usage please check the project page at https://github.com/dheerajshenoy/IMGV");
+
 
     try {
         parser.parse_args(argc, argv);

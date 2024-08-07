@@ -47,6 +47,7 @@ public:
 
 signals:
     void fileLoaded(QString);
+    void droppedImage(QString);
 
 protected:
     void wheelEvent(QWheelEvent *e) override;
