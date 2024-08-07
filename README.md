@@ -79,9 +79,13 @@ I aM an imaGe Viewer ~ IMGV
 
 3. Go the project directory and run `qmake6 .`
 
-4. Finally, if all went well, run `make` or `sudo make install` if you want to install it system-wide.
+4. Finally, if all went well, run `make` and copy the binary file inside the bin directory to `/usr/bin` if you want to access the software system-wide.
 
 5. Enjoy...hopefully
+
+One line command (assuming you are inside the project directory)
+
+`qmake6 . && make && sudo cp ./bin/imgv /usr/bin`
 
 <a name="theming" />
 
