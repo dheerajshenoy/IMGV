@@ -1,5 +1,19 @@
 <RCC version="1.0">
   <qresource>
     <file>icons/imgv.png</file>
+    <file>icons/open-file.svg</file>
+    <file>icons/vertical-flip.svg</file>
+    <file>icons/horizontal-flip.svg</file>
+    <file>icons/save-session.svg</file>
+    <file>icons/close-session.svg</file>
+    <file>icons/exit.svg</file>
+    <file>icons/open-session.svg</file>
+    <file>icons/new-session.svg</file>
+    <file>icons/maximize.svg</file>
+    <file>icons/thumbnail.svg</file>
+    <file>icons/menubar.svg</file>
+    <file>icons/clockwise.svg</file>
+    <file>icons/anticlockwise.svg</file>
+    <file>icons/statusbar.svg</file>
   </qresource>
 </RCC>

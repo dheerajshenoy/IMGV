@@ -73,32 +73,32 @@ private:
     QMenu *viewMenu = m_menuBar->addMenu("&View");
     QMenu *helpMenu = m_menuBar->addMenu("&Help");
 
-    QAction *file__newSession = new QAction("New Session");
-    QAction *file__openAction = new QAction("Open");
+    QAction *file__newSession = new QAction(QIcon(":/icons/new-session.svg"), "New Session");
+    QAction *file__openAction = new QAction(QIcon(":/icons/open-file.svg"), "Open");
     QMenu *file__openRecent = new QMenu("Open Recent Files");
     QMenu *file__openSession = new QMenu("Open Session");
     QAction *file__openNewWindowAction = new QAction("Open in new &Window");
-    QAction *file__saveSession = new QAction("Save session");
-    QAction *file__closeSession = new QAction("Close session");
-    QAction *file__exit = new QAction("Exit");
+    QAction *file__saveSession = new QAction(QIcon(":/icons/save-session.svg"), "Save session");
+    QAction *file__closeSession = new QAction(QIcon(":/icons/close-session.svg"), "Close session");
+    QAction *file__exit = new QAction(QIcon(":/icons/exit.svg"), "Exit");
 
     QAction *help__about = new QAction("About");
 
     QMenu *edit__rotate = new QMenu("Rotate");
     QMenu *edit__flip = new QMenu("Flip");
 
-    QAction *flip__vertical = new QAction("Vertical");
-    QAction *flip__horizontal = new QAction("Horizontal");
+    QAction *flip__vertical = new QAction(QIcon(":/icons/vertical-flip.svg"), "Vertical");
+    QAction *flip__horizontal = new QAction(QIcon(":/icons/horizontal-flip.svg"), "Horizontal");
 
-    QAction *rotate__clockwise = new QAction("Clockwise");
-    QAction *rotate__anticlockwise = new QAction("Anti Clockwise");
+    QAction *rotate__clockwise = new QAction(QIcon(":/icons/clockwise.svg"), "Clockwise");
+    QAction *rotate__anticlockwise = new QAction(QIcon(":/icons/anticlockwise.svg"), "Anti Clockwise");
     QAction *rotate__custom = new QAction("Custom");
     QAction *rotate__reset = new QAction("Reset");
 
-    QAction *view__thumbnails = new QAction("Thumbnail Panel");
-    QAction *view__statusbar = new QAction("Statusbar");
-    QAction *view__menubar = new QAction("Menubar");
-    QAction *view__maximize_image = new QAction("Maximize Image");
+    QAction *view__thumbnails = new QAction(QIcon(":/icons/thumbnail.svg"), "Thumbnail Panel");
+    QAction *view__statusbar = new QAction(QIcon(":/icons/statusbar.svg"), "Statusbar");
+    QAction *view__menubar = new QAction(QIcon(":/icons/menubar.svg"), "Menubar");
+    QAction *view__maximize_image = new QAction(QIcon(":/icons/maximize.svg"), "Maximize Image");
 
     QAction *tools__manage_sessions = new QAction("Manage Sessions");
 
