@@ -2,12 +2,9 @@
 
 The Image Viewer no one asked for.
 Written in C++.
+Only for **Linux**.
 
 **NOTE** This is a work in progress. I'll add features as I seem fit for this software.
-
-# Ehh....Why ?
-
-Why ? I never liked any of the image viewers existing for linux, with the exception of nomacs. I did not like the super minimal approach of sxiv/nsxiv image viewer, and I did not like the full blown features of heavy image viewer. I just want something to open, click, press and it should do what I need it to do. This pretty much does the job for me.
 
 # Table of Contents
 
@@ -15,9 +12,10 @@ Why ? I never liked any of the image viewers existing for linux, with the except
 2. [Introduction](#introduction)
 3. [Features](#features)
 4. [Installation](#installation)
-5. [Changelogs and Bug fixes](#changelogs)
-6. [Todo](#todo)
-7. [Thanks](#thanks)
+5. [Theming](#theming)
+6. [Changelogs and Bug fixes](#changelogs)
+7. [Todo](#todo)
+8. [Thanks](#thanks)
 
 <a name="screenshots" />
 
@@ -33,6 +31,14 @@ Why ? I never liked any of the image viewers existing for linux, with the except
 
 IMGV is an image viewer aiming for the balance between minimalism and features. The aim is simple. Display IMAGES....quickly, switch between them, do whatever the user wants it to do (through a little bit of scripting).
 
+## Ehh....Why ?
+
+Why ? I never liked any of the image viewers existing for linux, with the exception of nomacs. I did not like the super minimal approach of sxiv/nsxiv image viewer, and I did not like the full blown features of heavy image viewer. I just want something to open, click, press and it should do what I need it to do. This pretty much does the job for me.
+
+## Why the name IMGV ?
+
+I aM an imaGe Viewer ~ IMGV
+
 <a name="features" />
 
 # Features
@@ -41,10 +47,9 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 2. Everything is customizable
 3. Session file support
 
-    Session files allow you to group images together to open it at a later point. They are just plain text files with date and list of files. In the program, you can choose to open a session, and it will open all the listed images in them.
+    Session files allow you to group images together to open it at a later point. Sessionb files are just plain text files with date and list of files (this might change in the future).
    
    ![image](https://github.com/user-attachments/assets/5e8e74c2-6b7a-4113-80c4-d2819ba09767)
-
 
 5. Image format support
     1. JPG/JPEG
@@ -78,6 +83,11 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 
 5. Enjoy...hopefully
 
+<a name="theming" />
+
+# Theming
+
+The theme for IMGV depends on the theme set for Qt6 applications. There is a handy tool called `qt6ct`. Install it and configure the theme and it will be applied to this software also.
 
 <a name="changelogs" />
 
@@ -87,6 +97,7 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 
     - EXIF Metadata support (JPEG metadata)
     - Added Image Caching support through `QPixmapCache`
+    - Added icons
 
 - 06 Aug 2024
 
@@ -102,6 +113,7 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 1. [ ] Ability to add notes to images inside sessions
 2. [ ] ~~Load image from URL~~
 3. [x] Caching images
+4. [ ] Lua configuration option
 
 <a name="thanks" />
 
