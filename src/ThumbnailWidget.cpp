@@ -12,6 +12,7 @@ ThumbnailWidget::ThumbnailWidget(QWidget *parent)
     setTextElideMode(Qt::TextElideMode::ElideRight);
     setWordWrap(true);
     setSelectionMode(SelectionMode::ExtendedSelection);
+    /*this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);*/
     /*setUniformItemSizes(true);*/
 
     this->setContextMenuPolicy(Qt::CustomContextMenu);

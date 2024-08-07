@@ -18,6 +18,8 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     centralWidget->setLayout(layout);
 
+    splitter->setHandleWidth(0);
+
     splitter->addWidget(m_thumbnail_widget);
     splitter->addWidget(m_img_widget);
 
@@ -123,7 +125,8 @@ void IMGV::initMenu()
         connect(action, &QAction::triggered, this, [&]() {
             auto filename = reinterpret_cast<QAction*>(sender())->text();
             QString file = QString("%1%2%3").arg(m_sessions_dir_path).arg(QDir::separator()).arg(filename);
-            openSessionInNewWindow(file);
+            openSession(file);
+            /*openSessionInNewWindow(file);*/
         });
 
         file__openSession->addAction(action);
@@ -433,10 +436,35 @@ void IMGV::maximizeImage(bool state)
 
 void IMGV::closeSession()
 {
-    if (m_session_name.isEmpty()) return;
     m_session_name.clear();
     m_thumbnail_widget->clear();
     m_img_widget->closeFile();
     m_statusbar->setSessionName("");
     m_statusbar->clearTexts();
+}
+
+void IMGV::openSession(QString &file)
+{
+    if (m_session_name.isEmpty())
+    {
+        closeSession();
+        readSessionFile(file);
+    }
+    else
+    {
+        QMessageBox msgBox;
+        QAbstractButton *thisWindowBtn = msgBox.addButton("This Window", QMessageBox::YesRole);
+        QAbstractButton *newWindowBtn = msgBox.addButton("New Window", QMessageBox::NoRole);
+        msgBox.setText("There is already a session open in this window. Do you want to open the session in this window or in a new window ?");
+        msgBox.setWindowTitle("Open Session");
+        msgBox.exec();
+
+        if (msgBox.clickedButton() == thisWindowBtn)
+        {
+            closeSession();
+            readSessionFile(file);
+        }
+        else
+            openSessionInNewWindow(file);
+    }
 }

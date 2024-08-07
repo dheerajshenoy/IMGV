@@ -50,6 +50,7 @@ private:
     void fullScreen();
     void maximizeImage(bool);
     void closeSession();
+    void openSession(QString &);
 
     ThumbnailWidget *m_thumbnail_widget = new ThumbnailWidget();
     ImageWidget *m_img_widget = new ImageWidget();
