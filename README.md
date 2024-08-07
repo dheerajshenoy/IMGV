@@ -94,3 +94,4 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 # Todo
 
 1. [ ] Ability to add notes to images inside sessions
+2. [ ] Load image from URL
