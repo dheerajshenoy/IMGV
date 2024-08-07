@@ -5,6 +5,7 @@
 #include <qt6/QtWidgets/QGraphicsScene>
 #include <qt6/QtWidgets/QGraphicsPixmapItem>
 #include <qt6/QtGui/QPixmap>
+#include <qt6/QtGui/QPixmapCache>
 #include <qt6/QtCore/QFile>
 #include <qt6/QtGui/QImage>
 #include <qt6/QtGui/QWheelEvent>
@@ -48,6 +49,7 @@ public:
 signals:
     void fileLoaded(QString);
     void droppedImage(QString);
+    void fileDim(int, int);
 
 protected:
     void wheelEvent(QWheelEvent *e) override;
@@ -76,6 +78,7 @@ private:
     QMovie *m_movie;
 
     unsigned int m_gif_max_loop_count = 10;
+
 };
 
 #endif

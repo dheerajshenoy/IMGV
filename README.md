@@ -100,7 +100,7 @@ IMGV is an image viewer aiming for the balance between minimalism and features. 
 
 1. [ ] Ability to add notes to images inside sessions
 2. [ ] ~~Load image from URL~~
-3. [ ] Caching images
+3. [x] Caching images
 
 <a name="thanks" />
 

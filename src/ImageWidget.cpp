@@ -105,6 +105,7 @@ void ImageWidget::loadFile(QString file)
     /*m_rotate = 0.0f;*/
     /*m_zoomLevel = 0.0f;*/
     /*setMatrix();*/
+    int w = 0, h = 0;
     QImageReader imreader(file);
     if (imreader.supportsAnimation())
     {
@@ -112,6 +113,8 @@ void ImageWidget::loadFile(QString file)
         m_movieItem->show();
         m_movie->stop();
         m_movie->setFileName(file);
+        w = m_movie->currentPixmap().width();
+        h = m_movie->currentPixmap().height();
         m_movie->start();
         m_scene->setSceneRect(m_movieItem->boundingRect());
     }
@@ -119,13 +122,21 @@ void ImageWidget::loadFile(QString file)
     {
         m_movieItem->hide();
         m_pixmapItem->show();
-        if (utils::detectImageFormat(file) == "WEBP")
-            m_pixmapItem->setPixmap(utils::decodeWebPToPixmap(file));
-        else
-            m_pixmapItem->setPixmap(QPixmap(file));
+        QPixmap pix;
+        if (!QPixmapCache::find(file, &pix))
+        {
+            if (utils::detectImageFormat(file) == "WEBP")
+                pix = utils::decodeWebPToPixmap(file);
+            else
+                pix.load(file);
+            QPixmapCache::insert(file, pix);
+        }
+        w = pix.width(); h = pix.height();
+        m_pixmapItem->setPixmap(pix);
         m_scene->setSceneRect(m_pixmapItem->boundingRect());
     }
     emit fileLoaded(file);
+    emit fileDim(w, h);
 }
 
 void ImageWidget::loadPixmap(QPixmap &pix)

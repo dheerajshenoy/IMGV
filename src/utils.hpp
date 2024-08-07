@@ -10,6 +10,12 @@
 #include <qt6/QtCore/QMimeType>
 #include <webp/decode.h>
 
+struct Dimension
+{
+    int width;
+    int height;
+};
+
 class utils
 {
 

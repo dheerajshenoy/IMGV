@@ -50,6 +50,7 @@ void ThumbnailWidget::createThumbnails(const QStringList &fileNames)
             qWarning("Failed to create thumbnail for %s", qPrintable(fileName));
         }
     }
+    setCurrentItem(this->item(this->count() - 1));
 }
 
 QPixmap ThumbnailWidget::createThumbnail(const QString &fileName, const QSize &size)
@@ -112,6 +113,7 @@ void ThumbnailWidget::addThumbnail(const QString &fileName)
         QListWidgetItem *item = new QListWidgetItem(QIcon(thumbnail), QFileInfo(fileName).fileName());
         item->setData(Qt::UserRole, fileName); // Store full file path in item
         addItem(item);
+        setCurrentItem(item);
     } else {
         qWarning("Failed to create thumbnail for %s", qPrintable(fileName));
     }

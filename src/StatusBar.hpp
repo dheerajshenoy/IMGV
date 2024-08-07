@@ -20,6 +20,7 @@ public:
     void setSessionName(QString) noexcept;
     void clearTexts() noexcept;
     void setMsg(QString msg, int sec = 1) noexcept;
+    void setImgDimension(const int w, const int h) noexcept;
 
 signals:
     void visibilityChanged(bool);

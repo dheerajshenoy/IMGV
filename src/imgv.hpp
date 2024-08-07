@@ -9,6 +9,7 @@
 #include <qt6/QtWidgets/QSplitter>
 #include <qt6/QtWidgets/QMenuBar>
 #include <qt6/QtGui/QAction>
+#include <qt6/QtGui/QPixmapCache>
 #include <qt6/QtGui/QShortcut>
 #include <qt6/QtGui/QKeySequence>
 #include <qt6/QtCore/QTimer>

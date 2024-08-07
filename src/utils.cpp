@@ -39,4 +39,3 @@ QPixmap utils::decodeWebPToPixmap(const QString &filePath) {
     WebPFree(decodedData);  // Free the decoded data buffer
     return pixmap;
 }
-

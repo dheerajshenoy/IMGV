@@ -31,7 +31,7 @@ StatusBar::StatusBar(QWidget *parent)
 
 void StatusBar::setSessionName(QString sess) noexcept
 {
-    sessionLabel->setText("SESSION: " + sess);
+    sessionLabel->setText("Session: " + sess);
 }
 
 void StatusBar::updateFileInfo(const QString &filePath)
@@ -47,13 +47,6 @@ void StatusBar::updateFileInfo(const QString &filePath)
         QLocale locale;
         fileSizeLabel->setText(QString("Size: %1").arg(locale.formattedDataSize(fileSize)));
 
-        // Update image dimensions
-        QPixmap pixmap(filePath);
-        if (!pixmap.isNull()) {
-            imageDimensionsLabel->setText(QString("Dimensions: (%1, %2)").arg(pixmap.width()).arg(pixmap.height()));
-        } else {
-            imageDimensionsLabel->setText("Dimensions: N/A");
-        }
     } else {
         filePathLabel->setText("File: N/A");
         fileSizeLabel->setText("Size: N/A");
@@ -88,4 +81,9 @@ void StatusBar::setMsg(QString msg, int sec) noexcept
     QTimer::singleShot(sec * 1000, [&]() {
         filePathLabel->setHidden(false);
     });
+}
+
+void StatusBar::setImgDimension(const int w, const int h) noexcept
+{
+    imageDimensionsLabel->setText(QString("(%1,%2)").arg(w).arg(h));
 }

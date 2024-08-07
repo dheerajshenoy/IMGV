@@ -38,6 +38,10 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
         m_img_widget->loadFile(filepath);
     });
 
+    connect(m_img_widget, &ImageWidget::fileDim, this, [&](int w, int h) {
+        m_statusbar->setImgDimension(w, h);
+    });
+
     parseCommandLineArguments(parser);
     initMenu();
     initConnections();
@@ -459,6 +463,7 @@ void IMGV::closeSession()
     m_img_widget->closeFile();
     m_statusbar->setSessionName("");
     m_statusbar->clearTexts();
+    QPixmapCache::clear();
 }
 
 void IMGV::openSession(QString &file)
