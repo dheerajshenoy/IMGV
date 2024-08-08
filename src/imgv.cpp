@@ -3,8 +3,6 @@
 IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     : QMainWindow(parent)
 {
-
-
     file__openSession->setIcon(QIcon(":/icons/open-session.svg"));
     setWindowIcon(QIcon(":/icons/imgv.png"));
     // Set up the main widget and layout
@@ -12,6 +10,7 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     QVBoxLayout *layout = new QVBoxLayout();
     QSplitter *splitter = new QSplitter();
 
+    /*m_thumbnail_view->setModel(m_thumbnail_model);*/
     helpMenu->addAction(help__about);
 
     connect(help__about, &QAction::triggered, this, [&]() {
@@ -23,11 +22,20 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     splitter->setHandleWidth(0);
 
-    splitter->addWidget(m_thumbnail_widget);
+    splitter->addWidget(m_thumbnail_view);
     splitter->addWidget(m_img_widget);
+
+    m_thumbnail_search_edit->setVisible(false);
+
+    connect(m_thumbnail_search_edit, &QLineEdit::textChanged, this, &IMGV::ThumbSearchTextChanged);
+    connect(m_thumbnail_search_edit, &QLineEdit::returnPressed, this, [&]() {
+        m_thumbnail_view->searchMode(false);
+        m_thumbnail_search_edit->setVisible(false);
+    });
 
     splitter->setStretchFactor(1, 1);
     layout->addWidget(splitter);
+    layout->addWidget(m_thumbnail_search_edit);
     layout->addWidget(m_statusbar);
     setCentralWidget(centralWidget);
 
@@ -38,9 +46,10 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     /*m_slideshow_timer->setInterval(2 * 1000);*/
     /*connect(m_slideshow_timer, &QTimer::timeout, this, &IMGV::slideShow);*/
 
-    connect(m_thumbnail_widget, &ThumbnailWidget::fileChangeRequested, m_img_widget, [&](QString filepath) {
+    connect(m_thumbnail_view, &ThumbnailView::fileChangeRequested, m_img_widget, [&](QString filepath) {
         m_img_widget->loadFile(filepath);
     });
+
 
     connect(m_img_widget, &ImageWidget::fileDim, this, [&](int w, int h) {
         m_statusbar->setImgDimension(w, h);
@@ -143,7 +152,7 @@ void IMGV::initMenu()
     connect(file__openAction, &QAction::triggered, this, &IMGV::openImage);
     connect(file__openNewWindowAction, &QAction::triggered, this, &IMGV::openImageInNewWindow);
     connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, &StatusBar::updateFileInfo);
-    connect(m_img_widget, &ImageWidget::droppedImage, m_thumbnail_widget, &ThumbnailWidget::addThumbnail);
+    connect(m_img_widget, &ImageWidget::droppedImage, m_thumbnail_view, &ThumbnailView::addThumbnail);
 
     connect(file__closeSession, &QAction::triggered, this, &IMGV::closeSession);
 
@@ -165,7 +174,7 @@ void IMGV::initMenu()
     });
 
     connect(view__thumbnails, &QAction::triggered, this, [&](bool state) {
-        m_thumbnail_widget->setVisible(state);
+        m_thumbnail_view->setVisible(state);
     });
 
     connect(view__statusbar, &QAction::triggered, this, [&](bool state) {
@@ -183,9 +192,10 @@ void IMGV::initMenu()
     connect(file__exit, &QAction::triggered, this, &QApplication::exit);
 
 
-    connect(m_thumbnail_widget, &ThumbnailWidget::visibilityChanged, this, [&](bool state) {
+    connect(m_thumbnail_view, &ThumbnailView::visibilityChanged, this, [&](bool state) {
         view__thumbnails->setChecked(state);
     });
+
 
     connect(m_statusbar, &StatusBar::visibilityChanged, this, [&](bool state) {
         view__statusbar->setChecked(state);
@@ -209,6 +219,7 @@ void IMGV::initKeybinds()
     QShortcut *kb_goto_prev = new QShortcut(QKeySequence("k"), this);
     QShortcut *kb_img_maximize = new QShortcut(QKeySequence("Shift+M"), this);
     QShortcut *kb_thumbnail_panel = new QShortcut(QKeySequence("T"), this);
+    QShortcut *kb_search_thumbnail = new QShortcut(QKeySequence("/"), this);
 
     connect(kb_clockwise, &QShortcut::activated, m_img_widget, &ImageWidget::rotateClockwise);
     connect(kb_anticlockwise, &QShortcut::activated, m_img_widget, &ImageWidget::rotateAnticlockwise);
@@ -224,23 +235,32 @@ void IMGV::initKeybinds()
     });
 
     connect(kb_thumbnail_panel, &QShortcut::activated, this, [&]() {
-        m_thumbnail_widget->setVisible(!m_thumbnail_widget->isVisible());
+        m_thumbnail_view->setVisible(!m_thumbnail_view->isVisible());
     });
 
-    connect(kb_goto_next, &QShortcut::activated, m_thumbnail_widget, &ThumbnailWidget::gotoNext);
-    connect(kb_goto_prev, &QShortcut::activated, m_thumbnail_widget, &ThumbnailWidget::gotoPrev);
+    connect(kb_goto_next, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoNext);
+    connect(kb_goto_prev, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoPrev);
     connect(kb_img_maximize, &QShortcut::activated, this, [&]() {
         view__maximize_image->setChecked(!m_image_maximize_mode);
         maximizeImage(!m_image_maximize_mode);
     });
+
+    connect(kb_search_thumbnail, &QShortcut::activated, m_img_widget, [&]() {
+        m_thumbnail_view->searchMode(true);
+        m_thumbnail_search_edit->setVisible(true);
+        m_thumbnail_search_edit->setFocus();
+        m_thumbnail_search_edit->selectAll();
+    });
+
 }
 
 void IMGV::initConnections()
 {
-    connect(m_thumbnail_widget, &ThumbnailWidget::itemDoubleClicked, this, [&](QListWidgetItem *item) {
-        const QString text = item->data(Qt::UserRole).toString();
+    connect(m_thumbnail_view, &ThumbnailView::doubleClicked, this, [&](const QModelIndex index) {
+        const QString text = index.data(Qt::UserRole).toString();
         m_img_widget->loadFile(text);
     });
+
 }
 
 void IMGV::openImageInNewWindow()
@@ -264,8 +284,8 @@ void IMGV::openImage()
 {
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp)"));
     if (!files.isEmpty()) {
-        m_thumbnail_widget->createThumbnails(files);
         m_img_widget->loadFile(files[0]);
+        m_thumbnail_view->createThumbnails(files);
     }
 }
 
@@ -292,9 +312,9 @@ void IMGV::saveSession()
         auto datetime = QString("%1\n").arg(QDateTime::currentDateTime().toString()).toStdString();
         sess_file.write(datetime.data());
 
-        for(unsigned int i=0; i < m_thumbnail_widget->count(); i++)
+        for(unsigned int i=0; i < m_thumbnail_view->count(); i++)
         {
-            QString filepath = m_thumbnail_widget->item(i)->data(Qt::UserRole).toString();
+            QString filepath = m_thumbnail_view->item(i, Qt::UserRole);
             sess_file.write(QString("%1\n").arg(filepath).toStdString().data());
         }
 
@@ -319,9 +339,9 @@ void IMGV::saveSession()
         auto datetime = QString("%1\n").arg(QDateTime::currentDateTime().toString()).toStdString();
         sess_file.write(datetime.data());
 
-        for(unsigned int i=0; i < m_thumbnail_widget->count(); i++)
+        for(unsigned int i=0; i < m_thumbnail_view->count(); i++)
         {
-            QString filepath = m_thumbnail_widget->item(i)->data(Qt::UserRole).toString();
+            QString filepath = m_thumbnail_view->item(i, Qt::UserRole);
             sess_file.write(QString("%1\n").arg(filepath).toStdString().data());
         }
 
@@ -353,7 +373,7 @@ void IMGV::readSessionFile(QString filename)
 
     file.close();
 
-    m_thumbnail_widget->createThumbnails(files);
+    m_thumbnail_view->createThumbnails(files);
     m_img_widget->loadFile(files[0]);
 
     auto session_name = QFileInfo(file).baseName();
@@ -408,13 +428,13 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         {
             auto dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
             for(const auto &f: dirfiles)
-                m_thumbnail_widget->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));
+                m_thumbnail_view->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));
             return;
         }
         m_img_widget->loadFile(file);
 
         for(const auto &file: files)
-            m_thumbnail_widget->addThumbnail(QString::fromStdString(file));
+            m_thumbnail_view->addThumbnail(QString::fromStdString(file));
         return;
     }
 
@@ -426,13 +446,13 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         {
             auto dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
             for(const auto &f: dirfiles)
-                m_thumbnail_widget->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));
+                m_thumbnail_view->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));
             return;
         }
         m_img_widget->loadFile(file);
 
         for(const auto &file: files)
-            m_thumbnail_widget->addThumbnail(QString::fromStdString(file));
+            m_thumbnail_view->addThumbnail(QString::fromStdString(file));
         return;
     }
 
@@ -464,13 +484,13 @@ void IMGV::maximizeImage(bool state)
     m_image_maximize_mode = state;
     if (m_image_maximize_mode)
     {
-        m_thumbnail_widget->setVisible(false);
+        m_thumbnail_view->setVisible(false);
         m_menuBar->setVisible(false);
         m_statusbar->setVisible(false);
         m_img_widget->setScrollBarsVisibility(false);
     }
     else {
-        m_thumbnail_widget->setVisible(true);
+        m_thumbnail_view->setVisible(true);
         m_menuBar->setVisible(true);
         m_statusbar->setVisible(true);
         m_img_widget->setScrollBarsVisibility(true);
@@ -480,7 +500,7 @@ void IMGV::maximizeImage(bool state)
 void IMGV::closeSession()
 {
     m_session_name.clear();
-    m_thumbnail_widget->clear();
+    m_thumbnail_view->model()->clear();
     m_img_widget->closeFile();
     m_statusbar->setSessionName("");
     m_statusbar->clearTexts();
@@ -489,7 +509,7 @@ void IMGV::closeSession()
 
 void IMGV::openSession(QString &file)
 {
-    if (m_session_name.isEmpty() && m_thumbnail_widget->count() == 0)
+    if (m_session_name.isEmpty() && m_thumbnail_view->count() == 0)
     {
         closeSession();
         readSessionFile(file);
@@ -535,4 +555,13 @@ void IMGV::newSession() noexcept
     if (!process->waitForStarted())
         qDebug() << "FAILED";
     else {}
+}
+
+void IMGV::addNote() noexcept
+{
+}
+
+void IMGV::ThumbSearchTextChanged(QString text) noexcept
+{
+    m_thumbnail_view->search(text);
 }

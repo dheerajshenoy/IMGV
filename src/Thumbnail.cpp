@@ -1,33 +1,42 @@
 #include "Thumbnail.hpp"
 
-Thumbnail::Thumbnail(QWidget *parent)
-    : QWidget(parent)
+Thumbnail::Thumbnail()
+{}
+
+Thumbnail::Thumbnail(const QString &fileName) noexcept
 {
-    m_layout = new QVBoxLayout(this);
-
-    m_imageLabel = new QLabel(this);
-    m_imageLabel->setAlignment(Qt::AlignCenter);
-
-    m_textLabel = new QLabel(this);
-    m_textLabel->setAlignment(Qt::AlignCenter);
-
-    m_layout->addWidget(m_imageLabel);
-    m_layout->addWidget(m_textLabel);
-
-    setLayout(m_layout);
-
+    if (utils::detectImageFormat(fileName) != "WEBP")
+    {
+        QPixmap pixmap(fileName);
+        if (pixmap.isNull()) return;
+        m_pix = pixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+    else
+        m_pix = utils::decodeWebPToPixmap(fileName).scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_filename = fileName;
 }
 
-void Thumbnail::setFilename(const QString &fileName)
+QString Thumbnail::note() noexcept
 {
-    QFileInfo fileInfo(fileName);
-    QPixmap pixmap(fileName);
-    
-    if (!pixmap.isNull()) {
-        m_imageLabel->setPixmap(pixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    } else {
-        m_imageLabel->clear();
-    }
+    return m_note;
+}
 
-    m_textLabel->setText(fileInfo.fileName());
+QPixmap Thumbnail::pixmap() noexcept
+{
+    return m_pix;
+}
+
+QString Thumbnail::filename() noexcept
+{
+    return m_filename;
+}
+
+void Thumbnail::setNote(const QString &note) noexcept
+{
+    if (note.isNull()) m_note = note;
+}
+
+void Thumbnail::setFilename(const QString &filename) noexcept
+{
+    m_filename = filename;
 }

@@ -1,7 +1,7 @@
-#ifndef THUMBNAIL_WIDGET_HPP
-#define THUMBANIL_WIDGET_HPP
+#ifndef THUMBNAIL_VIEW_HPP
+#define THUMBNAIL_VIEW_HPP
 
-#include <qt6/QtWidgets/QListWidget>
+#include <qt6/QtWidgets/QListView>
 #include <qt6/QtWidgets/QMessageBox>
 #include <qt6/QtWidgets/QMenu>
 #include <qt6/QtGui/QAction>
@@ -11,24 +11,31 @@
 #include <qt6/QtGui/QDropEvent>
 #include <qt6/QtCore/QMimeData>
 #include <qt6/QtGui/QDesktopServices>
+#include <qt6/QtGui/QStandardItem>
 #include <qt6/QtCore/QProcess>
 #include <qt6/QtGui/QHideEvent>
 #include <qt6/QtGui/QShowEvent>
-#include "Thumbnail.hpp"
-#include "utils.hpp"
 #include "exif.hpp"
+#include "utils.hpp"
+#include "ThumbnailModel.hpp"
+#include "ThumbnailFilterProxy.hpp"
 
-class ThumbnailWidget : public QListWidget
+class ThumbnailView : public QListView
 {
     Q_OBJECT
 public:
-    explicit ThumbnailWidget(QWidget *parent = nullptr);
-    ~ThumbnailWidget(){}
-
-    void createThumbnails(const QStringList &fileNames);
-    void addThumbnail(const QString &filename);
-    void gotoNext();
-    void gotoPrev();
+    ThumbnailView(QWidget *parent = nullptr);
+    ThumbnailModel* model() noexcept;
+    void createThumbnails(const QStringList &fileNames) noexcept;
+    void addThumbnail(const QString &filename) noexcept;
+    void loadFile(const QString &path) noexcept;
+    void gotoNext() noexcept;
+    void gotoPrev() noexcept;
+    int count() noexcept;
+    QString item(int index, int role) noexcept;
+    void clear() noexcept;
+    void search(QString) noexcept;
+    void searchMode(bool) noexcept;
 
 signals:
     void fileChangeRequested(QString);
@@ -43,7 +50,8 @@ protected:
     void showEvent(QShowEvent *e) noexcept override;
 
 private:
-    QPixmap createThumbnail(const QString &fileName, const QSize &size);
+
+    ThumbnailModel *m_model = new ThumbnailModel();
     void showContextMenu(const QPoint &pos) noexcept;
     void removeThumbnails();
     void hideThumbnails();
@@ -57,6 +65,8 @@ private:
     QAction *m_action__hide = new QAction("Hide");
     QAction *m_action__show_in_explorer = new QAction("Show in File Explorer");
     QAction *m_action__image_properties = new QAction("Properties");
+
+    ThumbnailFilterProxy *m_filter_proxy = new ThumbnailFilterProxy();
 };
 
 #endif

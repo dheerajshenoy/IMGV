@@ -20,19 +20,22 @@ HEADERS += src/ImageWidget.hpp \
            src/imgv.hpp \
            src/StatusBar.hpp \
            src/Thumbnail.hpp \
-           src/ThumbnailWidget.hpp \
            src/sol/sol.hpp \
            src/AboutDialog.hpp \
            src/MovieItem.hpp \
            src/utils.hpp \
-           src/exif.hpp
+           src/exif.hpp \
+           src/ThumbnailView.hpp \
+           src/ThumbnailModel.hpp \
+           src/ThumbnailFilterProxy.hpp
 
 SOURCES += src/main.cpp \
             src/ImageWidget.cpp \
            src/imgv.cpp \
            src/StatusBar.cpp \
            src/Thumbnail.cpp \
-           src/ThumbnailWidget.cpp \
            src/AboutDialog.cpp \
            src/utils.cpp \
-           src/exif.cpp
+           src/exif.cpp \
+           src/ThumbnailView.cpp \
+           src/ThumbnailModel.cpp \

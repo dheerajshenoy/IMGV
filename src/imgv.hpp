@@ -4,6 +4,7 @@
 #include <argparse/argparse.hpp>
 #include <qt6/QtWidgets/QApplication>
 #include <qt6/QtWidgets/QMessageBox>
+#include <qt6/QtWidgets/QLineEdit>
 #include <qt6/QtWidgets/QInputDialog>
 #include <qt6/QtWidgets/QMainWindow>
 #include <qt6/QtWidgets/QSplitter>
@@ -23,15 +24,17 @@
 #include <qt6/QtWidgets/QGraphicsPixmapItem>
 #include <qt6/QtWidgets/QVBoxLayout>
 #include <qt6/QtWidgets/QWidget>
-#include "ThumbnailWidget.hpp"
 #include "ImageWidget.hpp"
 #include "StatusBar.hpp"
 #include "sol/sol.hpp"
 #include "AboutDialog.hpp"
 #include "exif.hpp"
+#include "ThumbnailView.hpp"
+#include "ThumbnailModel.hpp"
 
 class IMGV : public QMainWindow
 {
+
 public:
     IMGV(argparse::ArgumentParser &parser, QWidget *parent = nullptr);
     ~IMGV(){}
@@ -54,13 +57,14 @@ private:
     void closeSession();
     void openSession(QString &);
     void newSession() noexcept;
+    void addNote() noexcept;
+    void ThumbSearchTextChanged(QString) noexcept;
 
-    ThumbnailWidget *m_thumbnail_widget = new ThumbnailWidget();
+    ThumbnailView *m_thumbnail_view  = new ThumbnailView();
     ImageWidget *m_img_widget = new ImageWidget();
     StatusBar *m_statusbar = new StatusBar();
 
     bool m_slideshow_mode = false;
-
     QTimer *m_slideshow_timer;
 
     QString m_config_dir_path, m_sessions_dir_path;
@@ -105,6 +109,8 @@ private:
     QString m_session_name;
     bool m_image_maximize_mode = false;
 
+    ThumbnailModel *m_thumbnail_model = new ThumbnailModel();
+    QLineEdit *m_thumbnail_search_edit = new QLineEdit();
 };
 
 

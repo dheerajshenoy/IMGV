@@ -97,6 +97,11 @@ The theme for IMGV depends on the theme set for Qt6 applications. There is a han
 
 # Changelogs and Bug Fixes
 
+- 08 Aug 2024
+
+    - Removed `QListWidget` and replaced with `QListView`
+    - Added search feature for thumbnails
+
 - 07 Aug 2024
 
     - EXIF Metadata support (JPEG metadata)

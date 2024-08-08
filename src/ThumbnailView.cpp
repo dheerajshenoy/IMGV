@@ -1,14 +1,12 @@
-#include "ThumbnailWidget.hpp"
-#include "qnamespace.h"
+#include "ThumbnailView.hpp"
 
-ThumbnailWidget::ThumbnailWidget(QWidget *parent)
-    : QListWidget(parent)
+ThumbnailView::ThumbnailView(QWidget *parent)
+    : QListView(parent)
 {
-    
     setWindowIcon(QIcon(":/icons/imgv.png"));
-    setViewMode(QListWidget::IconMode);
+    setViewMode(QListView::IconMode);
     setIconSize(QSize(100, 100));  // Set the size for thumbnails
-    setResizeMode(QListWidget::Adjust);
+    setResizeMode(QListView::Adjust);
     setSpacing(20);  // Spacing between thumbnails
     setTextElideMode(Qt::TextElideMode::ElideRight);
     setWordWrap(true);
@@ -17,8 +15,9 @@ ThumbnailWidget::ThumbnailWidget(QWidget *parent)
     /*setUniformItemSizes(true);*/
 
     this->setContextMenuPolicy(Qt::CustomContextMenu);
+    this->setModel(m_model);
 
-    connect(this, &ThumbnailWidget::customContextMenuRequested, this, &ThumbnailWidget::showContextMenu);
+    connect(this, &ThumbnailView::customContextMenuRequested, this, &ThumbnailView::showContextMenu);
 
     m_contextMenu->addAction(m_action__remove);
     m_contextMenu->addAction(m_action__hide);
@@ -30,65 +29,58 @@ ThumbnailWidget::ThumbnailWidget(QWidget *parent)
         this->selectAll();
     });
 
-    connect(m_action__image_properties, &QAction::triggered, this, &ThumbnailWidget::showProperties);
+    connect(m_action__image_properties, &QAction::triggered, this, &ThumbnailView::showProperties);
 
     m_partialContextMenu->addAction(m_action__select_all);
 
-    connect(m_action__remove, &QAction::triggered, this, &ThumbnailWidget::removeThumbnails);
-    connect(m_action__hide, &QAction::triggered, this, &ThumbnailWidget::hideThumbnails);
-    connect(m_action__show_in_explorer, &QAction::triggered, this, &ThumbnailWidget::showFilesInExplorer);
+    connect(m_action__remove, &QAction::triggered, this, &ThumbnailView::removeThumbnails);
+    connect(m_action__hide, &QAction::triggered, this, &ThumbnailView::hideThumbnails);
+    connect(m_action__show_in_explorer, &QAction::triggered, this, &ThumbnailView::showFilesInExplorer);
+
+    m_filter_proxy->setSourceModel(m_model);
 }
 
-void ThumbnailWidget::createThumbnails(const QStringList &fileNames)
+void ThumbnailView::loadFile(const QString &file) noexcept
+{
+    Thumbnail thumb(file);
+    m_model->addThumbnail(thumb);
+}
+
+ThumbnailModel* ThumbnailView::model() noexcept
+{
+    return m_model;
+}
+
+void ThumbnailView::createThumbnails(const QStringList &fileNames) noexcept
 {
     for (const QString &fileName : fileNames) {
-        QPixmap thumbnail = createThumbnail(fileName, QSize(100, 100));
-        if (!thumbnail.isNull()) {
-            QListWidgetItem *item = new QListWidgetItem(QIcon(thumbnail), QFileInfo(fileName).fileName());
-            item->setData(Qt::UserRole, fileName); // Store full file path in item
-            addItem(item);
-        } else {
-            qWarning("Failed to create thumbnail for %s", qPrintable(fileName));
-        }
+        Thumbnail thumb(fileName);
+        m_model->addThumbnail(thumb);
     }
-    if (this->count() >= 0)
-        setCurrentItem(this->item(0));
+
+    if (m_model->rowCount() >= 0)
+        setCurrentIndex(m_model->index(0));
 }
 
-QPixmap ThumbnailWidget::createThumbnail(const QString &fileName, const QSize &size)
-{
-    if (utils::detectImageFormat(fileName) != "WEBP")
-    {
-        QPixmap pixmap = QPixmap(fileName);
-
-        if (pixmap.isNull()) return QPixmap();
-
-        return pixmap.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-    else
-        return utils::decodeWebPToPixmap(fileName).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-}
-
-
-void ThumbnailWidget::dragEnterEvent(QDragEnterEvent *e)
+void ThumbnailView::dragEnterEvent(QDragEnterEvent *e)
 {
     const QMimeData *mimedata = e->mimeData();
     if (mimedata->hasUrls())
         e->acceptProposedAction();
 }
 
-void ThumbnailWidget::dragLeaveEvent(QDragLeaveEvent *e)
+void ThumbnailView::dragLeaveEvent(QDragLeaveEvent *e)
 {
     e->accept();
 }
 
-void ThumbnailWidget::dragMoveEvent(QDragMoveEvent *e)
+void ThumbnailView::dragMoveEvent(QDragMoveEvent *e)
 {
     e->accept();
     e->acceptProposedAction();
 }
 
-void ThumbnailWidget::dropEvent(QDropEvent *e)
+void ThumbnailView::dropEvent(QDropEvent *e)
 {
     /*if (e->source() == this) return;*/
     if (e->mimeData()->hasUrls())
@@ -99,82 +91,66 @@ void ThumbnailWidget::dropEvent(QDropEvent *e)
             if (url.isLocalFile())
             {
                 QString filepath = url.toLocalFile();
-                addThumbnail(filepath);
+                m_model->addThumbnail(filepath);
             }
         }
     }
     e->acceptProposedAction();
 }
 
-void ThumbnailWidget::addThumbnail(const QString &fileName)
+void ThumbnailView::showContextMenu(const QPoint &pos) noexcept
 {
-    QPixmap thumbnail = createThumbnail(fileName, QSize(100, 100));
-    if (!thumbnail.isNull()) {
-        QListWidgetItem *item = new QListWidgetItem(QIcon(thumbnail), QFileInfo(fileName).fileName());
-        item->setData(Qt::UserRole, fileName); // Store full file path in item
-        addItem(item);
-        setCurrentItem(item);
-    } else {
-        qWarning("Failed to create thumbnail for %s", qPrintable(fileName));
-    }
-}
-
-void ThumbnailWidget::showContextMenu(const QPoint &pos) noexcept
-{
-    if (this->selectedItems().size() > 0 || this->itemAt(pos))
+    if (this->selectedIndexes().size() > 0 || this->indexAt(pos).isValid())
         m_contextMenu->exec(mapToGlobal(pos));
     else
         m_partialContextMenu->exec(mapToGlobal(pos));
+
 }
 
-void ThumbnailWidget::removeThumbnails()
+void ThumbnailView::removeThumbnails()
 {
-    auto selections = this->selectedItems();
-    for(const QListWidgetItem *s : selections)
+    auto selections = this->selectedIndexes();
+    for(const auto index : selections)
     {
-        delete this->takeItem(this->row(s));
+        m_model->removeAt(index.row());
     }
 }
 
-void ThumbnailWidget::hideThumbnails()
+void ThumbnailView::hideThumbnails()
 {
-
-    auto selections = this->selectedItems();
+    auto selections = this->selectedIndexes();
     for(const auto &s : selections)
-    {
-        s->setHidden(true);
-    }
-
+        this->setRowHidden(s.row(), true);
 }
 
-void ThumbnailWidget::showFilesInExplorer()
+void ThumbnailView::showFilesInExplorer()
 {
-    auto selection = this->selectedItems()[0];
-    auto filepath = QFileInfo(selection->data(Qt::UserRole).toString()).path();
+    auto selection = this->selectedIndexes()[0];
+    auto filepath = QFileInfo(selection.data(Qt::UserRole).toString()).path();
     QDesktopServices::openUrl(QUrl::fromLocalFile(filepath));
 }
 
-void ThumbnailWidget::gotoNext()
+void ThumbnailView::gotoNext() noexcept
 {
-    if (currentRow() < count() - 1)
+    if (currentIndex().row() < m_model->rowCount() - 1)
     {
-        this->setCurrentRow(currentRow() + 1);
-        emit fileChangeRequested(currentItem()->data(Qt::UserRole).toString());
+        this->setCurrentIndex(currentIndex().siblingAtRow(currentIndex().row() + 1));
+        emit fileChangeRequested(currentIndex().data(Qt::UserRole).toString());
     }
 }
 
-void ThumbnailWidget::gotoPrev()
+void ThumbnailView::gotoPrev() noexcept
 {
-    if (currentRow() > 0)
+    if (currentIndex().row() > 0)
     {
-        this->setCurrentRow(currentRow() - 1);
-        emit fileChangeRequested(currentItem()->data(Qt::UserRole).toString());
+        this->setCurrentIndex(currentIndex().siblingAtRow(currentIndex().row() - 1));
+        emit fileChangeRequested(currentIndex().data(Qt::UserRole).toString());
     }
 }
 
-void ThumbnailWidget::showProperties()
+void ThumbnailView::showProperties()
 {
-    QString filepath = this->selectedItems()[0]->data(Qt::UserRole).toString();
+    QString filepath = this->selectedIndexes()[0].data(Qt::UserRole).toString();
     using namespace easyexif;
     auto format = utils::detectImageFormat(filepath);
     if ( format == "JPEG" )
@@ -240,12 +216,42 @@ void ThumbnailWidget::showProperties()
     else QMessageBox::information(this, "Metadata Retreival Error", "Sorry. But this format doesn't support Image Metadata");
 }
 
-void ThumbnailWidget::hideEvent(QHideEvent *e) noexcept
+void ThumbnailView::hideEvent(QHideEvent *e) noexcept
 {
     emit visibilityChanged(isVisible());
 }
 
-void ThumbnailWidget::showEvent(QShowEvent *e) noexcept
+void ThumbnailView::showEvent(QShowEvent *e) noexcept
 {
     emit visibilityChanged(isVisible());
+}
+
+void ThumbnailView::addThumbnail(const QString &filename) noexcept
+{
+    m_model->addThumbnail(filename);
+}
+
+int ThumbnailView::count() noexcept
+{
+    return m_model->rowCount();
+}
+
+QString ThumbnailView::item(int _index, int role) noexcept
+{
+    auto index = this->currentIndex().siblingAtRow(_index);
+    return m_model->data(index, role).toString();
+}
+
+void ThumbnailView::search(QString text) noexcept
+{
+    qDebug() << text;
+    m_filter_proxy->setFilterText(text);
+}
+
+void ThumbnailView::searchMode(bool state) noexcept
+{
+    if (state)
+        this->setModel(m_filter_proxy);
+    else
+        this->setModel(m_model);
 }
