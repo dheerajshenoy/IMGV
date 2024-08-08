@@ -270,3 +270,25 @@ void ImageWidget::closeFile()
     m_pixmapItem->hide();
     m_movieItem->hide();
 }
+
+void ImageWidget::moveLeft() noexcept
+{
+    this->scroll(-5, 0);
+}
+
+
+void ImageWidget::moveDown() noexcept
+{
+    this->scroll(0, 5);
+}
+
+
+void ImageWidget::moveUp() noexcept
+{
+    this->scroll(0, -5);
+}
+
+void ImageWidget::moveRight() noexcept
+{
+    this->scroll(5, 0);
+}

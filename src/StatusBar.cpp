@@ -12,7 +12,12 @@ StatusBar::StatusBar(QWidget *parent)
 
     msgLabel->setHidden(true);
 
+    noteModifiedLabel->setVisible(false);
+
     layout->addWidget(msgLabel);
+    layout->addSpacing(10);
+    layout->addWidget(noteModifiedLabel);
+    layout->addSpacing(10);
     layout->addWidget(filePathLabel);
     layout->addStretch(1);
     layout->addWidget(fileSizeLabel);
@@ -85,4 +90,21 @@ void StatusBar::setMsg(QString msg, int sec) noexcept
 void StatusBar::setImgDimension(const int w, const int h) noexcept
 {
     imageDimensionsLabel->setText(QString("(%1,%2)").arg(w).arg(h));
+}
+
+void StatusBar::setNoteModified(bool state) noexcept
+{
+    if (state)
+        noteModifiedLabel->setText("[M]");
+    else
+        noteModifiedLabel->clear();
+
+}
+
+void StatusBar::modificationLabelVisiblity(bool state) noexcept
+{
+    if (state)
+        this->noteModifiedLabel->setVisible(true);
+    else
+        this->noteModifiedLabel->setVisible(false);
 }

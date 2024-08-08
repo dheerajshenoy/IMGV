@@ -10,7 +10,6 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     QVBoxLayout *layout = new QVBoxLayout();
     QSplitter *splitter = new QSplitter();
 
-
     m_note_holder->setAcceptRichText(true);
     /*m_thumbnail_view->setModel(m_thumbnail_model);*/
     helpMenu->addAction(help__about);
@@ -22,6 +21,8 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     centralWidget->setLayout(layout);
 
+    m_note_holder->setVisible(false);
+
     splitter->setHandleWidth(0);
 
     splitter->addWidget(m_thumbnail_view);
@@ -29,7 +30,10 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     m_right_pane_splitter->addWidget(m_img_widget);
     m_right_pane_splitter->addWidget(m_note_holder);
-    m_right_pane_splitter->addWidget(m_note_save_btn);
+
+    connect(m_note_holder, &NoteWidget::modificationChanged, m_statusbar, &StatusBar::setNoteModified);
+
+    connect(m_note_holder, &NoteWidget::visibilityChanged, m_statusbar, &StatusBar::modificationLabelVisiblity);
 
     m_right_pane_splitter->setStretchFactor(0, 1);
     m_right_pane_layout->addWidget(m_right_pane_splitter);
@@ -68,7 +72,6 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     parseCommandLineArguments(parser);
     initMenu();
     initConnections();
-    initKeybinds();
     this->show();
 }
 
@@ -92,6 +95,102 @@ void IMGV::initConfigDirectory()
         scriptFile.write("-- This is the config file for IMGV\n");
         scriptFile.write("-- Check out the documentation for more information about configuring IMGV");
     }
+
+    m_lua_state.open_libraries(sol::lib::io, sol::lib::base, sol::lib::table);
+
+    try
+    {
+        m_lua_state.safe_script_file(script_file_path.toStdString());
+    }
+    catch (const sol::error &e)
+    {
+        QMessageBox::critical(this, "Error Loading Config File", "There was a problem loading config.lua file");
+        return;
+    }
+
+
+    sol::optional<sol::object> defaults_table_exist = m_lua_state["Defaults"];
+    if (defaults_table_exist)
+    {
+        sol::table defaults_table = defaults_table_exist.value();
+
+        m_statusbar->setVisible(defaults_table["statusbar"].get_or(true));
+        m_menuBar->setVisible(defaults_table["menubar"].get_or(true));
+        m_thumbnail_view->setVisible(defaults_table["thumbnail_panel"].get_or(true));
+
+
+        // keybindings
+        
+        sol::optional<sol::object> keybindings_table_exist = defaults_table["keybindings"];
+        if (keybindings_table_exist)
+        {
+            sol::table keys_table = keybindings_table_exist.value();
+
+            QMap<QString, QString> keys;
+            for(auto &pair : keys_table)
+            {
+                QString action = pair.first.as<std::string>().c_str();
+                QString key = pair.second.as<std::string>().c_str();
+                keys[action] = key;
+            }
+
+            for(auto it = keys.begin(); it != keys.end(); it++)
+            {
+                QString action = it.key();
+                QString key = it.value();
+
+                QShortcut *shortcut = new QShortcut(QKeySequence(key), this);
+
+                if (action == "zoom_in") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomIn);
+                } else if (action == "zoom_out") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomOut);
+                } else if (action == "zoom_reset") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomOriginal);
+                } else if (action == "rotate_clockwise") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::rotateClockwise);
+                } else if (action == "rotate_anticlockwise") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::rotateAnticlockwise);
+                } else if (action == "flip_vertical") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::flipVertical);
+                } else if (action == "flip_horizontal") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::flipHorizontal);
+                } else if (action == "left") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveLeft);
+                } else if (action == "down") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveDown);
+                } else if (action == "up") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveUp);
+                } else if (action == "right") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveRight);
+                } else if (action == "next") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoNext);
+                } else if (action == "prev") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoPrev);
+                } else if (action == "notes") {
+                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleNotes);
+                } else if (action == "maximize") {
+                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::maximizeImage);
+                } else if (action == "search") {
+                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::searchThumbnails);
+                } else if (action == "toggle_menubar") {
+                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleMenubar);
+                } else if (action == "toggle_statusbar") {
+                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleStatusbar);
+                } else if (action == "toggle_thumbnail_panel") {
+                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleThumbnailPanel);
+                }
+            }
+        }
+        else 
+        {
+            // Load default keybindings if custom keybindings not found
+            if (defaults_table["default_keybindings"].get_or(true))
+                initKeybinds();
+        }
+        
+    }
+
 
     // create sessions folder
     
@@ -164,7 +263,12 @@ void IMGV::initMenu()
     connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, [&](QString filename) {
         m_statusbar->updateFileInfo(filename);
         if (m_thumbnail_view->currentThumbnail().hasNote())
+        {
+            if (!m_note_holder->isVisible())
+                m_note_holder->setVisible(true);
             m_note_holder->setMarkdown(m_thumbnail_view->currentThumbnail().note());
+        }
+        else if (m_note_holder->isVisible()) m_note_holder->setVisible(false);
     });
 
     connect(m_img_widget, &ImageWidget::droppedImage, m_thumbnail_view, &ThumbnailView::addThumbnail);
@@ -256,16 +360,11 @@ void IMGV::initKeybinds()
     connect(kb_goto_next, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoNext);
     connect(kb_goto_prev, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoPrev);
     connect(kb_img_maximize, &QShortcut::activated, this, [&]() {
-        view__maximize_image->setChecked(!m_image_maximize_mode);
-        maximizeImage(!m_image_maximize_mode);
+        maximizeImage();
+        view__maximize_image->setChecked(m_image_maximize_mode);
     });
 
-    connect(kb_search_thumbnail, &QShortcut::activated, m_img_widget, [&]() {
-        m_thumbnail_view->searchMode(true);
-        m_thumbnail_search_edit->setVisible(true);
-        m_thumbnail_search_edit->setFocus();
-        m_thumbnail_search_edit->selectAll();
-    });
+    connect(kb_search_thumbnail, &QShortcut::activated, this, &IMGV::searchThumbnails);
 
 }
 
@@ -277,8 +376,9 @@ void IMGV::initConnections()
         m_note_holder->setMarkdown(index.data(Thumbnail::Note).toString());
     });
     
-    connect(m_note_save_btn, &QPushButton::clicked, this, [&]() {
+    connect(m_note_holder, &NoteWidget::saveRequested, this, [&]() {
         m_thumbnail_view->model()->setNote(m_thumbnail_view->currentIndex(), m_note_holder->toMarkdown());
+        m_note_holder->document()->setModified(false);
     });
 }
 
@@ -580,9 +680,9 @@ void IMGV::fullScreen()
     this->showFullScreen();
 }
 
-void IMGV::maximizeImage(bool state)
+void IMGV::maximizeImage()
 {
-    m_image_maximize_mode = state;
+    m_image_maximize_mode = !m_image_maximize_mode;
     if (m_image_maximize_mode)
     {
         m_thumbnail_view->setVisible(false);
@@ -597,6 +697,7 @@ void IMGV::maximizeImage(bool state)
         m_img_widget->setScrollBarsVisibility(true);
     }
 }
+
 
 void IMGV::closeSession()
 {
@@ -670,3 +771,31 @@ void IMGV::ThumbSearchTextChanged(QString text) noexcept
 }
 
 
+
+void IMGV::toggleNotes() noexcept
+{
+    m_note_holder->setVisible(!m_note_holder->isVisible());
+}
+
+void IMGV::searchThumbnails() noexcept
+{
+    m_thumbnail_view->searchMode(true);
+    m_thumbnail_search_edit->setVisible(true);
+    m_thumbnail_search_edit->setFocus();
+    m_thumbnail_search_edit->selectAll();
+}
+
+void IMGV::toggleThumbnailPanel() noexcept
+{
+    m_thumbnail_view->setVisible(!m_thumbnail_view->isVisible());
+}
+
+void IMGV::toggleStatusbar() noexcept
+{
+    m_statusbar->setVisible(!m_statusbar->isVisible());
+}
+
+void IMGV::toggleMenubar() noexcept
+{
+    m_menuBar->setVisible(!m_menuBar->isVisible());
+}

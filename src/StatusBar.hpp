@@ -21,6 +21,8 @@ public:
     void clearTexts() noexcept;
     void setMsg(QString msg, int sec = 1) noexcept;
     void setImgDimension(const int w, const int h) noexcept;
+    void setNoteModified(bool state) noexcept;
+    void modificationLabelVisiblity(bool state) noexcept;
 
 signals:
     void visibilityChanged(bool);
@@ -36,6 +38,7 @@ private:
     QLabel *fileSizeLabel;
     QLabel *imageDimensionsLabel;
     QLabel *sessionLabel = new QLabel("Session:");
+    QLabel *noteModifiedLabel = new QLabel();
 
     QString formatFileSize(qint64 size) const;
 };

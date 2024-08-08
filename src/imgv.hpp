@@ -62,12 +62,17 @@ private:
     void readSessionFile(QString filepath);
     void openSessionInNewWindow(QString &);
     void fullScreen();
-    void maximizeImage(bool);
+    void maximizeImage();
     void closeSession();
     void openSession(QString &);
     void newSession() noexcept;
     void addNote() noexcept;
     void ThumbSearchTextChanged(QString) noexcept;
+    void searchThumbnails() noexcept;
+    void toggleNotes() noexcept;
+    void toggleThumbnailPanel() noexcept;
+    void toggleMenubar() noexcept;
+    void toggleStatusbar() noexcept;
 
     ThumbnailView *m_thumbnail_view  = new ThumbnailView();
     ImageWidget *m_img_widget = new ImageWidget();
@@ -126,7 +131,6 @@ private:
     QVBoxLayout *m_right_pane_layout = new QVBoxLayout();
     NoteWidget *m_note_holder = new NoteWidget();
     QSplitter *m_right_pane_splitter = new QSplitter(Qt::Orientation::Vertical);
-    QPushButton *m_note_save_btn = new QPushButton("Save Note");
 };
 
 

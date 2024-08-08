@@ -45,6 +45,10 @@ public:
     void fitToHeight();
     void resetRotation() noexcept;
     void setScrollBarsVisibility(bool state) noexcept;
+    void moveLeft() noexcept;
+    void moveRight() noexcept;
+    void moveUp() noexcept;
+    void moveDown() noexcept;
 
 signals:
     void fileLoaded(QString);

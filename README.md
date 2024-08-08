@@ -102,6 +102,8 @@ The theme for IMGV depends on the theme set for Qt6 applications. There is a han
     - Added note functionality
     - Changed session file format to json files for easy reading
     - Added dependency for rapidjson
+    - Show note modification status on the statusbar
+    - Markdown Highlighting support for the Note Widget
 
 - 07 Aug 2024
 
