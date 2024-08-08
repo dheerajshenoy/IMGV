@@ -47,10 +47,8 @@ I aM an imaGe Viewer ~ IMGV
 2. Everything is customizable
 3. Session file support
 
-    Session files allow you to group images together to open it at a later point. Sessionb files are just plain text files with date and list of files (this might change in the future).
+    Session files allow you to group images together to open it at a later point. *NOTE*: Previously session files were just plain text files, but since the addition of notes features, session files are now stored as json files with the extension .imgv.
    
-   ![image](https://github.com/user-attachments/assets/5e8e74c2-6b7a-4113-80c4-d2819ba09767)
-
 5. Image format support
     1. JPG/JPEG
     2. PNG
@@ -102,6 +100,8 @@ The theme for IMGV depends on the theme set for Qt6 applications. There is a han
     - Removed `QListWidget` and replaced with `QListView`
     - Added search feature for thumbnails
     - Added note functionality
+    - Changed session file format to json files for easy reading
+    - Added dependency for rapidjson
 
 - 07 Aug 2024
 
@@ -135,3 +135,4 @@ I want to thank the authors of the following libraries I have integrated in this
 2. [ArgParse](https://github.com/p-ranav/argparse)
 3. [libwebp](https://github.com/webmproject/libwebp)
 4. [EasyEXIF](https://github.com/mayanklahiri/easyexif)
+5. [rapidjson](https://github.com/tencent/rapidjson)
