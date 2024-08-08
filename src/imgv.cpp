@@ -10,6 +10,8 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     QVBoxLayout *layout = new QVBoxLayout();
     QSplitter *splitter = new QSplitter();
 
+
+    m_note_holder->setAcceptRichText(true);
     /*m_thumbnail_view->setModel(m_thumbnail_model);*/
     helpMenu->addAction(help__about);
 
@@ -23,7 +25,15 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     splitter->setHandleWidth(0);
 
     splitter->addWidget(m_thumbnail_view);
-    splitter->addWidget(m_img_widget);
+    m_right_pane->setLayout(m_right_pane_layout);
+
+    m_right_pane_splitter->addWidget(m_img_widget);
+    m_right_pane_splitter->addWidget(m_note_holder);
+    m_right_pane_splitter->addWidget(m_note_save_btn);
+
+    m_right_pane_splitter->setStretchFactor(0, 1);
+    m_right_pane_layout->addWidget(m_right_pane_splitter);
+    splitter->addWidget(m_right_pane);
 
     m_thumbnail_search_edit->setVisible(false);
 
@@ -151,7 +161,12 @@ void IMGV::initMenu()
     connect(file__newSession, &QAction::triggered, this, &IMGV::newSession);
     connect(file__openAction, &QAction::triggered, this, &IMGV::openImage);
     connect(file__openNewWindowAction, &QAction::triggered, this, &IMGV::openImageInNewWindow);
-    connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, &StatusBar::updateFileInfo);
+    connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, [&](QString filename) {
+        m_statusbar->updateFileInfo(filename);
+        if (m_thumbnail_view->currentThumbnail().hasNote())
+            m_note_holder->setMarkdown(m_thumbnail_view->currentThumbnail().note());
+    });
+
     connect(m_img_widget, &ImageWidget::droppedImage, m_thumbnail_view, &ThumbnailView::addThumbnail);
 
     connect(file__closeSession, &QAction::triggered, this, &IMGV::closeSession);
@@ -259,8 +274,12 @@ void IMGV::initConnections()
     connect(m_thumbnail_view, &ThumbnailView::doubleClicked, this, [&](const QModelIndex index) {
         const QString text = index.data(Qt::UserRole).toString();
         m_img_widget->loadFile(text);
+        m_note_holder->setMarkdown(index.data(Thumbnail::Note).toString());
     });
-
+    
+    connect(m_note_save_btn, &QPushButton::clicked, this, [&]() {
+        m_thumbnail_view->model()->setNote(m_thumbnail_view->currentIndex(), m_note_holder->toMarkdown());
+    });
 }
 
 void IMGV::openImageInNewWindow()
@@ -284,8 +303,8 @@ void IMGV::openImage()
 {
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp)"));
     if (!files.isEmpty()) {
-        m_img_widget->loadFile(files[0]);
         m_thumbnail_view->createThumbnails(files);
+        m_img_widget->loadFile(files[0]);
     }
 }
 
@@ -306,43 +325,95 @@ void IMGV::saveSession()
 
     if (!m_session_name.isEmpty())
     {
-        QFile sess_file(QString("%1%2%3.imgv").arg(m_sessions_dir_path).arg(QDir::separator()).arg(m_session_name));
-        sess_file.open(QIODevice::WriteOnly);
+        rapidjson::Document document;
+        document.SetObject();
 
-        auto datetime = QString("%1\n").arg(QDateTime::currentDateTime().toString()).toStdString();
-        sess_file.write(datetime.data());
+        rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
 
+        std::string sess_name = m_session_name.toStdString();
+        std::string date = QDateTime::currentDateTime().toString().toStdString();
+
+        document.AddMember("session-name", rapidjson::Value(sess_name.c_str(), allocator), allocator);
+        document.AddMember("date", rapidjson::Value(date.c_str(), allocator), allocator);
+        
+        rapidjson::Value files(rapidjson::kArrayType);
+        
         for(unsigned int i=0; i < m_thumbnail_view->count(); i++)
         {
-            QString filepath = m_thumbnail_view->item(i, Qt::UserRole);
-            sess_file.write(QString("%1\n").arg(filepath).toStdString().data());
+            rapidjson::Value file(rapidjson::kObjectType);
+            file.AddMember("path", rapidjson::Value(m_thumbnail_view->item(i, Qt::UserRole).toStdString().c_str(), allocator),
+                           allocator);
+            file.AddMember("note", rapidjson::Value(m_thumbnail_view->item(i, Thumbnail::Note).toStdString().c_str(), allocator),
+                           allocator);
+            files.PushBack(file, allocator);
         }
+        
+        document.AddMember("files", files, allocator);
 
+        rapidjson::StringBuffer buffer;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+        document.Accept(writer);
+        // Save JSON string to file
+        auto sess_file = QString("%1%2%3.imgv").arg(m_sessions_dir_path).arg(QDir::separator()).arg(m_session_name);
+        std::ofstream ofs(sess_file.toStdString());
+        if (ofs.is_open()) {
+            ofs << buffer.GetString();
+            ofs.close();
+        } else {
+            qCritical() << "Error opening file for writing.";
+        }
         return;
     }
 
     QStringList sessionFiles = getSessionFiles();
     bool ok;
 
-    QString sessionName = QInputDialog::getText(this, "Save Session", "Please enter a name for the current session", QLineEdit::Normal, "", &ok) + ".imgv";
+    QString sessionName = QInputDialog::getText(this, "Save Session", "Please enter a name for the current session", QLineEdit::Normal, "", &ok);
     if (ok && !sessionName.isEmpty())
     {
-        if (sessionFiles.indexOf(sessionName) > -1)
+        if (sessionFiles.indexOf(sessionName + ".imgv") > -1)
         {
             QMessageBox::warning(this, "Overwrite", "A file with that name already exists. Please try again with different name");
             return;
         }
 
-        QFile sess_file(QString("%1%2%3").arg(m_sessions_dir_path).arg(QDir::separator()).arg(sessionName));
-        sess_file.open(QIODevice::WriteOnly);
+        rapidjson::Document document;
+        document.SetObject();
 
-        auto datetime = QString("%1\n").arg(QDateTime::currentDateTime().toString()).toStdString();
-        sess_file.write(datetime.data());
+        rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
 
+        std::string sess_name = sessionName.toStdString();
+        std::string date = QDateTime::currentDateTime().toString().toStdString();
+
+        document.AddMember("session-name", rapidjson::Value(sess_name.c_str(), allocator), allocator);
+        document.AddMember("date", rapidjson::Value(date.c_str(), allocator), allocator);
+        
+        rapidjson::Value files(rapidjson::kArrayType);
+        
         for(unsigned int i=0; i < m_thumbnail_view->count(); i++)
         {
-            QString filepath = m_thumbnail_view->item(i, Qt::UserRole);
-            sess_file.write(QString("%1\n").arg(filepath).toStdString().data());
+            rapidjson::Value file(rapidjson::kObjectType);
+            file.AddMember("path", rapidjson::Value(m_thumbnail_view->item(i, Qt::UserRole).toStdString().c_str(), allocator),
+                           allocator);
+            file.AddMember("note", rapidjson::Value(m_thumbnail_view->item(i, Thumbnail::Note).toStdString().c_str(), allocator),
+                           allocator);
+            files.PushBack(file, allocator);
+        }
+        
+        document.AddMember("files", files, allocator);
+
+        rapidjson::StringBuffer buffer;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+        document.Accept(writer);
+        // Save JSON string to file
+        auto sess_file = QString("%1%2%3.imgv").arg(m_sessions_dir_path).arg(QDir::separator()).arg(sessionName);
+        std::ofstream ofs(sess_file.toStdString());
+        if (ofs.is_open()) {
+            ofs << buffer.GetString();
+            ofs.close();
+            qDebug() << "JSON saved to " << sessionName;
+        } else {
+            qCritical() << "Error opening file for writing.";
         }
 
         m_session_name = sessionName;
@@ -355,30 +426,60 @@ void IMGV::saveSession()
 
 void IMGV::readSessionFile(QString filename)
 {
-    QFile file(filename);
-    if (!file.exists())
-    {
+    using namespace rapidjson;
+    std::ifstream ifs(filename.toStdString());
+
+    if (!ifs.is_open()) {
         QMessageBox::critical(this, "File not found", "The specified session file was not found");
         return;
     }
 
-    file.open(QIODevice::ReadOnly);
-    QTextStream in(&file);
+    IStreamWrapper isw(ifs);
 
-    QString date_modified = in.readLine();
-    QStringList files;
+    Document doc;
+    doc.ParseStream(isw);
 
-    while (!in.atEnd())
-        files.push_back(in.readLine());
+    if (doc.HasParseError())
+    {
+        QMessageBox::critical(this, "Error Parsing Session File", "There seems to be a problem reading the session file");
+        return;
+    }
 
-    file.close();
+    if (doc.HasMember("session-name") && doc["session-name"].IsString())
+    {
+        auto session_name = QString::fromStdString(doc["session-name"].GetString());
+        m_session_name = session_name;
+        m_statusbar->setSessionName(session_name);
+    }
+    else QMessageBox::information(this, "Session Info", "No session name found for the current session");
 
-    m_thumbnail_view->createThumbnails(files);
-    m_img_widget->loadFile(files[0]);
+    if (doc.HasMember("date") && doc["date"].IsString())
+        m_session_date = QString::fromStdString(doc["date"].GetString());
+    else
+        QMessageBox::information(this, "Session Info", "No date found for the current session");
 
-    auto session_name = QFileInfo(file).baseName();
-    m_session_name = session_name;
-    m_statusbar->setSessionName(session_name);
+    if (doc.HasMember("files") && doc["files"].IsArray())
+    {
+        const Value& files_arr = doc["files"];
+        QList<Thumbnail> files_stringlist;
+        for(SizeType i=0; i < files_arr.Size(); i++)
+        {
+            if (files_arr[i].IsObject())
+            {
+                auto file = files_arr[i].GetObject();
+                if (file.HasMember("path") && file["path"].IsString() && file.HasMember("note") && file["note"].IsString())
+                {
+                    qDebug() << file["path"].GetString();
+                    qDebug() << file["note"].GetString();
+                    files_stringlist << Thumbnail(QString::fromStdString(file["path"].GetString()), QString::fromStdString(file["note"].GetString()));
+                }
+            }
+        }
+        m_thumbnail_view->createThumbnails(files_stringlist);
+        m_img_widget->loadFile(m_thumbnail_view->getFile(0));
+    }
+    else QMessageBox::information(this, "Session Info", "No files found in the session file");
+    ifs.close();
 }
 
 void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
@@ -540,10 +641,12 @@ void IMGV::newSession() noexcept
     while (true)
     {
         sessionName = QInputDialog::getText(this, "New Session", "Please enter a name for the session");
+        if (sessionName.isEmpty()) return;
         if (sessions.indexOf(sessionName + ".imgv") == -1)
             break;
     }
     QString program = QCoreApplication::applicationFilePath();
+
 
     QStringList arguments;
     arguments << "-S" << sessionName;
@@ -565,3 +668,5 @@ void IMGV::ThumbSearchTextChanged(QString text) noexcept
 {
     m_thumbnail_view->search(text);
 }
+
+

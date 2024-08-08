@@ -18,7 +18,9 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     void clear() noexcept;
-    void removeAt(int index) noexcept;
+    void removeAt(const int index) noexcept;
+    Thumbnail getThumbnail(const int index) noexcept;
+    void setNote(const QModelIndex &index, const QString &note) noexcept;
 
 private:
     QVector<Thumbnail> m_thumbnails;

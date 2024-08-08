@@ -62,6 +62,16 @@ void ThumbnailView::createThumbnails(const QStringList &fileNames) noexcept
         setCurrentIndex(m_model->index(0));
 }
 
+void ThumbnailView::createThumbnails(const QList<Thumbnail> &thumbnails) noexcept
+{
+    for (const Thumbnail &thumb : thumbnails) {
+        m_model->addThumbnail(thumb);
+    }
+
+    if (m_model->rowCount() >= 0)
+        setCurrentIndex(m_model->index(0));
+}
+
 void ThumbnailView::dragEnterEvent(QDragEnterEvent *e)
 {
     const QMimeData *mimedata = e->mimeData();
@@ -254,4 +264,14 @@ void ThumbnailView::searchMode(bool state) noexcept
         this->setModel(m_filter_proxy);
     else
         this->setModel(m_model);
+}
+
+Thumbnail ThumbnailView::currentThumbnail() noexcept
+{
+    return m_model->getThumbnail(currentIndex().row());
+}
+
+QString ThumbnailView::getFile(const int index) noexcept
+{
+    return m_model->index(index).data(Qt::UserRole).toString();
 }

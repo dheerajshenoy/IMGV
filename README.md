@@ -101,6 +101,7 @@ The theme for IMGV depends on the theme set for Qt6 applications. There is a han
 
     - Removed `QListWidget` and replaced with `QListView`
     - Added search feature for thumbnails
+    - Added note functionality
 
 - 07 Aug 2024
 
@@ -119,7 +120,7 @@ The theme for IMGV depends on the theme set for Qt6 applications. There is a han
 
 # Todo
 
-1. [ ] Ability to add notes to images inside sessions
+1. [x] Ability to add notes to images inside sessions
 2. [ ] ~~Load image from URL~~
 3. [x] Caching images
 4. [ ] Lua configuration option

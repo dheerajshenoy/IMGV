@@ -4,6 +4,7 @@
 #include <argparse/argparse.hpp>
 #include <qt6/QtWidgets/QApplication>
 #include <qt6/QtWidgets/QMessageBox>
+#include <qt6/QtWidgets/QTextEdit>
 #include <qt6/QtWidgets/QLineEdit>
 #include <qt6/QtWidgets/QInputDialog>
 #include <qt6/QtWidgets/QMainWindow>
@@ -31,6 +32,14 @@
 #include "exif.hpp"
 #include "ThumbnailView.hpp"
 #include "ThumbnailModel.hpp"
+#include "rapidjson/rapidjson.h"
+#include "rapidjson/document.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/reader.h"
+#include "rapidjson/istreamwrapper.h"
+#include <fstream>
+#include "NoteWidget.hpp"
 
 class IMGV : public QMainWindow
 {
@@ -107,10 +116,17 @@ private:
     QAction *tools__manage_sessions = new QAction("Manage Sessions");
 
     QString m_session_name;
+    QString m_session_date;
     bool m_image_maximize_mode = false;
 
     ThumbnailModel *m_thumbnail_model = new ThumbnailModel();
     QLineEdit *m_thumbnail_search_edit = new QLineEdit();
+
+    QWidget *m_right_pane = new QWidget();
+    QVBoxLayout *m_right_pane_layout = new QVBoxLayout();
+    NoteWidget *m_note_holder = new NoteWidget();
+    QSplitter *m_right_pane_splitter = new QSplitter(Qt::Orientation::Vertical);
+    QPushButton *m_note_save_btn = new QPushButton("Save Note");
 };
 
 

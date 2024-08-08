@@ -27,6 +27,7 @@ public:
     ThumbnailView(QWidget *parent = nullptr);
     ThumbnailModel* model() noexcept;
     void createThumbnails(const QStringList &fileNames) noexcept;
+    void createThumbnails(const QList<Thumbnail> &thumbnails) noexcept;
     void addThumbnail(const QString &filename) noexcept;
     void loadFile(const QString &path) noexcept;
     void gotoNext() noexcept;
@@ -36,6 +37,8 @@ public:
     void clear() noexcept;
     void search(QString) noexcept;
     void searchMode(bool) noexcept;
+    Thumbnail currentThumbnail() noexcept;
+    QString getFile(const int index) noexcept;
 
 signals:
     void fileChangeRequested(QString);

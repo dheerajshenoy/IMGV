@@ -40,7 +40,7 @@ void StatusBar::updateFileInfo(const QString &filePath)
 
     if (fileInfo.exists()) {
         // Update file path
-        filePathLabel->setText(QString("File: %1").arg(filePath));
+        filePathLabel->setText(filePath);
 
         // Update file size
         qint64 fileSize = fileInfo.size();
@@ -48,9 +48,8 @@ void StatusBar::updateFileInfo(const QString &filePath)
         fileSizeLabel->setText(QString("Size: %1").arg(locale.formattedDataSize(fileSize)));
 
     } else {
-        filePathLabel->setText("File: N/A");
+        filePathLabel->setText("N/A");
         fileSizeLabel->setText("Size: N/A");
-        imageDimensionsLabel->setText("Dimensions: N/A");
     }
 }
 
