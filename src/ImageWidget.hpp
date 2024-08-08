@@ -2,6 +2,7 @@
 #define IMAGE_WIDGET_HPP
 
 #include <qt6/QtWidgets/QGraphicsView>
+#include <qt6/QtWidgets/QScrollBar>
 #include <qt6/QtWidgets/QGraphicsScene>
 #include <qt6/QtWidgets/QGraphicsPixmapItem>
 #include <qt6/QtGui/QPixmap>
@@ -42,13 +43,14 @@ public:
     void rotateAnticlockwise();
     void rotateClockwise();
     void fitToWidth();
-    void fitToHeight();
+    void fitToWindow();
     void resetRotation() noexcept;
     void setScrollBarsVisibility(bool state) noexcept;
     void moveLeft() noexcept;
     void moveRight() noexcept;
     void moveUp() noexcept;
     void moveDown() noexcept;
+    void resetScrollbars() noexcept;
 
 signals:
     void fileLoaded(QString);

@@ -14,29 +14,60 @@ StatusBar::StatusBar(QWidget *parent)
 
     noteModifiedLabel->setVisible(false);
 
-    layout->addWidget(msgLabel);
-    layout->addSpacing(10);
-    layout->addWidget(noteModifiedLabel);
-    layout->addSpacing(10);
-    layout->addWidget(filePathLabel);
-    layout->addStretch(1);
-    layout->addWidget(fileSizeLabel);
-    layout->addSpacing(10);
-    layout->addWidget(imageDimensionsLabel);
-    layout->addSpacing(10);
-    layout->addWidget(sessionLabel);
+    filePathLabel->setToolTip("File path of the current Image");
+    hasNoteLabel->setToolTip("This file has a note associated with it. Press the note key to open");
+    noteModifiedLabel->setToolTip("Note has unsaved changes. Switching to other image will delete the unsaved changes");
+    sessionLabel->setToolTip("Current session");
 
-    this->setContentsMargins(0, 0, 0, 0);
-    layout->setContentsMargins(0, 0, 0, 0);
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
 
     setLayout(layout);
 }
 
+void StatusBar::defaultLayout() noexcept
+{
+    layout->setSpacing(10);
+    layout->addWidget(msgLabel);
+    layout->addWidget(filePathLabel);
+    layout->addStretch(1);
+    layout->addWidget(hasNoteLabel);
+    layout->addWidget(noteModifiedLabel);
+    layout->addWidget(fileSizeLabel);
+    layout->addWidget(imageDimensionsLabel);
+    layout->addWidget(sessionLabel);
+}
+
+void StatusBar::addWidget(const QString &name) noexcept
+{
+    if (name == "message")
+        layout->addWidget(msgLabel);
+
+    if (name == "path")
+        layout->addWidget(filePathLabel);
+
+    if (name == "note-indicator")
+        layout->addWidget(hasNoteLabel);
+
+    if (name == "note-modified-indicator")
+        layout->addWidget(noteModifiedLabel);
+
+    if (name == "size")
+        layout->addWidget(fileSizeLabel);
+
+    if (name == "dimension")
+        layout->addWidget(imageDimensionsLabel);
+
+    if (name == "stretch")
+        layout->addStretch(1);
+
+    if (name == "session")
+        layout->addWidget(sessionLabel);
+}
+
 void StatusBar::setSessionName(QString sess) noexcept
 {
-    sessionLabel->setText("Session: " + sess);
+    sessionLabel->setText(sess);
 }
 
 void StatusBar::updateFileInfo(const QString &filePath)
@@ -95,16 +126,46 @@ void StatusBar::setImgDimension(const int w, const int h) noexcept
 void StatusBar::setNoteModified(bool state) noexcept
 {
     if (state)
-        noteModifiedLabel->setText("[M]");
+    {
+        noteModifiedLabel->setText(m_note_modified_indicator);
+        noteModifiedLabel->setVisible(true);
+    }
     else
-        noteModifiedLabel->clear();
+        noteModifiedLabel->setVisible(false);
 
 }
 
 void StatusBar::modificationLabelVisiblity(bool state) noexcept
 {
+    /*if (state)*/
+    /*    this->noteModifiedLabel->setVisible(true);*/
+    /*else*/
+    /*if (!state)*/
+    /*    this->noteModifiedLabel->setVisible(false);*/
+}
+
+void StatusBar::setHasNote(bool state) noexcept
+{
     if (state)
-        this->noteModifiedLabel->setVisible(true);
+    {
+        hasNoteLabel->setText(m_note_indicator);
+        hasNoteLabel->setVisible(true);
+    }
     else
-        this->noteModifiedLabel->setVisible(false);
+        hasNoteLabel->setHidden(true);
+}
+
+void StatusBar::setSpacing(const int spacing) noexcept
+{
+    layout->setSpacing(spacing);
+}
+
+void StatusBar::setNoteIndicator(const QString &indicator) noexcept
+{
+    m_note_indicator = indicator;
+}
+
+void StatusBar::setNoteModifiedIndicator(const QString &indicator) noexcept
+{
+    m_note_modified_indicator = indicator;
 }

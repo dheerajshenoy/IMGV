@@ -117,7 +117,7 @@ void ThumbnailView::showContextMenu(const QPoint &pos) noexcept
 
 }
 
-void ThumbnailView::removeThumbnails()
+void ThumbnailView::removeThumbnails() noexcept
 {
     auto selections = this->selectedIndexes();
     for(const auto index : selections)
@@ -126,14 +126,14 @@ void ThumbnailView::removeThumbnails()
     }
 }
 
-void ThumbnailView::hideThumbnails()
+void ThumbnailView::hideThumbnails() noexcept
 {
     auto selections = this->selectedIndexes();
     for(const auto &s : selections)
         this->setRowHidden(s.row(), true);
 }
 
-void ThumbnailView::showFilesInExplorer()
+void ThumbnailView::showFilesInExplorer() noexcept
 {
     auto selection = this->selectedIndexes()[0];
     auto filepath = QFileInfo(selection.data(Qt::UserRole).toString()).path();
@@ -156,74 +156,6 @@ void ThumbnailView::gotoPrev() noexcept
         this->setCurrentIndex(currentIndex().siblingAtRow(currentIndex().row() - 1));
         emit fileChangeRequested(currentIndex().data(Qt::UserRole).toString());
     }
-}
-
-void ThumbnailView::showProperties()
-{
-    QString filepath = this->selectedIndexes()[0].data(Qt::UserRole).toString();
-    using namespace easyexif;
-    auto format = utils::detectImageFormat(filepath);
-    if ( format == "JPEG" )
-    {
-        EXIFInfo exifInfo;
-        QFile file(filepath);
-        file.open(QIODevice::ReadOnly);
-        auto data = file.readAll();
-        file.close();
-        exifInfo.parseFrom(reinterpret_cast<const unsigned char*>(data.constData()), data.size());
-        QString exifData = QString("Camera make       : %1\n"
-                                   "Camera model      : %2\n"
-                                   "Software          : %3\n"
-                                   "Bits per sample   : %4\n"
-                                   "Image width       : %5\n"
-                                   "Image height      : %6\n"
-                                   "Image description : %7\n"
-                                   "Image orientation : %8\n"
-                                   "Image copyright   : %9\n"
-                                   "Image date/time   : %10\n"
-                                   "Original date/time: %11\n"
-                                   "Digitize date/time: %12\n"
-                                   "Subsecond time    : %13\n"
-                                   "Exposure time     : 1/%14 s\n"
-                                   "F-stop            : f/%15\n"
-                                   "ISO speed         : %16\n"
-                                   "Subject distance  : %17 m\n"
-                                   "Exposure bias     : %18 EV\n"
-                                   "Flash used?       : %19\n"
-                                   "Metering mode     : %20\n"
-                                   "Lens focal length : %21 mm\n"
-                                   "35mm focal length : %22 mm\n"
-                                   "GPS Latitude      : %23 deg\n"
-                                   "GPS Longitude     : %24 deg\n"
-                                   "GPS Altitude      : %25 m")
-            .arg(QString::fromStdString(exifInfo.Make))
-            .arg(QString::fromStdString(exifInfo.Model))
-            .arg(QString::fromStdString(exifInfo.Software))
-            .arg(exifInfo.BitsPerSample)
-            .arg(exifInfo.ImageWidth)
-            .arg(exifInfo.ImageHeight)
-            .arg(QString::fromStdString(exifInfo.ImageDescription))
-            .arg(exifInfo.Orientation)
-            .arg(QString::fromStdString(exifInfo.Copyright))
-            .arg(QString::fromStdString(exifInfo.DateTime))
-            .arg(QString::fromStdString(exifInfo.DateTimeOriginal))
-            .arg(QString::fromStdString(exifInfo.DateTimeDigitized))
-            .arg(QString::fromStdString(exifInfo.SubSecTimeOriginal))
-            .arg(static_cast<unsigned>(1.0 / exifInfo.ExposureTime))
-            .arg(exifInfo.FNumber, 0, 'f', 1)
-            .arg(exifInfo.ISOSpeedRatings)
-            .arg(exifInfo.SubjectDistance, 0, 'f', 2)
-            .arg(exifInfo.ExposureBiasValue, 0, 'f', 2)
-            .arg(exifInfo.Flash)
-            .arg(exifInfo.MeteringMode)
-            .arg(exifInfo.FocalLength, 0, 'f', 2)
-            .arg(exifInfo.FocalLengthIn35mm)
-            .arg(exifInfo.GeoLocation.Latitude, 0, 'f', 6)
-            .arg(exifInfo.GeoLocation.Longitude, 0, 'f', 6)
-            .arg(exifInfo.GeoLocation.Altitude, 0, 'f', 2);
-        QMessageBox::information(this, "Metadata", exifData);
-    }
-    else QMessageBox::information(this, "Metadata Retreival Error", "Sorry. But this format doesn't support Image Metadata");
 }
 
 void ThumbnailView::hideEvent(QHideEvent *e) noexcept
@@ -274,4 +206,10 @@ Thumbnail ThumbnailView::currentThumbnail() noexcept
 QString ThumbnailView::getFile(const int index) noexcept
 {
     return m_model->index(index).data(Qt::UserRole).toString();
+}
+
+void ThumbnailView::showProperties() noexcept
+{
+    ImagePropertiesDialog *pd = new ImagePropertiesDialog(getFile(currentIndex().row()), this);
+    pd->open();
 }

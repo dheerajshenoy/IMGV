@@ -33,7 +33,7 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     connect(m_note_holder, &NoteWidget::modificationChanged, m_statusbar, &StatusBar::setNoteModified);
 
-    connect(m_note_holder, &NoteWidget::visibilityChanged, m_statusbar, &StatusBar::modificationLabelVisiblity);
+    /*connect(m_note_holder, &NoteWidget::visibilityChanged, m_statusbar, &StatusBar::modificationLabelVisiblity);*/
 
     m_right_pane_splitter->setStretchFactor(0, 1);
     m_right_pane_layout->addWidget(m_right_pane_splitter);
@@ -62,8 +62,8 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     connect(m_thumbnail_view, &ThumbnailView::fileChangeRequested, m_img_widget, [&](QString filepath) {
         m_img_widget->loadFile(filepath);
+        m_note_holder->setMarkdown(m_thumbnail_view->currentIndex().data(Thumbnail::Note).toString());
     });
-
 
     connect(m_img_widget, &ImageWidget::fileDim, this, [&](int w, int h) {
         m_statusbar->setImgDimension(w, h);
@@ -118,10 +118,18 @@ void IMGV::initConfigDirectory()
         m_menuBar->setVisible(defaults_table["menubar"].get_or(true));
         m_thumbnail_view->setVisible(defaults_table["thumbnail_panel"].get_or(true));
 
+        m_auto_notes_popup = defaults_table["auto_notes_popup"].get_or(false);
+
+        m_img_widget->setScrollBarsVisibility(defaults_table["scrollbars"].get_or(true));
+
+        if(defaults_table["start_in_minimal_mode"].get_or(false))
+        {
+            maximizeImage();
+        }
 
         // keybindings
         
-        sol::optional<sol::object> keybindings_table_exist = defaults_table["keybindings"];
+        sol::optional<sol::table> keybindings_table_exist = defaults_table["keybindings"];
         if (keybindings_table_exist)
         {
             sol::table keys_table = keybindings_table_exist.value();
@@ -179,6 +187,10 @@ void IMGV::initConfigDirectory()
                     QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleStatusbar);
                 } else if (action == "toggle_thumbnail_panel") {
                     QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleThumbnailPanel);
+                } else if (action == "fit_width") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWidth);
+                } else if (action == "fit_window") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWindow);
                 }
             }
         }
@@ -189,6 +201,34 @@ void IMGV::initConfigDirectory()
                 initKeybinds();
         }
         
+    }
+
+    // Statusbar
+    sol::optional<sol::table> statusbar_table_exists = m_lua_state["Statusbar"];
+
+    if (statusbar_table_exists)
+    {
+        sol::table statusbar_table = statusbar_table_exists.value();
+        auto spacing = statusbar_table["spacing"].get_or(10);
+
+        auto note_indicator = statusbar_table["note_indicator"].get_or<std::string>("NOTE");
+        auto note_modified_indicator = statusbar_table["note_modified_indicator"].get_or<std::string>("[M]");
+
+        m_statusbar->setNoteIndicator(QString::fromStdString(note_indicator));
+        m_statusbar->setNoteModifiedIndicator(QString::fromStdString(note_modified_indicator));
+
+        m_statusbar->setSpacing(spacing);
+
+        sol::optional<sol::table> elements_table_exists = statusbar_table["elements"];
+
+        if (elements_table_exists)
+        {
+            sol::table elements = elements_table_exists.value();
+
+            for(const auto &element : elements)
+                m_statusbar->addWidget(QString::fromStdString(element.second.as<std::string>()));
+        }
+
     }
 
 
@@ -227,20 +267,25 @@ void IMGV::initMenu()
     viewMenu->addAction(view__thumbnails);
     viewMenu->addAction(view__statusbar);
     viewMenu->addAction(view__menubar);
+    viewMenu->addAction(view__notes);
     viewMenu->addAction(view__maximize_image);
 
     view__maximize_image->setCheckable(true);
 
     view__thumbnails->setCheckable(true);
-    view__thumbnails->setChecked(true);
 
     view__statusbar->setCheckable(true);
-    view__statusbar->setChecked(true);
 
     view__menubar->setCheckable(true);
-    view__menubar->setChecked(true);
+
+    view__notes->setCheckable(true);
 
     toolsMenu->addAction(tools__manage_sessions);
+
+    connect(tools__manage_sessions, &QAction::triggered, this, [&]() {
+        ManageSessionsDialog *md = new ManageSessionsDialog(m_sessions_dir_path, this);
+        md->open();
+    });
 
     auto session_files = getSessionFiles();
 
@@ -264,11 +309,20 @@ void IMGV::initMenu()
         m_statusbar->updateFileInfo(filename);
         if (m_thumbnail_view->currentThumbnail().hasNote())
         {
-            if (!m_note_holder->isVisible())
+            // Auto Popup
+            if (!m_note_holder->isVisible() && m_auto_notes_popup)
                 m_note_holder->setVisible(true);
+
             m_note_holder->setMarkdown(m_thumbnail_view->currentThumbnail().note());
+            m_statusbar->setHasNote(true);
         }
-        else if (m_note_holder->isVisible()) m_note_holder->setVisible(false);
+        else
+        {
+            // Popup close
+            if (m_note_holder->isVisible() && m_auto_notes_popup)
+                m_note_holder->setVisible(false);
+            m_statusbar->setHasNote(false);
+        }
     });
 
     connect(m_img_widget, &ImageWidget::droppedImage, m_thumbnail_view, &ThumbnailView::addThumbnail);
@@ -304,20 +358,26 @@ void IMGV::initMenu()
         m_menuBar->setVisible(state);
     });
 
+    connect(view__notes, &QAction::triggered, this, [&](bool state) {
+        m_note_holder->setVisible(state);
+    });
+    
     connect(file__saveSession, &QAction::triggered, this, &IMGV::saveSession);
 
     connect(view__maximize_image, &QAction::triggered, this, &IMGV::maximizeImage);
 
     connect(file__exit, &QAction::triggered, this, &QApplication::exit);
 
-
     connect(m_thumbnail_view, &ThumbnailView::visibilityChanged, this, [&](bool state) {
         view__thumbnails->setChecked(state);
     });
 
-
     connect(m_statusbar, &StatusBar::visibilityChanged, this, [&](bool state) {
         view__statusbar->setChecked(state);
+    });
+
+    connect(m_note_holder, &NoteWidget::visibilityChanged, this, [&](bool state) {
+        view__notes->setChecked(state);
     });
 
 }
@@ -332,7 +392,7 @@ void IMGV::initKeybinds()
     QShortcut *kb_fliphoriz = new QShortcut(QKeySequence(";"), this);
     QShortcut *kb_flipvert= new QShortcut(QKeySequence("'"), this);
     QShortcut *kb_fit_to_width = new QShortcut(QKeySequence("w"), this);
-    QShortcut *kb_fit_to_height = new QShortcut(QKeySequence("h"), this);
+    QShortcut *kb_fit_to_window = new QShortcut(QKeySequence("h"), this);
     QShortcut *kb_toggle_menubar = new QShortcut(QKeySequence("Ctrl+M"), this);
     QShortcut *kb_goto_next = new QShortcut(QKeySequence("j"), this);
     QShortcut *kb_goto_prev = new QShortcut(QKeySequence("k"), this);
@@ -348,7 +408,7 @@ void IMGV::initKeybinds()
     connect(kb_fliphoriz, &QShortcut::activated, m_img_widget, &ImageWidget::flipHorizontal);
     connect(kb_flipvert, &QShortcut::activated, m_img_widget, &ImageWidget::flipVertical);
     connect(kb_fit_to_width, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWidth);
-    connect(kb_fit_to_height, &QShortcut::activated, m_img_widget, &ImageWidget::fitToHeight);
+    connect(kb_fit_to_window, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWindow);
     connect(kb_toggle_menubar, &QShortcut::activated, this, [&]() {
         m_menuBar->setVisible(!m_menuBar->isVisible());
     });
@@ -373,7 +433,9 @@ void IMGV::initConnections()
     connect(m_thumbnail_view, &ThumbnailView::doubleClicked, this, [&](const QModelIndex index) {
         const QString text = index.data(Qt::UserRole).toString();
         m_img_widget->loadFile(text);
+        m_note_holder->blockSignals(true);
         m_note_holder->setMarkdown(index.data(Thumbnail::Note).toString());
+        m_note_holder->blockSignals(false);
     });
     
     connect(m_note_holder, &NoteWidget::saveRequested, this, [&]() {
@@ -569,8 +631,6 @@ void IMGV::readSessionFile(QString filename)
                 auto file = files_arr[i].GetObject();
                 if (file.HasMember("path") && file["path"].IsString() && file.HasMember("note") && file["note"].IsString())
                 {
-                    qDebug() << file["path"].GetString();
-                    qDebug() << file["note"].GetString();
                     files_stringlist << Thumbnail(QString::fromStdString(file["path"].GetString()), QString::fromStdString(file["note"].GetString()));
                 }
             }
@@ -689,12 +749,14 @@ void IMGV::maximizeImage()
         m_menuBar->setVisible(false);
         m_statusbar->setVisible(false);
         m_img_widget->setScrollBarsVisibility(false);
+        view__maximize_image->setChecked(true);
     }
     else {
         m_thumbnail_view->setVisible(true);
         m_menuBar->setVisible(true);
         m_statusbar->setVisible(true);
         m_img_widget->setScrollBarsVisibility(true);
+        view__maximize_image->setChecked(false);
     }
 }
 

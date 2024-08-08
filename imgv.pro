@@ -29,6 +29,8 @@ HEADERS += src/ImageWidget.hpp \
            src/ThumbnailModel.hpp \
            src/ThumbnailFilterProxy.hpp \
            src/NoteWidget.hpp \
+           src/ImagePropertiesDialog.hpp \
+           src/ManageSessionsDialog.hpp
 
 SOURCES += src/main.cpp \
             src/ImageWidget.cpp \
@@ -41,5 +43,7 @@ SOURCES += src/main.cpp \
            src/ThumbnailView.cpp \
            src/ThumbnailModel.cpp \
            src/NoteWidget.cpp \
+           src/ImagePropertiesDialog.cpp \
+           src/ManageSessionsDialog.cpp
 
 include(src/qmarkdowntextedit/qmarkdowntextedit.pri)

@@ -39,6 +39,7 @@
 #include "rapidjson/reader.h"
 #include "rapidjson/istreamwrapper.h"
 #include <fstream>
+#include "ManageSessionsDialog.hpp"
 #include "NoteWidget.hpp"
 
 class IMGV : public QMainWindow
@@ -116,6 +117,7 @@ private:
     QAction *view__thumbnails = new QAction(QIcon(":/icons/thumbnail.svg"), "Thumbnail Panel");
     QAction *view__statusbar = new QAction(QIcon(":/icons/statusbar.svg"), "Statusbar");
     QAction *view__menubar = new QAction(QIcon(":/icons/menubar.svg"), "Menubar");
+    QAction *view__notes = new QAction(QIcon(":/icons/menubar.svg"), "Notes");
     QAction *view__maximize_image = new QAction(QIcon(":/icons/maximize.svg"), "Maximize Image");
 
     QAction *tools__manage_sessions = new QAction("Manage Sessions");
@@ -131,6 +133,7 @@ private:
     QVBoxLayout *m_right_pane_layout = new QVBoxLayout();
     NoteWidget *m_note_holder = new NoteWidget();
     QSplitter *m_right_pane_splitter = new QSplitter(Qt::Orientation::Vertical);
+    bool m_auto_notes_popup = false;
 };
 
 

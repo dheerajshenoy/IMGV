@@ -27,3 +27,8 @@ void NoteWidget::hideEvent(QHideEvent *e) noexcept
 {
     emit visibilityChanged(false);
 }
+
+void NoteWidget::setModified(bool state) noexcept
+{
+    this->document()->setModified(state);
+}

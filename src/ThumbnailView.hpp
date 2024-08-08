@@ -15,10 +15,10 @@
 #include <qt6/QtCore/QProcess>
 #include <qt6/QtGui/QHideEvent>
 #include <qt6/QtGui/QShowEvent>
-#include "exif.hpp"
 #include "utils.hpp"
 #include "ThumbnailModel.hpp"
 #include "ThumbnailFilterProxy.hpp"
+#include "ImagePropertiesDialog.hpp"
 
 class ThumbnailView : public QListView
 {
@@ -56,10 +56,10 @@ private:
 
     ThumbnailModel *m_model = new ThumbnailModel();
     void showContextMenu(const QPoint &pos) noexcept;
-    void removeThumbnails();
-    void hideThumbnails();
-    void showFilesInExplorer();
-    void showProperties();
+    void removeThumbnails() noexcept;
+    void hideThumbnails() noexcept;
+    void showFilesInExplorer() noexcept;
+    void showProperties() noexcept;
 
     QMenu *m_contextMenu = new QMenu("Context Menu", this);
     QMenu *m_partialContextMenu = new QMenu("Partial Menu", this);

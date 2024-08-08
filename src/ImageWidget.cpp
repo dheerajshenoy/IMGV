@@ -41,6 +41,7 @@ void ImageWidget::zoomIn() {
 }
 
 void ImageWidget::zoomOut() {
+    if (m_zoomLevel - m_zoomFactor < -50) return;
     m_zoomLevel -= m_zoomFactor;
     m_fit = false;
     setMatrix();
@@ -105,6 +106,7 @@ void ImageWidget::loadFile(QString file)
     /*m_rotate = 0.0f;*/
     /*m_zoomLevel = 0.0f;*/
     /*setMatrix();*/
+    resetScrollbars();
     int w = 0, h = 0;
     QImageReader imreader(file);
     if (imreader.supportsAnimation())
@@ -137,6 +139,7 @@ void ImageWidget::loadFile(QString file)
     }
     emit fileLoaded(file);
     emit fileDim(w, h);
+    fitToWindow();
 }
 
 void ImageWidget::loadPixmap(QPixmap &pix)
@@ -230,7 +233,7 @@ void ImageWidget::fitToWidth()
     zoomFit();
 }
 
-void ImageWidget::fitToHeight()
+void ImageWidget::fitToWindow()
 {
     m_aspect_ratio_mode = Qt::KeepAspectRatio;
     zoomFit();
@@ -273,22 +276,32 @@ void ImageWidget::closeFile()
 
 void ImageWidget::moveLeft() noexcept
 {
-    this->scroll(-5, 0);
+    auto scrollbar = this->horizontalScrollBar();
+    scrollbar->setValue(scrollbar->value() - 20);
 }
 
 
 void ImageWidget::moveDown() noexcept
 {
-    this->scroll(0, 5);
+    auto scrollbar = this->verticalScrollBar();
+    scrollbar->setValue(scrollbar->value() + 20);
 }
 
 
 void ImageWidget::moveUp() noexcept
 {
-    this->scroll(0, -5);
+    auto scrollbar = this->verticalScrollBar();
+    scrollbar->setValue(scrollbar->value() - 20);
 }
 
 void ImageWidget::moveRight() noexcept
 {
-    this->scroll(5, 0);
+    auto scrollbar = this->horizontalScrollBar();
+    scrollbar->setValue(scrollbar->value() + 20);
+}
+
+void ImageWidget::resetScrollbars() noexcept
+{
+    this->horizontalScrollBar()->setValue(0);
+    this->verticalScrollBar()->setValue(0);
 }

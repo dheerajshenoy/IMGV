@@ -14,11 +14,13 @@ class NoteWidget : public QTextEdit
 public:
     NoteWidget(QWidget *parent = nullptr);
     ~NoteWidget(){}
+    void setModified(bool) noexcept;
 
 signals:
     void saveRequested();
     void modificationChanged(bool);
     void visibilityChanged(bool);
+
 
 protected:
     void showEvent(QShowEvent *e) noexcept override;

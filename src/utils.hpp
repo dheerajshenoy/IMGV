@@ -9,6 +9,11 @@
 #include <qt6/QtCore/QMimeDatabase>
 #include <qt6/QtCore/QMimeType>
 #include <webp/decode.h>
+#include <fstream>
+#include "rapidjson/rapidjson.h"
+#include "rapidjson/reader.h"
+#include "rapidjson/istreamwrapper.h"
+#include "rapidjson/document.h"
 
 struct Dimension
 {
@@ -23,9 +28,11 @@ public:
     utils(){}
     ~utils(){}
 
-    static QString detectImageFormat(const QString &filePath);
-    static QPixmap decodeWebPToPixmap(const QString &filePath);
-
+    static QString detectImageFormat(const QString &filePath) noexcept;
+    static QPixmap decodeWebPToPixmap(const QString &filePath) noexcept;
+    static QImage decodeWebPToImage(const QString &filePath) noexcept;
+    static QString imageFormatToString(const QImage::Format format) noexcept;
+    static QStringList getImagesFromSessionFile(const QString &session_file) noexcept;
 };
 
 #endif

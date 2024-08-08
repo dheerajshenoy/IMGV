@@ -103,10 +103,15 @@ Defaults = {
     statusbar = true,
     menubar = true,
     thumbnail_panel = true,
+    auto_notes_popup = false,
+    scrollbars = true,
+    start_in_minimal_mode = false,
     keybindings = {
         zoom_in = "=",
         zoom_out = "-",
         zoom_reset = "0",
+        fit_width = "w",
+        fit_window = "Shift+h",
         rotate_clockwise = ".",
         rotate_anticlockwise = ",",
         flip_vertical = "'",
@@ -125,6 +130,36 @@ Defaults = {
         search = "/",
     }
 }
+
+Statusbar = {
+    spacing = 10,
+    note_indicator = "NOTE",
+    note_modified_indicator = "[M]",
+    --[[
+
+    Change the order or removing statusbar elements 
+
+    Elements:
+        message - shows important messages
+        path - shows full file path
+        size - file size
+        stretch - separator
+        dimension - shows the (width, height) of the image
+        session - shows the session name
+        note-indicator - shows an indicator when there is a non-empty note associated with an image file
+        note-modified-indicator - shows an indicator when there is any unsaved changes to a note for an image file
+    --]]
+    elements = {
+        "message",
+        "path",
+        "note-indicator",
+        "note-modified-indicator",
+        "stretch",
+        "size",
+        "dimension",
+        "session",
+    }
+}
 ```
 
 Note that if the `keybindings` table is present in the `Defaults` table, then default keybindings will not be loaded.
@@ -133,6 +168,8 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 - 08 Aug 2024
 
+    - Remove & Rename session files
+    - Bulf remove session files. Ask confirmation based on number of files selected.
     - Removed `QListWidget` and replaced with `QListView`
     - Added search feature for thumbnails
     - Added note functionality
@@ -141,6 +178,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Show note modification status on the statusbar
     - Markdown Highlighting support for the Note Widget
     - Lua support for configuration
+    - Display full image properties
 
 - 07 Aug 2024
 
@@ -163,6 +201,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 2. [ ] ~~Load image from URL~~
 3. [x] Caching images
 4. [x] Lua configuration option
+5. [x] Display Image Properties
 
 <a name="thanks" />
 
