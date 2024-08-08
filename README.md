@@ -26,6 +26,8 @@ Only for **Linux**.
 
 ![image](https://github.com/user-attachments/assets/c5f42acb-0760-45e7-a41d-11fac2570c41)
 
+
+
 <a name="introduction" />
 
 # Introduction
@@ -63,6 +65,14 @@ I aM an imaGe Viewer ~ IMGV
     - `-n` or `--no-config` load the software without any lua configuration
     - `-l` or `--list-sessions` list all the sessions
     - `-s` or `--session` takes path to a session file. Loads all the images of that session 
+
+7. Notes
+
+![image](https://github.com/user-attachments/assets/59a58073-295a-4e67-9666-e6e26fc8d0f0)
+
+8. Image Properties (with EXIF support)
+
+![image](https://github.com/user-attachments/assets/2b575390-0799-4524-9083-5618538c7a7d)
 
 <a name="installation" />
 
@@ -179,6 +189,9 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Markdown Highlighting support for the Note Widget
     - Lua support for configuration
     - Display full image properties
+
+    ![image](https://github.com/user-attachments/assets/1c8f2e7d-7efd-420e-8ec0-dd3cf78a3409)
+
 
 - 07 Aug 2024
 
