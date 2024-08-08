@@ -4,6 +4,7 @@
 #include <qt6/QtWidgets/QDialog>
 #include <qt6/QtWidgets/QVBoxLayout>
 #include <qt6/QtWidgets/QMessageBox>
+#include <qt6/QtWidgets/QPushButton>
 #include <qt6/QtWidgets/QTableWidget>
 #include <qt6/QtWidgets/QInputDialog>
 #include <qt6/QtWidgets/QHeaderView>
@@ -26,12 +27,14 @@ private:
     QAction *renameSession = new QAction("Rename Session");
     QAction *deleteSession = new QAction("Delete Session");
     QAction *openInExplorer = new QAction("Open in Explorer");
+    QPushButton *done_btn = new QPushButton("Done");
 
     void RenameSession() noexcept;
     void OpenInExplorer() noexcept;
     void DeleteSession() noexcept;
     void showContextMenu(const QPointF loc) noexcept;
     QStringList getSessions() noexcept;
+
 
     QString session_path;
 };

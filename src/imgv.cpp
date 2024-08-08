@@ -837,6 +837,8 @@ void IMGV::ThumbSearchTextChanged(QString text) noexcept
 void IMGV::toggleNotes() noexcept
 {
     m_note_holder->setVisible(!m_note_holder->isVisible());
+    if (m_note_holder->isVisible())
+        m_note_holder->setFocus();
 }
 
 void IMGV::searchThumbnails() noexcept

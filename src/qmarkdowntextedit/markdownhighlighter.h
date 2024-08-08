@@ -350,4 +350,5 @@ class MarkdownHighlighter : public QSyntaxHighlighter {
     static QHash<HighlighterState, QTextCharFormat> _formats;
     static QHash<QString, HighlighterState> _langStringToEnum;
     static constexpr int tildeOffset = 300;
+
 };

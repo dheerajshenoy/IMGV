@@ -26,6 +26,10 @@ ManageSessionsDialog::ManageSessionsDialog(QString &sessionDirPath, QWidget *par
     layout->addWidget(table);
     this->setLayout(layout);
 
+    layout->addWidget(done_btn);
+
+    connect(done_btn, &QPushButton::clicked, this, &QDialog::done);
+
     contextMenu->addAction(renameSession);
     contextMenu->addAction(deleteSession);
     contextMenu->addAction(openInExplorer);
