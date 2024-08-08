@@ -13,6 +13,7 @@ Only for **Linux**.
 3. [Features](#features)
 4. [Installation](#installation)
 5. [Theming](#theming)
+6. [Configuration](#configuration)
 6. [Changelogs and Bug fixes](#changelogs)
 7. [Todo](#todo)
 8. [Thanks](#thanks)
@@ -93,6 +94,41 @@ The theme for IMGV depends on the theme set for Qt6 applications. There is a han
 
 <a name="changelogs" />
 
+# Configuration
+
+IMGV can be configured using the lua programming language. `config.lua` file should have already been created at the config location. The following code lists all the options possible:
+
+```lua
+Defaults = {
+    statusbar = true,
+    menubar = true,
+    thumbnail_panel = true,
+    keybindings = {
+        zoom_in = "=",
+        zoom_out = "-",
+        zoom_reset = "0",
+        rotate_clockwise = ".",
+        rotate_anticlockwise = ",",
+        flip_vertical = "'",
+        flip_horizontal = ";",
+        left = "h",
+        down = "j",
+        up = "k",
+        right = "l",
+        next = "Shift+j",
+        prev = "Shift+k",
+        notes = "n",
+        maximize = "Shift+m",
+        toggle_menubar = "Ctrl+m",
+        toggle_statusbar = "Ctrl+x",
+        toggle_thumbnail_panel = "Ctrl+t",
+        search = "/",
+    }
+}
+```
+
+Note that if the `keybindings` table is present in the `Defaults` table, then default keybindings will not be loaded.
+
 # Changelogs and Bug Fixes
 
 - 08 Aug 2024
@@ -104,6 +140,7 @@ The theme for IMGV depends on the theme set for Qt6 applications. There is a han
     - Added dependency for rapidjson
     - Show note modification status on the statusbar
     - Markdown Highlighting support for the Note Widget
+    - Lua support for configuration
 
 - 07 Aug 2024
 
@@ -125,7 +162,7 @@ The theme for IMGV depends on the theme set for Qt6 applications. There is a han
 1. [x] Ability to add notes to images inside sessions
 2. [ ] ~~Load image from URL~~
 3. [x] Caching images
-4. [ ] Lua configuration option
+4. [x] Lua configuration option
 
 <a name="thanks" />
 
