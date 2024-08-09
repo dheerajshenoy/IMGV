@@ -81,9 +81,15 @@ I aM an imaGe Viewer ~ IMGV
 Check out the releases page for packages.
 
 - Ubuntu based distributions can install the .deb file
-- Arch Linux users can download the PKGBUILD file and install the program using the following command.
+- Arch Linux users > [!CAUTION]
 
-`mkdir imgv && wget https://github.com/dheerajshenoy/imgv/releases/download/1.2.0/PKGBUILD && makepkg -si`
+    - download the PKGBUILD file and install the program using the following command.
+
+        `mkdir imgv && wget https://github.com/dheerajshenoy/imgv/releases/download/1.2.0/PKGBUILD && makepkg -si`
+
+    - download the pkg.tar.zst file directly from the releases page and install it using `pacman -U <downloaded-file-name>`
+
+
 
 ## Build from Source
 
