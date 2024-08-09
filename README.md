@@ -40,7 +40,7 @@ Why ? I never liked any of the image viewers existing for linux, with the except
 
 ## Why the name IMGV ?
 
-I aM an imaGe Viewer ~ IMGV
+IMaGe Viewer ~ IMGV. **Original**.
 
 <a name="features" />
 
