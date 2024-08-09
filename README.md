@@ -1,10 +1,12 @@
 # IMGV
 
 The Image Viewer no one asked for.
+
 Written in C++.
+
 Only for **Linux**.
 
-**NOTE** This is a work in progress. I'll add features as I seem fit for this software.
+With [features](#features) I like.
 
 # Table of Contents
 
