@@ -77,6 +77,13 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     this->show();
 }
 
+void IMGV::initDefaultConfig()
+{
+    for(const auto &s : QStringList() << "message" << "path" << "note-indicator" << "note-modified-indicator" << "stretch" << "size" << "dimension" << "session")
+        m_statusbar->addWidget(s);
+    initKeybinds();
+}
+
 void IMGV::initConfigDirectory()
 {
     m_config_dir_path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
@@ -648,8 +655,11 @@ void IMGV::readSessionFile(QString filename)
 void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
 {
 
-    if (!parser.is_used("--no-config"))
+    if (parser.is_used("--no-config"))
     {
+        initDefaultConfig();
+    }
+    else {
         initConfigDirectory();
     }
 
@@ -658,7 +668,7 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         auto ses_files = getSessionFiles();
         qInfo() << "Session files found: " << ses_files.size();
         for(const QString &file: ses_files)
-            qInfo() << file;
+        qInfo() << file;
         exit(0);
     }
 
@@ -690,7 +700,7 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         auto file = QString::fromStdString(files[0]);
         if (QFileInfo(file).isDir())
         {
-            auto dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
+            auto dirfiles = QDir(file).entryList(QStringList() << "*.pg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
             for(const auto &f: dirfiles)
                 m_thumbnail_view->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));
             return;

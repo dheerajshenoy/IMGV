@@ -51,6 +51,7 @@ public:
 
 private:
     void initConfigDirectory();
+    void initDefaultConfig();
     void initMenu();
     void initConnections();
     void initKeybinds();
