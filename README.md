@@ -91,8 +91,6 @@ Check out the [releases](https://github.com/dheerajshenoy/imgv/releases) page fo
 
     - download the pkg.tar.zst file directly from the [releases](https://github.com/dheerajshenoy/imgv/releases) page and install it using `pacman -U <downloaded-file-name>`
 
-
-
 ## Build from Source
 
 1. This software depends on the following programs/libraries. Install them first.
@@ -103,7 +101,7 @@ Check out the [releases](https://github.com/dheerajshenoy/imgv/releases) page fo
 
 2. Clone this repo.
 
-3. Go the project directory and run `qmake6 .`
+3. Go the project directory and run `cmake .`
 
 4. Finally, if all went well, run `make` and copy the binary file inside the bin directory to `/usr/bin` if you want to access the software system-wide.
 
@@ -196,6 +194,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 - 09 Aug 2024
 
     - Open sessions from Manage Session Dialog
+    - Change build system from qmake to cmake
 
 - 08 Aug 2024
 
