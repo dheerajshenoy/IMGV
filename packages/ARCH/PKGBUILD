@@ -1,0 +1,33 @@
+# Maintainer: Dheeraj Vittal Shenoy <dheerajshenoy22@gmail.com>
+pkgname=imgv
+pkgver=1.2.0
+pkgrel=1
+pkgdesc="Image Viewer no one asked for"
+arch=('x86_64')
+url="https://github.com/dheerajshenoy/imgv"
+license=('LGPL')
+groups=()
+depends=('qt6-base' 'lua' 'libwebp')
+makedepends=('git')
+# checkdepends=()
+# optdepends=()
+# provides=()
+# conflicts=()
+# replaces=()
+# backup=()
+# options=()
+source=("imgv::git+https://github.com/dheerajshenoy/imgv.git")
+# noextract=()
+sha256sums=('SKIP')
+# validpgpkeys=()
+
+build() {
+    cd "$pkgname"
+    qmake6 .
+    make
+}
+
+package() {
+    cd "$pkgname"
+    install -Dm755 ./bin/imgv "$pkgdir/usr/bin/imgv"
+}

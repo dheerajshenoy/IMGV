@@ -1,0 +1,6 @@
+Package: imgv
+Version: 1.2.0
+Maintainer: Dheeraj Vittal Shenoy
+Architecture: all
+Description: Image Viewer world never asked for
+Depends: qt6-base-dev

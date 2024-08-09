@@ -76,6 +76,17 @@ I aM an imaGe Viewer ~ IMGV
 
 # Installation
 
+## Install from release package
+
+Check out the releases page for packages.
+
+- Ubuntu based distributions can install the .deb file
+- Arch Linux users can download the PKGBUILD file and install the program using the following command.
+
+``
+
+## Build from Source
+
 1. This software depends on the following programs/libraries. Install them first.
 
     1. Qt (GUI)

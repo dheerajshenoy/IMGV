@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=IMGV
+GenericName=Image Viewer
+Comment=View Images
+TryExec=imgv
+Exec=imgv --input %F
+Type=Application
+Keywords=Image;Viewer;
+Icon=imgv
+Categories=Utility;ImageViewer;
+StartupNotify=false
+MimeType=image/jpeg;image/png;image/svg+xml;image/webp;image/bmp;image/gif;
