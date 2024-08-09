@@ -82,14 +82,15 @@ IMaGe Viewer ~ IMGV. **Original**.
 
 Check out the [releases](https://github.com/dheerajshenoy/imgv/releases) page for packages.
 
-- Ubuntu based distributions can install the .deb file
-- Arch Linux users > [!CAUTION]
+This software has been built using `Qt v6.7.2`. So, at the time of writing, Ubuntu users are still on Qt v6.4.2 and hence this wont be support until I make a build against that version of Qt (really hectic).
 
-    - download the PKGBUILD file and install the program using the following command.
+### Arch Linux users
 
-        `mkdir imgv && wget https://github.com/dheerajshenoy/imgv/releases/download/1.2.0/PKGBUILD && makepkg -si`
+- download the PKGBUILD file and install the program using the following command.
 
-    - download the pkg.tar.zst file directly from the [releases](https://github.com/dheerajshenoy/imgv/releases) page and install it using `pacman -U <downloaded-file-name>`
+`mkdir imgv && wget https://github.com/dheerajshenoy/imgv/releases/download/1.2.0/PKGBUILD && makepkg -si`
+
+- download the pkg.tar.zst file directly from the [releases](https://github.com/dheerajshenoy/imgv/releases) page and install it using `pacman -U <downloaded-file-name>`
 
 ## Build from Source
 
