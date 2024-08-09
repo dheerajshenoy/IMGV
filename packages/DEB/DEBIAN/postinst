@@ -1,4 +1,0 @@
-#!/bin/sh
-
-echo "Copying desktop files"
-sudo cp imgv.desktop /usr/share/applications/
