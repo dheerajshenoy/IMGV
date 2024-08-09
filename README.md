@@ -1,10 +1,12 @@
 # IMGV
 
 The Image Viewer no one asked for.
+
 Written in C++.
+
 Only for **Linux**.
 
-**NOTE** This is a work in progress. I'll add features as I seem fit for this software.
+With [features](#features) I like.
 
 # Table of Contents
 
@@ -38,7 +40,7 @@ Why ? I never liked any of the image viewers existing for linux, with the except
 
 ## Why the name IMGV ?
 
-I aM an imaGe Viewer ~ IMGV
+IMaGe Viewer ~ IMGV. **Original**.
 
 <a name="features" />
 
@@ -78,7 +80,7 @@ I aM an imaGe Viewer ~ IMGV
 
 ## Install from release package
 
-Check out the releases page for packages.
+Check out the [releases](https://github.com/dheerajshenoy/imgv/releases) page for packages.
 
 - Ubuntu based distributions can install the .deb file
 - Arch Linux users > [!CAUTION]
@@ -87,7 +89,7 @@ Check out the releases page for packages.
 
         `mkdir imgv && wget https://github.com/dheerajshenoy/imgv/releases/download/1.2.0/PKGBUILD && makepkg -si`
 
-    - download the pkg.tar.zst file directly from the releases page and install it using `pacman -U <downloaded-file-name>`
+    - download the pkg.tar.zst file directly from the [releases](https://github.com/dheerajshenoy/imgv/releases) page and install it using `pacman -U <downloaded-file-name>`
 
 
 
