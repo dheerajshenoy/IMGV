@@ -4,6 +4,7 @@
 #include <qt6/QtCore/QString>
 #include <qt6/QtCore/QFile>
 #include <qt6/QtCore/QFileInfo>
+#include <qt6/QtCore/QStringList>
 #include <qt6/QtGui/QPixmap>
 #include <qt6/QtCore/QMimeData>
 #include <qt6/QtCore/QMimeDatabase>
@@ -21,6 +22,12 @@ struct Dimension
     int height;
 };
 
+struct Custom
+{
+    QStringList files;
+    QString date;
+};
+
 class utils
 {
 
@@ -33,6 +40,7 @@ public:
     static QImage decodeWebPToImage(const QString &filePath) noexcept;
     static QString imageFormatToString(const QImage::Format format) noexcept;
     static QStringList getImagesFromSessionFile(const QString &session_file) noexcept;
+    static Custom getDateandImagesFromSessionFile(const QString &session_file) noexcept;
 };
 
 #endif

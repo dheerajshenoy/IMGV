@@ -26,8 +26,6 @@ Only for **Linux**.
 
 ![image](https://github.com/user-attachments/assets/c5f42acb-0760-45e7-a41d-11fac2570c41)
 
-
-
 <a name="introduction" />
 
 # Introduction
@@ -176,6 +174,10 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 # Changelogs and Bug Fixes
 
+- 09 Aug 2024
+
+    - Open sessions from Manage Session Dialog
+
 - 08 Aug 2024
 
     - Remove & Rename session files
@@ -191,7 +193,6 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Display full image properties
 
     ![image](https://github.com/user-attachments/assets/1c8f2e7d-7efd-420e-8ec0-dd3cf78a3409)
-
 
 - 07 Aug 2024
 

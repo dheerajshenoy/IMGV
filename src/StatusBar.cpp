@@ -19,6 +19,7 @@ StatusBar::StatusBar(QWidget *parent)
     noteModifiedLabel->setToolTip("Note has unsaved changes. Switching to other image will delete the unsaved changes");
     sessionLabel->setToolTip("Current session");
 
+    layout->setContentsMargins(2, 2, 2, 2);
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
 

@@ -6,6 +6,7 @@ ImageWidget::ImageWidget(QWidget *parent)
     m_scene = new QGraphicsScene(this);
     setScene(m_scene);
 
+    
     m_pixmapItem = new QGraphicsPixmapItem;
     m_movieItem = new MovieItem;
     m_scene->addItem(m_pixmapItem);

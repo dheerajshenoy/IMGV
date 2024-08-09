@@ -3,8 +3,8 @@
 ManageSessionsDialog::ManageSessionsDialog(QString &sessionDirPath, QWidget *parent)
     : QDialog(parent), session_path(sessionDirPath)
 {
-    table->setColumnCount(2);
-    table->setHorizontalHeaderLabels({ "Session Name", "Images" });
+    table->setColumnCount(3);
+    table->setHorizontalHeaderLabels({ "Session Name", "Date Modified", "Images" });
 
     auto files = QDir(sessionDirPath).entryList(QStringList() << "*.imgv" << "*.IMGV", QDir::Files);
     table->setRowCount(files.size());
@@ -17,10 +17,14 @@ ManageSessionsDialog::ManageSessionsDialog(QString &sessionDirPath, QWidget *par
     for(int i=0; i < files.size(); i++)
     {
         QTableWidgetItem *session_file = new QTableWidgetItem(QFileInfo(files[i]).baseName());
-        QStringList imgfiles = utils::getImagesFromSessionFile(QString("%1%2%3").arg(sessionDirPath).arg(QDir::separator()).arg(files[i]));
+        Custom date_and_files = utils::getDateandImagesFromSessionFile(QString("%1%2%3").arg(sessionDirPath).arg(QDir::separator()).arg(files[i]));
+        auto imgfiles = date_and_files.files;
         QTableWidgetItem *img_count = new QTableWidgetItem(QString::number(imgfiles.size()));
+        QTableWidgetItem *date = new QTableWidgetItem(date_and_files.date);
+        img_count->setToolTip(imgfiles.join("\n"));
         table->setItem(i, 0, session_file);
-        table->setItem(i, 1, img_count);
+        table->setItem(i, 1, date);
+        table->setItem(i, 2, img_count);
     }
 
     layout->addWidget(table);
@@ -33,13 +37,23 @@ ManageSessionsDialog::ManageSessionsDialog(QString &sessionDirPath, QWidget *par
     contextMenu->addAction(renameSession);
     contextMenu->addAction(deleteSession);
     contextMenu->addAction(openInExplorer);
+    contextMenu->addAction(_openSession);
 
     table->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(renameSession, &QAction::triggered, this, &ManageSessionsDialog::RenameSession);
     connect(deleteSession, &QAction::triggered, this, &ManageSessionsDialog::DeleteSession);
     connect(openInExplorer, &QAction::triggered, this, &ManageSessionsDialog::OpenInExplorer);
+    connect(_openSession, &QAction::triggered, this, &ManageSessionsDialog::OpenSession);
     connect(table, &QTableWidget::customContextMenuRequested, this, &ManageSessionsDialog::showContextMenu);
+}
+
+void ManageSessionsDialog::OpenSession() noexcept
+{
+    auto sessions = table->selectedItems();
+
+    for(int i=0; i < sessions.count() / 2; i += 2)
+        emit openSession(session_path + QDir::separator() + sessions[i]->text() + ".imgv");
 }
 
 void ManageSessionsDialog::showContextMenu(const QPointF loc) noexcept
@@ -59,7 +73,7 @@ void ManageSessionsDialog::DeleteSession() noexcept
         msgbox.setStandardButtons(QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No);
     msgbox.setWindowTitle("Deleting Session");
     bool check = true;
-    for(int i=0; i < sessions.count(); i += 2)
+    for(int i=0; i < sessions.count() / 2; i += 2)
     {
         auto session = sessions[i];
         auto filepath = QString("%1%2%3").arg(session_path).arg(QDir::separator()).arg(session->text() + ".imgv");

@@ -28,6 +28,8 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     splitter->addWidget(m_thumbnail_view);
     m_right_pane->setLayout(m_right_pane_layout);
 
+    m_right_pane_layout->setContentsMargins(0, 0, 0, 0);
+
     m_right_pane_splitter->addWidget(m_img_widget);
     m_right_pane_splitter->addWidget(m_note_holder);
 
@@ -53,7 +55,7 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     layout->addWidget(m_statusbar);
     setCentralWidget(centralWidget);
 
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(5, 5, 5, 5);
     centralWidget->setContentsMargins(0, 0, 0, 0);
     this->setContentsMargins(0, 0, 0, 0);
 
@@ -284,6 +286,7 @@ void IMGV::initMenu()
 
     connect(tools__manage_sessions, &QAction::triggered, this, [&]() {
         ManageSessionsDialog *md = new ManageSessionsDialog(m_sessions_dir_path, this);
+        connect(md, &ManageSessionsDialog::openSession, this, [&](QString name) { openSession(name); });
         md->open();
     });
 

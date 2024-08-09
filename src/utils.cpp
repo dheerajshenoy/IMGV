@@ -142,3 +142,48 @@ QStringList utils::getImagesFromSessionFile(const QString &sessionfilepath) noex
     ifs.close();
     return imgfiles;
 }
+
+Custom utils::getDateandImagesFromSessionFile(const QString &sessionfilepath) noexcept
+{
+    using namespace rapidjson;
+    std::ifstream ifs(sessionfilepath.toStdString());
+
+    if (!ifs.is_open()) {
+        return {};
+    }
+
+    IStreamWrapper isw(ifs);
+
+    Document doc;
+    doc.ParseStream(isw);
+
+    if (doc.HasParseError())
+    {
+        return {};
+    }
+
+    QStringList imgfiles;
+    if (doc.HasMember("files") && doc["files"].IsArray())
+    {
+        const Value& files_arr = doc["files"];
+        for(SizeType i=0; i < files_arr.Size(); i++)
+        {
+            if (files_arr[i].IsObject())
+            {
+                auto file = files_arr[i].GetObject();
+                if (file.HasMember("path") && file["path"].IsString() && file.HasMember("note") && file["note"].IsString())
+                {
+                    imgfiles << file["path"].GetString();
+                }
+            }
+        }
+    }
+
+    QString date;
+    if (doc.HasMember("date") && doc["date"].IsString())
+        date = doc["date"].GetString();
+    else
+        date = "N/A";
+    ifs.close();
+    return Custom{ imgfiles, date };
+}
