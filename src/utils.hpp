@@ -1,14 +1,14 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
-#include <qt6/QtCore/QString>
-#include <qt6/QtCore/QFile>
-#include <qt6/QtCore/QFileInfo>
-#include <qt6/QtCore/QStringList>
-#include <qt6/QtGui/QPixmap>
-#include <qt6/QtCore/QMimeData>
-#include <qt6/QtCore/QMimeDatabase>
-#include <qt6/QtCore/QMimeType>
+#include <QString>
+#include <QFile>
+#include <QFileInfo>
+#include <QStringList>
+#include <QPixmap>
+#include <QMimeData>
+#include <QMimeDatabase>
+#include <QMimeType>
 #include <webp/decode.h>
 #include <fstream>
 #include "rapidjson/rapidjson.h"

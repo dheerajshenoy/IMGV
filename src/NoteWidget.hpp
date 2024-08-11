@@ -2,12 +2,12 @@
 #define NOTE_WIDGET_HPP
 
 #include "qmarkdowntextedit/markdownhighlighter.h"
-#include <qt6/QtWidgets/QTextEdit>
-#include <qt6/QtGui/QKeySequence>
-#include <qt6/QtGui/QShortcut>
-#include <qt6/QtGui/QShowEvent>
-#include <qt6/QtGui/QKeyEvent>
-#include <qt6/QtGui/QHideEvent>
+#include <QTextEdit>
+#include <QKeySequence>
+#include <QShortcut>
+#include <QShowEvent>
+#include <QKeyEvent>
+#include <QHideEvent>
 
 class NoteWidget : public QTextEdit
 {

@@ -1,7 +1,7 @@
 #ifndef THUMBNAIL_FILTER_PROXY_HPP
 #define THUMBNAIL_FILTER_PROXY_HPP
 
-#include <qt6/QtCore/QSortFilterProxyModel>
+#include <QSortFilterProxyModel>
 
 class ThumbnailFilterProxy : public QSortFilterProxyModel
 {

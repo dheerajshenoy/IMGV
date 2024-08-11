@@ -1,17 +1,17 @@
 #ifndef MANAGE_SESSIONS_DIALOG_HPP
 #define MANAGE_SESSIONS_DIALOG_HPP
 
-#include <qt6/QtWidgets/QDialog>
-#include <qt6/QtWidgets/QVBoxLayout>
-#include <qt6/QtWidgets/QMessageBox>
-#include <qt6/QtWidgets/QPushButton>
-#include <qt6/QtWidgets/QTableWidget>
-#include <qt6/QtWidgets/QInputDialog>
-#include <qt6/QtWidgets/QHeaderView>
-#include <qt6/QtWidgets/QMenu>
-#include <qt6/QtGui/QAction>
-#include <qt6/QtGui/QDesktopServices>
-#include <qt6/QtCore/QDir>
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QTableWidget>
+#include <QInputDialog>
+#include <QHeaderView>
+#include <QMenu>
+#include <QAction>
+#include <QDesktopServices>
+#include <QDir>
 #include "utils.hpp"
 
 class ManageSessionsDialog : public QDialog

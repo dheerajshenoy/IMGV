@@ -1,12 +1,12 @@
 #ifndef ABOUT_DIALOG_HPP
 #define ABOUT_DIALOG_HPP
 
-#include <qt6/QtWidgets/QDialog>
-#include <qt6/QtWidgets/QVBoxLayout>
-#include <qt6/QtWidgets/QLabel>
-#include <qt6/QtWidgets/QPushButton>
-#include <qt6/QtGui/QDesktopServices>
-#include <qt6/QtCore/QString>
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QDesktopServices>
+#include <QString>
 
 const std::string APP_VERSION = "1.2";
 

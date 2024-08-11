@@ -1,10 +1,10 @@
 #ifndef THUMBNAIL_MODEL_HPP
 #define THUMBNAIL_MODEL_HPP
 
-#include <qt6/QtCore/QAbstractListModel>
-#include <qt6/QtCore/QFile>
-#include <qt6/QtCore/QFileInfo>
-#include <qt6/QtCore/QVector>
+#include <QAbstractListModel>
+#include <QFile>
+#include <QFileInfo>
+#include <QVector>
 #include "Thumbnail.hpp"
 
 class ThumbnailModel : public QAbstractListModel

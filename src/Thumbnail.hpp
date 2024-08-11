@@ -1,8 +1,8 @@
 #ifndef THUMBNAIL_HPP
 #define THUMBNAIL_HPP
 
-#include <qt6/QtWidgets/QWidget>
-#include <qt6/QtGui/QPixmap>
+#include <QWidget>
+#include <QPixmap>
 #include "utils.hpp"
 
 class Thumbnail

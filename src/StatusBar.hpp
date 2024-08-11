@@ -1,14 +1,14 @@
 #ifndef STATUSBAR_HPP
 #define STATUSBAR_HPP
 
-#include <qt6/QtWidgets/QWidget>
-#include <qt6/QtWidgets/QHBoxLayout>
-#include <qt6/QtWidgets/QLabel>
-#include <qt6/QtCore/QFileInfo>
-#include <qt6/QtCore/QTimer>
-#include <qt6/QtGui/QPixmap>
-#include <qt6/QtGui/QShowEvent>
-#include <qt6/QtGui/QHideEvent>
+#include <QWidget>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QFileInfo>
+#include <QTimer>
+#include <QPixmap>
+#include <QShowEvent>
+#include <QHideEvent>
 
 class StatusBar : public QWidget
 {

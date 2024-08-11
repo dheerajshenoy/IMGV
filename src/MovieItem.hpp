@@ -1,10 +1,10 @@
 #ifndef MOVIE_ITEM_HPP
 #define MOVIE_ITEM_HPP
 
-#include <qt6/QtWidgets/QGraphicsItem>
-#include <qt6/QtCore/QObject>
-#include <qt6/QtGui/QMovie>
-#include <qt6/QtGui/QPainter>
+#include <QGraphicsItem>
+#include <QObject>
+#include <QMovie>
+#include <QPainter>
 
 class MovieItem : public QGraphicsItem
 {
