@@ -79,6 +79,7 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
 void IMGV::initDefaultConfig()
 {
+    m_statusbar->setSpacing(10);
     for(const auto &s : QStringList() << "message" << "path" << "note-indicator" << "note-modified-indicator" << "stretch" << "size" << "dimension" << "session")
         m_statusbar->addWidget(s);
     initKeybinds();

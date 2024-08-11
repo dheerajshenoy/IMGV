@@ -1,14 +1,14 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.29)
 project(imgv)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
 qt_standard_project_setup()
 
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++20")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs")
-set(LUA_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/libs/liblua.a")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Installation Directory")
 
-qt_add_executable(imgv
+qt_add_executable(${PROJECT_NAME}
     src/main.cpp
     src/ImageWidget.cpp
     src/imgv.cpp
@@ -49,9 +49,13 @@ qt_add_executable(imgv
     src/sol/sol.hpp
 )
 
-target_link_libraries(imgv PRIVATE
+target_link_libraries(${PROJECT_NAME} PRIVATE
     "${LIB_DIR}/libwebp.a"
     "${LIB_DIR}/liblua.a"
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets)
+
+
+install(TARGETS ${PROJECT_NAME}
+        RUNTIME DESTINATION bin)
