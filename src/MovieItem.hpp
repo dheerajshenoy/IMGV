@@ -17,7 +17,7 @@ public:
         QObject::disconnect(mConnection); // disconnect old object
         mMovie = movie;
         if (mMovie)
-            mConnection = QObject::connect(mMovie, &QMovie::frameChanged, [=]{ update(); });
+            mConnection = QObject::connect(mMovie, &QMovie::frameChanged, [&]{ update(); });
     }
 
     QRectF boundingRect() const override
