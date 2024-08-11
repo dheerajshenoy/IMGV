@@ -50,8 +50,6 @@ qt_add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    "${LIB_DIR}/libwebp.a"
-    "${LIB_DIR}/liblua.a"
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets)
