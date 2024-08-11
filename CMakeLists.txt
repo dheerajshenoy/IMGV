@@ -8,7 +8,7 @@ qt_standard_project_setup()
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++20")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
-# set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Installation Directory")
+set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Installation Directory")
 
 qt_add_executable(${PROJECT_NAME}
     src/main.cpp
