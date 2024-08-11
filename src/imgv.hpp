@@ -1,7 +1,7 @@
 #ifndef IMGV_HPP
 #define IMGV_HPP
 
-#include "argparse/argparse.hpp"
+#include "argparse.hpp"
 #include <QApplication>
 #include <QMessageBox>
 #include <QTextEdit>
