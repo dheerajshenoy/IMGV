@@ -60,9 +60,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     webp
     lua)
 
-target_include_directories(${PROJECT_NAME} PRIVATE 
-    ${WebP_INCLUDE_DIRS}
-    ${Lua_INCLUDE_DIRS})
+# target_include_directories(${PROJECT_NAME} PRIVATE 
+#     ${WebP_INCLUDE_DIRS}
+#     ${Lua_INCLUDE_DIRS})
 
 install(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION bin)
