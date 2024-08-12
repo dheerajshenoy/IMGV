@@ -84,7 +84,15 @@ Check out the [releases](https://github.com/dheerajshenoy/imgv/releases) page fo
 
 This software has been built using `Qt v6.7.2`. So, at the time of writing, Ubuntu users are still on Qt v6.4.2 and hence this wont be support until I make a build against that version of Qt (really hectic). There is however Flatpak available.
 
-### Flatpak
+### Arch Linux users
+
+- download the PKGBUILD file and install the program using the following command.
+
+`mkdir imgv && wget https://github.com/dheerajshenoy/imgv/releases/download/1.2.0/PKGBUILD && makepkg -si`
+
+- download the pkg.tar.zst file directly from the [releases](https://github.com/dheerajshenoy/imgv/releases) page and install it using `pacman -U <downloaded-file-name>`
+
+## Flatpak
 
 Install instruction for your distro can be found [here](https://flatpak.org/setup/)
 
@@ -93,13 +101,6 @@ Install instruction for your distro can be found [here](https://flatpak.org/setu
 - **NOTE**: The user configuration and sessions in the case of imgv flatpak are stored at `~/.var/app/org.dheerajshenoy.imgv/config/`
 - Also, to do the theming for the flatpak version, please check [link1](https://itsfoss.com/flatpak-app-apply-theme/), [link2](https://www.reddit.com/r/flatpak/comments/y9jmqj/the_general_flatpak_qt_and_gtk_theming_guide/)
 
-### Arch Linux users
-
-- download the PKGBUILD file and install the program using the following command.
-
-`mkdir imgv && wget https://github.com/dheerajshenoy/imgv/releases/download/1.2.0/PKGBUILD && makepkg -si`
-
-- download the pkg.tar.zst file directly from the [releases](https://github.com/dheerajshenoy/imgv/releases) page and install it using `pacman -U <downloaded-file-name>`
 
 ## Build from Source
 
@@ -114,9 +115,9 @@ Install instruction for your distro can be found [here](https://flatpak.org/setu
 ```
 git clone https://github.com/dheerajshenoy/imgv.git
 cd imgv
-mkdir build && cd build
-cmake ..
-make
+mkdir build
+cmake -Bbuild
+cd build && make
 sudo make install
 ```
 
