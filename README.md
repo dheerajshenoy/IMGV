@@ -84,10 +84,12 @@ Check out the [releases](https://github.com/dheerajshenoy/imgv/releases) page fo
 
 This software has been built using `Qt v6.7.2`. So, at the time of writing, Ubuntu users are still on Qt v6.4.2 and hence this wont be support until I make a build against that version of Qt (really hectic). There is however Flatpak available.
 
-### FLATPAK
+### Flatpak
 
+- hazzle free, no need to download any stupid dependencies, no BS, just straight to the point.
 - download the flatpak from the [releases](https://github.com/dheerajshenoy/imgv/releases) page.
-- There are bugs associated with flatpak version of imgv relating to problems loading config files and such. It will be fixed (hopefully) in the future.
+- **NOTE**: The user configuration and sessions in the case of imgv flatpak are stored at `~/.var/app/org.dheerajshenoy.imgv/config/`
+- Also, to do the theming for the flatpak version, please check [link1](https://itsfoss.com/flatpak-app-apply-theme/), [link2](https://www.reddit.com/r/flatpak/comments/y9jmqj/the_general_flatpak_qt_and_gtk_theming_guide/)
 
 ### Arch Linux users
 
