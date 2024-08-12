@@ -116,7 +116,7 @@ Install instruction for your distro can be found [here](https://flatpak.org/setu
 git clone https://github.com/dheerajshenoy/imgv.git
 cd imgv
 mkdir build
-cmake -Bbuild
+cmake -Bbuild -DCMAKE_INSTALL_PREFIX:PATH=/usr
 cd build && make
 sudo make install
 ```
