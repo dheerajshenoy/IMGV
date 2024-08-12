@@ -86,6 +86,8 @@ This software has been built using `Qt v6.7.2`. So, at the time of writing, Ubun
 
 ### Flatpak
 
+Install instruction for your distro can be found [here](https://flatpak.org/setup/)
+
 - hazzle free, no need to download any stupid dependencies, no BS, just straight to the point.
 - download the flatpak from the [releases](https://github.com/dheerajshenoy/imgv/releases) page.
 - **NOTE**: The user configuration and sessions in the case of imgv flatpak are stored at `~/.var/app/org.dheerajshenoy.imgv/config/`
