@@ -132,6 +132,8 @@ These commands do the following things
 
 The theme for IMGV depends on the theme set for Qt6 applications. There is a handy tool called `qt6ct`. Install it and configure the theme and it will be applied to this software also.
 
+For flatpak version of the app, the theming is a bit of a problem. It can be done, but there are few steps, which can be done following few tutorials like [link1](https://itsfoss.com/flatpak-app-apply-theme/), [link2](https://www.reddit.com/r/flatpak/comments/y9jmqj/the_general_flatpak_qt_and_gtk_theming_guide/).
+
 <a name="changelogs" />
 
 # Configuration
