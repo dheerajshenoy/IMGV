@@ -208,6 +208,10 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 # Changelogs and Bug Fixes
 
+- 11 Aug 2024
+
+    - Create Flatpak for imgv
+
 - 09 Aug 2024
 
     - Open sessions from Manage Session Dialog
