@@ -8,7 +8,6 @@ qt_standard_project_setup()
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++20")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
-set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Installation Directory")
 
 qt_add_executable(${PROJECT_NAME}
     src/main.cpp
@@ -51,6 +50,9 @@ qt_add_executable(${PROJECT_NAME}
     src/sol/sol.hpp
 )
 
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${LIB_DIR})
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Core
     Qt6::Gui
@@ -58,9 +60,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     webp
     lua)
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(${PROJECT_NAME} PRIVATE 
     ${WebP_INCLUDE_DIRS}
     ${Lua_INCLUDE_DIRS})
 
 install(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION bin)
+
+#Install .desktop file
+install(FILES ${CMAKE_SOURCE_DIR}/imgv.desktop DESTINATION share/applications)
+
+# Install icons
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/icons/ DESTINATION share/icons/hicolor)
