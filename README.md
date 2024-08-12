@@ -107,19 +107,24 @@ Install instruction for your distro can be found [here](https://flatpak.org/setu
 
     1. Qt (GUI)
     2. lua
-    3. libwebp (for WEBP image support)
+    3. webp (for WEBP image support)
 
-2. Clone this repo.
+2. Run the following set of commands
 
-3. Go the project directory and run `cmake .`
+```
+git clone https://github.com/dheerajshenoy/imgv.git
+cd imgv
+mkdir build && cd build
+cmake ..
+make
+sudo make install
+```
 
-4. Finally, if all went well, run `make` and copy the binary file inside the bin directory to `/usr/bin` if you want to access the software system-wide.
+These commands do the following things
 
-5. Enjoy...hopefully
-
-One line command (assuming you are inside the project directory)
-
-`qmake6 . && make && sudo cp ./bin/imgv /usr/bin`
+- Clone this repo.
+- Go the project directory make a build directory and run the cmake command to generate the makefile
+- Finally run the make command and also install it system wide
 
 <a name="theming" />
 
