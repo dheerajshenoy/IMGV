@@ -211,8 +211,10 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 # Changelogs and Bug Fixes
 
-- 11 Aug 2024
+- 12 Aug 2024
+    - Rebuild DEB package which was f'ed last time.
 
+- 11 Aug 2024
     - Create Flatpak for imgv
 
 - 09 Aug 2024
