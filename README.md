@@ -82,7 +82,12 @@ IMaGe Viewer ~ IMGV. **Original**.
 
 Check out the [releases](https://github.com/dheerajshenoy/imgv/releases) page for packages.
 
-This software has been built using `Qt v6.7.2`. So, at the time of writing, Ubuntu users are still on Qt v6.4.2 and hence this wont be support until I make a build against that version of Qt (really hectic).
+This software has been built using `Qt v6.7.2`. So, at the time of writing, Ubuntu users are still on Qt v6.4.2 and hence this wont be support until I make a build against that version of Qt (really hectic). There is however Flatpak available.
+
+### FLATPAK
+
+- download the flatpak from the [releases](https://github.com/dheerajshenoy/imgv/releases) page.
+- There are bugs associated with flatpak version of imgv relating to problems loading config files and such. It will be fixed (hopefully) in the future.
 
 ### Arch Linux users
 
