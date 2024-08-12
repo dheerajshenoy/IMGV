@@ -82,7 +82,9 @@ IMaGe Viewer ~ IMGV. **Original**.
 
 Check out the [releases](https://github.com/dheerajshenoy/imgv/releases) page for packages.
 
-This software has been built using `Qt v6.7.2`. So, at the time of writing, Ubuntu users are still on Qt v6.4.2 and hence this wont be support until I make a build against that version of Qt (really hectic). There is however Flatpak available.
+### Ubuntu users
+
+The DEB package has been built using Ubuntu 24.04 base. It should work on most of the modern ubuntu base distro.
 
 ### Arch Linux users
 
@@ -92,7 +94,7 @@ This software has been built using `Qt v6.7.2`. So, at the time of writing, Ubun
 
 - download the pkg.tar.zst file directly from the [releases](https://github.com/dheerajshenoy/imgv/releases) page and install it using `pacman -U <downloaded-file-name>`
 
-## Flatpak
+### Flatpak
 
 Install instruction for your distro can be found [here](https://flatpak.org/setup/)
 
