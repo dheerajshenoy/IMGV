@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.28)
 project(imgv)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
 find_package(WebP REQUIRED)
@@ -6,6 +6,7 @@ find_package(Lua REQUIRED)
 qt_standard_project_setup()
 
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++20")
+set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
 qt_add_executable(${PROJECT_NAME}
@@ -53,8 +54,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
-    ${CMAKE_SOURCE_DIR}/lib/libwebp.a
-    ${CMAKE_SOURCE_DIR}/lib/liblua.a)
+    ${CMAKE_SOURCE_DIR}/lib/liblua.a
+    ${CMAKE_SOURCE_DIR}/lib/libwebp.a)
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
     ${WebP_INCLUDE_DIRS}

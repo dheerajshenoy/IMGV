@@ -1,0 +1,8 @@
+Package: imgv
+Version: 1.2.0
+Maintainer: Dheeraj Vittal Shenoy
+Architecture: all
+Description: Image viewer world never asked for
+Section: utils
+Build-Depends: liblua5.4-dev, libwebp-dev
+Suggests: qt6ct
