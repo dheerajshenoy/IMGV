@@ -213,6 +213,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 - 13 Aug 2024
     - Created new logo
     - Added logo to the AboutDialog
+    - Icons have been removed (looks messy)
 
 - 12 Aug 2024
     - Rebuild DEB package which was f'ed last time.
