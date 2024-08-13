@@ -1,5 +1,7 @@
 # IMGV
 
+![logo](./resources/images/logo.svg)
+
 The Image Viewer no one asked for.
 
 Written in C++.
@@ -210,6 +212,10 @@ Statusbar = {
 Note that if the `keybindings` table is present in the `Defaults` table, then default keybindings will not be loaded.
 
 # Changelogs and Bug Fixes
+
+- 13 Aug 2024
+    - Created new logo
+    - Added logo to the AboutDialog
 
 - 12 Aug 2024
     - Rebuild DEB package which was f'ed last time.

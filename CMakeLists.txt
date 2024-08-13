@@ -50,6 +50,13 @@ qt_add_executable(${PROJECT_NAME}
     src/sol/sol.hpp
 )
 
+qt_add_resources(${PROJECT_NAME}
+    PREFIX "resources"
+    FILES
+        resources/images/logo.svg
+        resources/fonts/ShureTechMono.ttf
+)
+
 qt_add_plugin(qtiff
     STATIC
     MANUAL_FINALIZATION

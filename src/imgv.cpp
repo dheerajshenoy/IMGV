@@ -3,8 +3,9 @@
 IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     : QMainWindow(parent)
 {
-    file__openSession->setIcon(QIcon(":/icons/open-session.svg"));
-    setWindowIcon(QIcon(":/icons/imgv.png"));
+
+    /*file__openSession->setIcon(QIcon(":/icons/open-session.svg"));*/
+    setWindowIcon(QIcon(":/resources/images/logo.svg"));
     // Set up the main widget and layout
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout();
