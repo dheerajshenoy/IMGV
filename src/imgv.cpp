@@ -701,7 +701,7 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         auto file = QString::fromStdString(files[0]);
         if (QFileInfo(file).isDir())
         {
-            auto dirfiles = QDir(file).entryList(QStringList() << "*.pg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
+            auto dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
             for(const auto &f: dirfiles)
                 m_thumbnail_view->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));
             return;

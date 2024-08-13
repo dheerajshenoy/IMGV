@@ -50,6 +50,14 @@ qt_add_executable(${PROJECT_NAME}
     src/sol/sol.hpp
 )
 
+qt_add_plugin(qtiff
+    STATIC
+    MANUAL_FINALIZATION
+    PLUGIN_TYPE imageformats
+)
+
+# qt_add_plugin(${PROJECT_NAME} STATIC ImageFormats MANUAL_FINALIZATION)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Core
     Qt6::Gui
@@ -57,8 +65,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/lib/liblua.a
     ${CMAKE_SOURCE_DIR}/lib/libwebp.a)
 
+
 target_include_directories(${PROJECT_NAME} PRIVATE 
-    ${WebP_INCLUDE_DIRS}
+    ${WebP_INCLUDE_DIR}
     ${LUA_INCLUDE_DIR})
 
 install(TARGETS ${PROJECT_NAME}

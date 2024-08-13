@@ -1,5 +1,4 @@
 #include "ThumbnailModel.hpp"
-
 ThumbnailModel::ThumbnailModel(QObject *parent)
     : QAbstractListModel(parent)
 {

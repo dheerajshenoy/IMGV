@@ -186,7 +186,6 @@ QString ThumbnailView::item(int _index, int role) noexcept
 
 void ThumbnailView::search(QString text) noexcept
 {
-    qDebug() << text;
     m_filter_proxy->setFilterText(text);
 }
 
