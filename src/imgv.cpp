@@ -480,6 +480,10 @@ void IMGV::initKeybinds()
 void IMGV::initConnections()
 {
     connect(m_thumbnail_view, &ThumbnailView::doubleClicked, this, [&](const QModelIndex index) {
+
+        // Don't load the image if already in the current image
+        if (m_thumbnail_view->currentHighlightIndex() == index.row()) return;
+
         const QString text = index.data(Qt::UserRole).toString();
         m_img_widget->loadFile(text);
         m_note_holder->blockSignals(true);

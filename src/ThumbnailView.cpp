@@ -228,3 +228,8 @@ void ThumbnailView::setHighlightIndex(const int row) noexcept
 {
     setCurrentIndex(currentIndex().siblingAtRow(row));
 }
+
+int ThumbnailView::currentHighlightIndex() noexcept
+{
+    return currentIndex().row();
+}

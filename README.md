@@ -52,12 +52,17 @@ IMaGe Viewer ~ IMGV. **Original**.
     Session files allow you to group images together to open it at a later point. *NOTE*: Previously session files were just plain text files, but since the addition of notes features, session files are now stored as json files with the extension .imgv.
    
 5. Image format support
-    1. JPG/JPEG
-    2. PNG
-    3. BMP
-    4. SVG
-    5. GIF
-    6. WEBP
+    1. JPG/JPEG (Joint Photographic Experts Group)
+    2. PNG (Portable Network Graphics)
+    3. BMP (Bitmap)
+    4. SVG (Scalable Vector Graphics)
+    5. GIF (Graphic Interchange Format)
+    6. WEBP (Web Picture Format)
+    7. PBM (Portable Bitmap Read)
+    8. PGM (Portable Graymap Read)
+    9. PPM (Portable Pixmap)
+    10. XBM (X11 Bitmap)
+    11. XPM (X11 Pixmap)
 
 6. Command line arguments support.
     - `-i` or `--input` takes in path to one or more image files of the supported format.

@@ -42,6 +42,7 @@ public:
     const QStringList getAllFiles() noexcept;
     void setCurrentThumbnail(const int index) noexcept;
     void setHighlightIndex(const int row) noexcept;
+    int currentHighlightIndex() noexcept;
 
 signals:
     void fileChangeRequested(QString);
