@@ -320,13 +320,14 @@ void IMGV::initMenu()
         md->open();
     });
 
+    connect(m_pix_analyser, &PixAnalyser::visibilityChanged, this, [&](bool state) { tools__pix_analyser->setChecked(state); });
+
     connect(tools__pix_analyser, &QAction::triggered, this, [&](bool state) {
         if (!m_pix_analyser)
         {
             m_pix_analyser = new PixAnalyser(this);
             m_pix_analyser->setPixmap(m_img_widget->getPixmap());
             m_pix_analyser->show();
-            connect(m_pix_analyser, &PixAnalyser::visibilityChanged, this, [&](bool state) { tools__pix_analyser->setChecked(state); });
             connect(m_img_widget, &ImageWidget::mouseMoved, m_pix_analyser, &PixAnalyser::analysePix);
         } else {
             m_pix_analyser->close();
