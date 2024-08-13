@@ -20,6 +20,7 @@
 #include <QFileInfo>
 #include "MovieItem.hpp"
 #include "utils.hpp"
+#include "PixAnalyser.hpp"
 
 class ImageWidget : public QGraphicsView
 {
@@ -51,11 +52,14 @@ public:
     void moveUp() noexcept;
     void moveDown() noexcept;
     void resetScrollbars() noexcept;
+    void setPixelAnalyser(PixAnalyser *e) noexcept;
+    const QPixmap getPixmap() noexcept;
 
 signals:
     void fileLoaded(QString);
     void droppedImage(QString);
     void fileDim(int, int);
+    void mouseMoved(QPointF);
 
 protected:
     void wheelEvent(QWheelEvent *e) override;
@@ -63,6 +67,7 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent *e) override;
     void dragMoveEvent(QDragMoveEvent *e) override;
     void dropEvent(QDropEvent *e) override;
+    void mouseMoveEvent(QMouseEvent *e) noexcept override;
 
 private:
     QGraphicsScene *m_scene;
@@ -85,6 +90,7 @@ private:
 
     unsigned int m_gif_max_loop_count = 10;
 
+    PixAnalyser *m_pix_analyser = nullptr;
 };
 
 #endif

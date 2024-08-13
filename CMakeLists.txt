@@ -23,6 +23,7 @@ qt_add_executable(${PROJECT_NAME}
     src/NoteWidget.cpp
     src/ImagePropertiesDialog.cpp
     src/ManageSessionsDialog.cpp
+    src/PixAnalyser.cpp
     src/ImageWidget.hpp
     src/imgv.hpp
     src/StatusBar.hpp
@@ -48,6 +49,7 @@ qt_add_executable(${PROJECT_NAME}
     src/qmarkdowntextedit/qownlanguagedata.h
     src/qmarkdowntextedit/qplaintexteditsearchwidget.h
     src/sol/sol.hpp
+    src/PixAnalyser.hpp
 )
 
 qt_add_resources(${PROJECT_NAME}

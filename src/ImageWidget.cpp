@@ -306,3 +306,14 @@ void ImageWidget::resetScrollbars() noexcept
     this->horizontalScrollBar()->setValue(0);
     this->verticalScrollBar()->setValue(0);
 }
+
+void ImageWidget::mouseMoveEvent(QMouseEvent *e) noexcept
+{
+    QGraphicsView::mouseMoveEvent(e);
+    emit mouseMoved(mapToScene(e->pos()));
+}
+
+const QPixmap ImageWidget::getPixmap() noexcept
+{
+    return m_pixmapItem->pixmap();
+}

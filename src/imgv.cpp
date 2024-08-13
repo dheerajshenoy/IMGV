@@ -282,21 +282,35 @@ void IMGV::initMenu()
     viewMenu->addAction(view__maximize_image);
 
     view__maximize_image->setCheckable(true);
-
     view__thumbnails->setCheckable(true);
-
     view__statusbar->setCheckable(true);
-
     view__menubar->setCheckable(true);
-
     view__notes->setCheckable(true);
 
     toolsMenu->addAction(tools__manage_sessions);
+    toolsMenu->addAction(tools__pix_analyser);
+
+    tools__pix_analyser->setCheckable(true);
 
     connect(tools__manage_sessions, &QAction::triggered, this, [&]() {
         ManageSessionsDialog *md = new ManageSessionsDialog(m_sessions_dir_path, this);
         connect(md, &ManageSessionsDialog::openSession, this, [&](QString name) { openSession(name); });
         md->open();
+    });
+
+    connect(tools__pix_analyser, &QAction::triggered, this, [&](bool state) {
+        if (!m_pix_analyser)
+        {
+            m_pix_analyser = new PixAnalyser(this);
+            m_pix_analyser->setPixmap(m_img_widget->getPixmap());
+            m_pix_analyser->show();
+            connect(m_pix_analyser, &PixAnalyser::visibilityChanged, this, [&](bool state) { tools__pix_analyser->setChecked(state); });
+            connect(m_img_widget, &ImageWidget::mouseMoved, m_pix_analyser, &PixAnalyser::analysePix);
+        } else {
+            m_pix_analyser->close();
+            delete m_pix_analyser;
+            m_pix_analyser = nullptr;
+        }
     });
 
     auto session_files = getSessionFiles();

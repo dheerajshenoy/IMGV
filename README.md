@@ -73,6 +73,8 @@ IMaGe Viewer ~ IMGV. **Original**.
 
 ![image](https://github.com/user-attachments/assets/2b575390-0799-4524-9083-5618538c7a7d)
 
+9. Color Picker
+
 <a name="installation" />
 
 # Installation
@@ -214,6 +216,8 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Created new logo
     - Added logo to the AboutDialog
     - Icons have been removed (looks messy)
+    - Minimal color picker has been added
+    - Version 1.3
 
 - 12 Aug 2024
     - Rebuild DEB package which was f'ed last time.

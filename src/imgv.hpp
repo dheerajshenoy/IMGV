@@ -41,6 +41,7 @@
 #include <fstream>
 #include "ManageSessionsDialog.hpp"
 #include "NoteWidget.hpp"
+#include "PixAnalyser.hpp"
 
 class IMGV : public QMainWindow
 {
@@ -122,6 +123,7 @@ private:
     QAction *view__maximize_image = new QAction("Maximize Image");
 
     QAction *tools__manage_sessions = new QAction("Manage Sessions");
+    QAction *tools__pix_analyser = new QAction("Pixel Analyser");
 
     QString m_session_name;
     QString m_session_date;
@@ -135,6 +137,8 @@ private:
     NoteWidget *m_note_holder = new NoteWidget();
     QSplitter *m_right_pane_splitter = new QSplitter(Qt::Orientation::Vertical);
     bool m_auto_notes_popup = false;
+
+    PixAnalyser *m_pix_analyser = nullptr;
 };
 
 
