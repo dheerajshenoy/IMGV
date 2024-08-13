@@ -39,6 +39,7 @@ public:
     void searchMode(bool) noexcept;
     Thumbnail currentThumbnail() noexcept;
     QString getFile(const int index) noexcept;
+    const QStringList getAllFiles() noexcept;
 
 signals:
     void fileChangeRequested(QString);

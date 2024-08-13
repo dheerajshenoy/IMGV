@@ -212,3 +212,8 @@ void ThumbnailView::showProperties() noexcept
     ImagePropertiesDialog *pd = new ImagePropertiesDialog(getFile(currentIndex().row()), this);
     pd->open();
 }
+
+const QStringList ThumbnailView::getAllFiles() noexcept
+{
+    return m_model->getFiles();
+}

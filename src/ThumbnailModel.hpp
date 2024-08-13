@@ -21,6 +21,7 @@ public:
     void removeAt(const int index) noexcept;
     Thumbnail getThumbnail(const int index) noexcept;
     void setNote(const QModelIndex &index, const QString &note) noexcept;
+    QStringList getFiles() noexcept;
 
 private:
     QVector<Thumbnail> m_thumbnails;

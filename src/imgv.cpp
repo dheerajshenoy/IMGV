@@ -60,8 +60,6 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     centralWidget->setContentsMargins(0, 0, 0, 0);
     this->setContentsMargins(0, 0, 0, 0);
 
-    /*m_slideshow_timer->setInterval(2 * 1000);*/
-    /*connect(m_slideshow_timer, &QTimer::timeout, this, &IMGV::slideShow);*/
 
     connect(m_thumbnail_view, &ThumbnailView::fileChangeRequested, m_img_widget, [&](QString filepath) {
         m_img_widget->loadFile(filepath);
@@ -289,8 +287,32 @@ void IMGV::initMenu()
 
     toolsMenu->addAction(tools__manage_sessions);
     toolsMenu->addAction(tools__pix_analyser);
+    toolsMenu->addAction(tools__slideshow);
 
     tools__pix_analyser->setCheckable(true);
+    tools__slideshow->setCheckable(true);
+
+    connect(tools__slideshow, &QAction::triggered, this, [&](bool state) {
+        if (state)
+        {
+            if (!m_slideshow_timer)
+                m_slideshow_timer = new QTimer();
+            m_slideshow_timer->setInterval(2 * 1000);
+            m_slideshow_index = -1;
+            m_slideshow_files = m_thumbnail_view->getAllFiles();
+            connect(m_slideshow_timer, &QTimer::timeout, this, [&]() {
+                slideShow();
+            });
+            m_statusbar->setMsg("Slideshow started", 2);
+        } else {
+            m_slideshow_files.squeeze();
+            /*delete m_slideshow_timer;*/
+            /*m_slideshow_timer = nullptr;*/
+            disconnect(m_slideshow_timer, 0, 0, 0);
+            m_statusbar->setMsg("Stopping Slideshow", 2);
+        }
+        toggleSlideshow();
+    });
 
     connect(tools__manage_sessions, &QAction::triggered, this, [&]() {
         ManageSessionsDialog *md = new ManageSessionsDialog(m_sessions_dir_path, this);
@@ -496,8 +518,21 @@ void IMGV::openImage()
     }
 }
 
-void IMGV::slideShow()
+void IMGV::slideShow() noexcept
 {
+    m_slideshow_index++;
+    if (m_slideshow_index >= m_slideshow_files.length())
+        m_slideshow_index = 0;
+    qDebug() << m_slideshow_files.at(m_slideshow_index);
+    m_img_widget->loadFile(m_slideshow_files.at(m_slideshow_index));
+}
+
+void IMGV::toggleSlideshow() noexcept
+{
+    if (m_slideshow_timer->isActive())
+        m_slideshow_timer->stop();
+    else
+        m_slideshow_timer->start();
 }
 
 QStringList IMGV::getSessionFiles()
@@ -599,7 +634,6 @@ void IMGV::saveSession()
         if (ofs.is_open()) {
             ofs << buffer.GetString();
             ofs.close();
-            qDebug() << "JSON saved to " << sessionName;
         } else {
             qCritical() << "Error opening file for writing.";
         }

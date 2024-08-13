@@ -218,6 +218,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Icons have been removed (looks messy)
     - Minimal color picker has been added
     - Version 1.3
+    - Slideshow
 
 - 12 Aug 2024
     - Rebuild DEB package which was f'ed last time.

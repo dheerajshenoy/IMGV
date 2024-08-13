@@ -31,7 +31,7 @@ Thumbnail::Thumbnail(const QString &fileName, const QString &note) noexcept
     m_note = note;
 }
 
-QString Thumbnail::note() noexcept
+const QString& Thumbnail::note() noexcept
 {
     return m_note;
 }
@@ -41,7 +41,7 @@ QPixmap Thumbnail::pixmap() noexcept
     return m_pix;
 }
 
-QString Thumbnail::filename() noexcept
+const QString& Thumbnail::filename() noexcept
 {
     return m_filename;
 }

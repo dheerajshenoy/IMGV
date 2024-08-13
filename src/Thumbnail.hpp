@@ -15,9 +15,9 @@ public:
 
     void setFilename(const QString &fileName) noexcept;
     void setNote(const QString &note) noexcept;
-    QString note() noexcept;
+    const QString& note() noexcept;
     bool hasNote() noexcept;
-    QString filename() noexcept;
+    const QString& filename() noexcept;
     QPixmap pixmap() noexcept;
 
     enum Data {

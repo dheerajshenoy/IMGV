@@ -57,7 +57,8 @@ private:
     void initConnections();
     void initKeybinds();
     void openImage();
-    void slideShow();
+    void slideShow() noexcept;
+    void toggleSlideshow() noexcept;
     void saveSession();
     void openImageInNewWindow();
     void parseCommandLineArguments(argparse::ArgumentParser &);
@@ -82,7 +83,7 @@ private:
     StatusBar *m_statusbar = new StatusBar();
 
     bool m_slideshow_mode = false;
-    QTimer *m_slideshow_timer;
+    QTimer *m_slideshow_timer = nullptr;
 
     QString m_config_dir_path, m_sessions_dir_path;
     sol::state m_lua_state;
@@ -124,6 +125,7 @@ private:
 
     QAction *tools__manage_sessions = new QAction("Manage Sessions");
     QAction *tools__pix_analyser = new QAction("Pixel Analyser");
+    QAction *tools__slideshow = new QAction("Slideshow");
 
     QString m_session_name;
     QString m_session_date;
@@ -139,6 +141,9 @@ private:
     bool m_auto_notes_popup = false;
 
     PixAnalyser *m_pix_analyser = nullptr;
+
+    int m_slideshow_index = -1;
+    QStringList m_slideshow_files;
 };
 
 

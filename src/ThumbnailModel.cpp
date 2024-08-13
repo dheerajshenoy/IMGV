@@ -55,3 +55,12 @@ void ThumbnailModel::removeAt(const int index) noexcept
 {
     m_thumbnails.removeAt(index);
 }
+
+QStringList ThumbnailModel::getFiles() noexcept
+{
+    QStringList filenames;
+    filenames.resize(m_thumbnails.size());
+    for(int i=0; i < m_thumbnails.size(); i++)
+        filenames[i] = m_thumbnails[i].filename();
+    return filenames;
+}
