@@ -1,14 +1,11 @@
-# IMGV
 
-![logo](./resources/images/logo.svg)
+<p align="center">
+<a href="https://github.com/dheerajshenoy/imgv">
+<img src="./resources/images/logo_with_text.svg" width="500" alt="logo"/>
+</a>
+</p>
 
-The Image Viewer no one asked for.
-
-Written in C++.
-
-Only for **Linux**.
-
-With [features](#features) I like.
+**IMGV**. The Image Viewer no one asked for. Written in C++. Only for **Linux**. With [features](#features) I wanted in my dream image viewer.
 
 # Table of Contents
 
