@@ -112,10 +112,12 @@ void StatusBar::clearTexts() noexcept
 void StatusBar::setMsg(QString msg, int sec) noexcept
 {
     msgLabel->setText(msg);
+    msgLabel->setHidden(false);
     filePathLabel->setHidden(true);
 
     QTimer::singleShot(sec * 1000, [&]() {
         filePathLabel->setHidden(false);
+        msgLabel->setHidden(true);
     });
 }
 

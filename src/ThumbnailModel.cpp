@@ -4,10 +4,11 @@ ThumbnailModel::ThumbnailModel(QObject *parent)
 {
 }
 
-void ThumbnailModel::addThumbnail(const Thumbnail &thumbnail) {
+int ThumbnailModel::addThumbnail(const Thumbnail &thumbnail) {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_thumbnails.append(thumbnail);
     endInsertRows();
+    return m_thumbnails.size();
 }
 
 int ThumbnailModel::rowCount(const QModelIndex &parent) const

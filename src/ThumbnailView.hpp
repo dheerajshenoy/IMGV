@@ -28,7 +28,7 @@ public:
     ThumbnailModel* model() noexcept;
     void createThumbnails(const QStringList &fileNames) noexcept;
     void createThumbnails(const QList<Thumbnail> &thumbnails) noexcept;
-    void addThumbnail(const QString &filename) noexcept;
+    int addThumbnail(const QString &filename) noexcept;
     void loadFile(const QString &path) noexcept;
     void gotoNext() noexcept;
     void gotoPrev() noexcept;
@@ -40,6 +40,8 @@ public:
     Thumbnail currentThumbnail() noexcept;
     QString getFile(const int index) noexcept;
     const QStringList getAllFiles() noexcept;
+    void setCurrentThumbnail(const int index) noexcept;
+    void setHighlightIndex(const int row) noexcept;
 
 signals:
     void fileChangeRequested(QString);

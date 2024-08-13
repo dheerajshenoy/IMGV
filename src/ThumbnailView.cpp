@@ -168,9 +168,9 @@ void ThumbnailView::showEvent(QShowEvent *e) noexcept
     emit visibilityChanged(isVisible());
 }
 
-void ThumbnailView::addThumbnail(const QString &filename) noexcept
+int ThumbnailView::addThumbnail(const QString &filename) noexcept
 {
-    m_model->addThumbnail(filename);
+    return m_model->addThumbnail(filename);
 }
 
 int ThumbnailView::count() noexcept
@@ -216,4 +216,15 @@ void ThumbnailView::showProperties() noexcept
 const QStringList ThumbnailView::getAllFiles() noexcept
 {
     return m_model->getFiles();
+}
+
+void ThumbnailView::setCurrentThumbnail(const int index) noexcept
+{
+
+
+}
+
+void ThumbnailView::setHighlightIndex(const int row) noexcept
+{
+    setCurrentIndex(currentIndex().siblingAtRow(row));
 }

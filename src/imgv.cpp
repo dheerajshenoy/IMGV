@@ -524,7 +524,7 @@ void IMGV::slideShow() noexcept
     m_slideshow_index++;
     if (m_slideshow_index >= m_slideshow_files.length())
         m_slideshow_index = 0;
-    qDebug() << m_slideshow_files.at(m_slideshow_index);
+    m_thumbnail_view->setHighlightIndex(m_slideshow_index);
     m_img_widget->loadFile(m_slideshow_files.at(m_slideshow_index));
 }
 
@@ -845,8 +845,9 @@ void IMGV::openSession(QString &file)
     else
     {
         QMessageBox msgBox;
-        QAbstractButton *thisWindowBtn = msgBox.addButton("This Window", QMessageBox::YesRole);
-        QAbstractButton *newWindowBtn = msgBox.addButton("New Window", QMessageBox::NoRole);
+        QAbstractButton *thisWindowBtn = msgBox.addButton("Take over this rindow", QMessageBox::YesRole);
+        QAbstractButton *newWindowBtn = msgBox.addButton("New window", QMessageBox::NoRole);
+        QAbstractButton *add_to_this_window_btn = msgBox.addButton("Add images to this session", QMessageBox::ApplyRole);
         msgBox.setText("There is already a session open in this window or there are images opened. Do you want to open the session in this window or in a new window ?");
         msgBox.setWindowTitle("Open Session");
         msgBox.exec();
@@ -856,8 +857,14 @@ void IMGV::openSession(QString &file)
             closeSession();
             readSessionFile(file);
         }
-        else
+        else if (msgBox.clickedButton() == newWindowBtn)
+        {
             openSessionInNewWindow(file);
+        }
+        else if (msgBox.clickedButton() == add_to_this_window_btn)
+        {
+            readSessionFile(file);
+        }
     }
 }
 
@@ -895,8 +902,6 @@ void IMGV::ThumbSearchTextChanged(QString text) noexcept
 {
     m_thumbnail_view->search(text);
 }
-
-
 
 void IMGV::toggleNotes() noexcept
 {

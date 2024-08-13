@@ -219,6 +219,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Minimal color picker has been added
     - Version 1.3
     - Slideshow
+    - Highlight current file during slideshow
 
 - 12 Aug 2024
     - Rebuild DEB package which was f'ed last time.
@@ -227,7 +228,6 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Create Flatpak for imgv
 
 - 09 Aug 2024
-
     - Open sessions from Manage Session Dialog
     - Change build system from qmake to cmake
 
