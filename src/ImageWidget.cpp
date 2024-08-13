@@ -1,7 +1,7 @@
 #include "ImageWidget.hpp"
 
 ImageWidget::ImageWidget(QWidget *parent)
-    : QGraphicsView(parent), m_zoomLevel(1.0)
+    : QGraphicsView(parent), m_zoomLevel(0.0)
 {
     m_scene = new QGraphicsScene(this);
     setScene(m_scene);
@@ -32,12 +32,15 @@ void ImageWidget::zoomOriginal() {
     m_zoomLevel = 0;
     m_fit = false;
     setMatrix();
+    emit zoomChanged(m_zoomLevel);
 }
 
 void ImageWidget::zoomIn() {
+    if (m_zoomLevel + m_zoomFactor >= 200) return;
     m_zoomLevel += m_zoomFactor;
     m_fit = false;
     setMatrix();
+    emit zoomChanged(m_zoomLevel);
 }
 
 void ImageWidget::zoomOut() {
@@ -45,6 +48,7 @@ void ImageWidget::zoomOut() {
     m_zoomLevel -= m_zoomFactor;
     m_fit = false;
     setMatrix();
+    emit zoomChanged(m_zoomLevel);
 }
 
 void ImageWidget::updateView()
@@ -93,6 +97,7 @@ void ImageWidget::zoomFit() {
     this->fitInView(m_movieItem, m_aspect_ratio_mode);
 
     m_zoomLevel = int(10.0 * std::log2(scale()));
+    emit zoomChanged(m_zoomLevel);
     m_fit = true;
 
     if (m_aspect_ratio_mode == Qt::KeepAspectRatioByExpanding)

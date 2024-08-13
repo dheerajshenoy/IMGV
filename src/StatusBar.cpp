@@ -9,6 +9,7 @@ StatusBar::StatusBar(QWidget *parent)
     filePathLabel = new QLabel(this);
     fileSizeLabel = new QLabel(this);
     imageDimensionsLabel = new QLabel(this);
+    zoomLabel = new QLabel(this);
 
     msgLabel->setHidden(true);
 
@@ -34,6 +35,7 @@ void StatusBar::defaultLayout() noexcept
     layout->addStretch(1);
     layout->addWidget(hasNoteLabel);
     layout->addWidget(noteModifiedLabel);
+    layout->addWidget(zoomLabel);
     layout->addWidget(fileSizeLabel);
     layout->addWidget(imageDimensionsLabel);
     layout->addWidget(sessionLabel);
@@ -64,6 +66,9 @@ void StatusBar::addWidget(const QString &name) noexcept
 
     if (name == "session")
         layout->addWidget(sessionLabel);
+
+    if (name == "zoom")
+        layout->addWidget(zoomLabel);
 }
 
 void StatusBar::setSessionName(QString sess) noexcept
@@ -171,4 +176,9 @@ void StatusBar::setNoteIndicator(const QString &indicator) noexcept
 void StatusBar::setNoteModifiedIndicator(const QString &indicator) noexcept
 {
     m_note_modified_indicator = indicator;
+}
+
+void StatusBar::setZoom(const QString &zoom) noexcept
+{
+    zoomLabel->setText(zoom + " %");
 }

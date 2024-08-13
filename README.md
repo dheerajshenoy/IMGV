@@ -225,6 +225,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Version 1.3
     - Slideshow
     - Highlight current file during slideshow
+    - Zoom percentage statusbar widget
 
 - 12 Aug 2024
     - Rebuild DEB package which was f'ed last time.

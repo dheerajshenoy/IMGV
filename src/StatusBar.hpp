@@ -29,6 +29,7 @@ public:
     void setSpacing(const int) noexcept;
     void setNoteIndicator(const QString &indicator) noexcept;
     void setNoteModifiedIndicator(const QString &indicator) noexcept;
+    void setZoom(const QString &zoom) noexcept;
 
 signals:
     void visibilityChanged(bool);
@@ -46,6 +47,7 @@ private:
     QLabel *sessionLabel = new QLabel("No Session");
     QLabel *noteModifiedLabel = new QLabel();
     QLabel *hasNoteLabel = new QLabel();
+    QLabel *zoomLabel = new QLabel();
 
     QString formatFileSize(qint64 size) const;
     QString m_note_indicator = "NOTE";

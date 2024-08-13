@@ -44,6 +44,10 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     m_thumbnail_search_edit->setVisible(false);
 
+    connect(m_img_widget, &ImageWidget::zoomChanged, this, [&](qreal zoom) {
+        m_statusbar->setZoom("Zoom: " + QString::number(4 * zoom));
+    });
+
     connect(m_thumbnail_search_edit, &QLineEdit::textChanged, this, &IMGV::ThumbSearchTextChanged);
     connect(m_thumbnail_search_edit, &QLineEdit::returnPressed, this, [&]() {
         m_thumbnail_view->searchMode(false);
@@ -270,8 +274,13 @@ void IMGV::initMenu()
     edit__flip->addAction(flip__horizontal);
     edit__flip->addAction(flip__vertical);
 
+    edit__zoom->addAction(zoom__in);
+    edit__zoom->addAction(zoom__out);
+    edit__zoom->addAction(zoom__reset);
+
     editMenu->addMenu(edit__rotate);
     editMenu->addMenu(edit__flip);
+    editMenu->addMenu(edit__zoom);
 
     viewMenu->addAction(view__thumbnails);
     viewMenu->addAction(view__statusbar);
@@ -291,6 +300,10 @@ void IMGV::initMenu()
 
     tools__pix_analyser->setCheckable(true);
     tools__slideshow->setCheckable(true);
+
+    connect(zoom__in, &QAction::triggered, m_img_widget, &ImageWidget::zoomIn);
+    connect(zoom__out, &QAction::triggered, m_img_widget, &ImageWidget::zoomOut);
+    connect(zoom__reset, &QAction::triggered, m_img_widget, &ImageWidget::zoomOriginal);
 
     connect(tools__slideshow, &QAction::triggered, this, [&](bool state) {
         if (state)

@@ -60,6 +60,7 @@ signals:
     void droppedImage(QString);
     void fileDim(int, int);
     void mouseMoved(QPointF);
+    void zoomChanged(qreal);
 
 protected:
     void wheelEvent(QWheelEvent *e) override;
