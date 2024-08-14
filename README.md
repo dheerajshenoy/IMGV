@@ -163,6 +163,8 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Remove highlight after removing image from thumbnail
     - Resize thumbnailview scrollbar after removing images
     - Added more lua configuration options
+    - Fit on load option
+    - Hover label for file path
 
 - 13 Aug 2024
     - Created new logo

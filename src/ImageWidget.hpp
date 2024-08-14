@@ -60,6 +60,10 @@ public:
     void setPixAnalyseMode(const bool state) noexcept;
     const QRectF visibleRect();
     void setVisibleRectFromMinimap(const QRectF rect) noexcept;
+    void setZoomFactor(const qreal zoom) noexcept;
+    void setHorizontalScrollFactor(const qreal factor) noexcept;
+    void setVerticalScrollFactor(const qreal factor) noexcept;
+    void setFitImageOnLoad(const bool fit) noexcept;
 
 signals:
     void fileLoaded(QString);
@@ -86,6 +90,7 @@ private:
     MovieItem *m_movieItem = nullptr;
     qreal m_zoomLevel = 1.0f, m_zoomFactor = 2.0f;
     qreal m_rotate = 0.0f;
+    qreal m_horizontal_scroll_factor = 20.0, m_vertical_scroll_factor = 20.0;
     void updateView();
     void GifLoopHandler(int frameNumber);
     qreal scale() const;
@@ -98,6 +103,7 @@ private:
     PixAnalyser *m_pix_analyser = nullptr;
     bool m_pix_analyse_mode = false, m_minimap_mode = false;
     bool m_panning = false;
+    bool m_fit_image_on_load = true;
 };
 
 #endif

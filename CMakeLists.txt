@@ -26,6 +26,7 @@ qt_add_executable(${PROJECT_NAME}
     src/PixAnalyser.cpp
     src/Minimap.cpp
     src/MinimapRect.cpp
+    src/HoverLabel.cpp
 
     src/ImageWidget.hpp
     src/imgv.hpp
@@ -55,6 +56,7 @@ qt_add_executable(${PROJECT_NAME}
     src/PixAnalyser.hpp
     src/Minimap.hpp
     src/MinimapRect.hpp
+    src/HoverLabel.hpp
 )
 
 qt_add_resources(${PROJECT_NAME}

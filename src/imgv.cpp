@@ -132,9 +132,21 @@ void IMGV::initConfigDirectory()
     if (defaults_table_exist)
     {
         sol::table defaults_table = defaults_table_exist.value();
-
         m_menuBar->setVisible(defaults_table["menubar"].get_or(true));
+        m_img_widget->setZoomFactor(defaults_table["zoom_factor"].get_or(2.0));
+        auto fit_on_load = defaults_table["fit_on_load"].get_or(false);
 
+        m_img_widget->setFitImageOnLoad(fit_on_load);
+        edit__fit_on_load->setChecked(fit_on_load);
+
+        sol::optional<sol::table> scroll_factor_table_optional = defaults_table["scroll_factor"];
+
+        if (scroll_factor_table_optional)
+        {
+            sol::table scroll_factor_table = scroll_factor_table_optional.value();
+            m_img_widget->setHorizontalScrollFactor(scroll_factor_table["horizontal"].get_or(20.0));
+            m_img_widget->setVerticalScrollFactor(scroll_factor_table["vertical"].get_or(20.0));
+        }
 
         // Thumbnails Table
         sol::optional<sol::table> thumbnails_table_exist = defaults_table["thumbnails"];
@@ -210,9 +222,7 @@ void IMGV::initConfigDirectory()
         m_img_widget->setScrollBarsVisibility(defaults_table["scrollbars"].get_or(true));
 
         if(defaults_table["start_in_minimal_mode"].get_or(false))
-        {
             maximizeImage();
-        }
 
         // keybindings table
         sol::optional<sol::table> keybindings_table_exist = defaults_table["keybindings"];
@@ -375,6 +385,9 @@ void IMGV::initMenu()
     editMenu->addMenu(edit__rotate);
     editMenu->addMenu(edit__flip);
     editMenu->addMenu(edit__zoom);
+    editMenu->addAction(edit__fit_on_load);
+
+    edit__fit_on_load->setCheckable(true);
 
     viewMenu->addAction(view__minimap);
     viewMenu->addAction(view__thumbnails);
@@ -396,6 +409,10 @@ void IMGV::initMenu()
 
     tools__pix_analyser->setCheckable(true);
     tools__slideshow->setCheckable(true);
+
+    connect(edit__fit_on_load, &QAction::triggered, [&](bool state) {
+        m_img_widget->setFitImageOnLoad(state);
+    });
 
     connect(zoom__in, &QAction::triggered, m_img_widget, &ImageWidget::zoomIn);
     connect(zoom__out, &QAction::triggered, m_img_widget, &ImageWidget::zoomOut);
@@ -512,9 +529,9 @@ void IMGV::initMenu()
         else
         {
             m_img_widget->setMinimapMode(false);
-            m_minimap->setVisible(false);
-            disconnect(m_minimap, 0, 0, 0);
+            disconnect(m_img_widget, &ImageWidget::getRegion, m_minimap, &Minimap::updateRect);
         }
+        m_minimap->setVisible(state);
     });
 
     connect(tools__pix_analyser, &QAction::triggered, this, [&](bool state) {
@@ -608,7 +625,7 @@ void IMGV::initKeybinds()
     });
 
     connect(kb_thumbnail_panel, &QShortcut::activated, this, [&]() {
-        m_thumbnail_view->setVisible(!m_thumbnail_view->isVisible());
+        m_left_pane->setVisible(!m_left_pane->isVisible());
     });
 
     connect(kb_goto_next, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoNext);
@@ -956,21 +973,14 @@ void IMGV::fullScreen()
 void IMGV::maximizeImage()
 {
     m_image_maximize_mode = !m_image_maximize_mode;
-    if (m_image_maximize_mode)
-    {
-        m_thumbnail_view->setVisible(false);
-        m_menuBar->setVisible(false);
-        m_statusbar->setVisible(false);
-        m_img_widget->setScrollBarsVisibility(false);
-        view__maximize_image->setChecked(true);
-    }
-    else {
-        m_thumbnail_view->setVisible(true);
-        m_menuBar->setVisible(true);
-        m_statusbar->setVisible(true);
-        m_img_widget->setScrollBarsVisibility(true);
-        view__maximize_image->setChecked(false);
-    }
+
+    m_left_pane->setVisible(!m_image_maximize_mode);
+    m_menuBar->setVisible(!m_image_maximize_mode);
+    m_statusbar->setVisible(!m_image_maximize_mode);
+    if (m_minimap)
+        m_minimap->setVisible(!m_image_maximize_mode);
+    m_img_widget->setScrollBarsVisibility(!m_image_maximize_mode);
+    view__maximize_image->setChecked(m_image_maximize_mode);
 }
 
 
@@ -997,7 +1007,8 @@ void IMGV::openSession(QString &file)
         QAbstractButton *thisWindowBtn = msgBox.addButton("Take over this rindow", QMessageBox::YesRole);
         QAbstractButton *newWindowBtn = msgBox.addButton("New window", QMessageBox::NoRole);
         QAbstractButton *add_to_this_window_btn = msgBox.addButton("Add images to this session", QMessageBox::ApplyRole);
-        msgBox.setText("There is already a session open in this window or there are images opened. Do you want to open the session in this window or in a new window ?");
+        QAbstractButton *cancel_btn = msgBox.addButton("Cancel Action", QMessageBox::RejectRole);
+        msgBox.setText("There is already a session open in this window or there are images opened. What do you want to do?");
         msgBox.setWindowTitle("Open Session");
         msgBox.exec();
 
@@ -1013,6 +1024,10 @@ void IMGV::openSession(QString &file)
         else if (msgBox.clickedButton() == add_to_this_window_btn)
         {
             readSessionFile(file);
+        }
+        else if (msgBox.clickedButton() == cancel_btn)
+        {
+            return;
         }
     }
 }

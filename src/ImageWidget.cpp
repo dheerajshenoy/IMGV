@@ -44,7 +44,8 @@ void ImageWidget::zoomOriginal() {
     emit zoomChanged(m_zoomLevel);
 
     /*emit getRegion(visibleRect(), m_scene->sceneRect());*/
-    emit getRegion(mapToScene(viewport()->rect()).boundingRect());
+    if (m_minimap_mode)
+        emit getRegion(mapToScene(viewport()->rect()).boundingRect());
 }
 
 void ImageWidget::zoomIn() {
@@ -53,8 +54,8 @@ void ImageWidget::zoomIn() {
     m_fit = false;
     setMatrix();
     emit zoomChanged(m_zoomLevel);
-    /*emit getRegion(visibleRect(), m_scene->sceneRect());*/
-    emit getRegion(mapToScene(viewport()->rect()).boundingRect());
+    if (m_minimap_mode)
+        emit getRegion(mapToScene(viewport()->rect()).boundingRect());
 }
 
 void ImageWidget::zoomOut() {
@@ -63,8 +64,8 @@ void ImageWidget::zoomOut() {
     m_fit = false;
     setMatrix();
     emit zoomChanged(m_zoomLevel);
-    /*emit getRegion(visibleRect(), m_scene->sceneRect());*/
-    emit getRegion(mapToScene(viewport()->rect()).boundingRect());
+    if (m_minimap_mode)
+        emit getRegion(mapToScene(viewport()->rect()).boundingRect());
 }
 
 void ImageWidget::updateView()
@@ -114,8 +115,9 @@ void ImageWidget::zoomFit() {
 
     m_zoomLevel = int(10.0 * std::log2(scale()));
     emit zoomChanged(m_zoomLevel);
-    /*emit getRegion(visibleRect(), m_scene->sceneRect());*/
-    emit getRegion(mapToScene(viewport()->rect()).boundingRect());
+
+    if (m_minimap_mode)
+        emit getRegion(mapToScene(viewport()->rect()).boundingRect());
     m_fit = true;
 
     if (m_aspect_ratio_mode == Qt::KeepAspectRatioByExpanding)
@@ -163,7 +165,9 @@ void ImageWidget::loadFile(QString file)
     }
     emit fileLoaded(file);
     emit fileDim(w, h);
-    fitToWindow();
+
+    if (m_fit_image_on_load)
+        fitToWindow();
 }
 
 void ImageWidget::loadPixmap(QPixmap &pix)
@@ -301,27 +305,27 @@ void ImageWidget::closeFile()
 void ImageWidget::moveLeft() noexcept
 {
     auto scrollbar = this->horizontalScrollBar();
-    scrollbar->setValue(scrollbar->value() - 20);
+    scrollbar->setValue(scrollbar->value() - m_horizontal_scroll_factor);
 }
 
 
 void ImageWidget::moveDown() noexcept
 {
     auto scrollbar = this->verticalScrollBar();
-    scrollbar->setValue(scrollbar->value() + 20);
+    scrollbar->setValue(scrollbar->value() + m_horizontal_scroll_factor);
 }
 
 
 void ImageWidget::moveUp() noexcept
 {
     auto scrollbar = this->verticalScrollBar();
-    scrollbar->setValue(scrollbar->value() - 20);
+    scrollbar->setValue(scrollbar->value() - m_horizontal_scroll_factor);
 }
 
 void ImageWidget::moveRight() noexcept
 {
     auto scrollbar = this->horizontalScrollBar();
-    scrollbar->setValue(scrollbar->value() + 20);
+    scrollbar->setValue(scrollbar->value() + m_vertical_scroll_factor);
 }
 
 void ImageWidget::resetScrollbars() noexcept
@@ -338,7 +342,6 @@ void ImageWidget::mouseMoveEvent(QMouseEvent *e) noexcept
         emit mouseMoved(mapToScene(e->pos()));
         this->viewport()->setCursor(Qt::CrossCursor);
     }
-    /*emit getRegion(visibleRect(), m_scene->sceneRect());*/
 
     if (m_minimap_mode && m_panning)
         emit getRegion(mapToScene(viewport()->rect()).boundingRect());
@@ -385,4 +388,24 @@ void ImageWidget::setPixAnalyseMode(const bool state) noexcept
         this->viewport()->setCursor(Qt::CrossCursor);
     else
         this->viewport()->setCursor(Qt::OpenHandCursor);
+}
+
+void ImageWidget::setHorizontalScrollFactor(const qreal factor) noexcept
+{
+    m_horizontal_scroll_factor = factor;
+}
+
+void ImageWidget::setVerticalScrollFactor(const qreal factor) noexcept
+{
+    m_vertical_scroll_factor = factor;
+}
+
+void ImageWidget::setZoomFactor(const qreal zoom) noexcept
+{
+    m_zoomFactor = zoom;
+}
+
+void ImageWidget::setFitImageOnLoad(const bool fit) noexcept
+{
+    m_fit_image_on_load = fit;
 }

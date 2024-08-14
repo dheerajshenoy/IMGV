@@ -3,17 +3,18 @@
 StatusBar::StatusBar(QWidget *parent)
     : QWidget(parent)
 {
-    layout = new QHBoxLayout(this);
-    msgLabel = new QLabel(this);
-    filePathLabel = new QLabel(this);
-    fileSizeLabel = new QLabel(this);
-    imageDimensionsLabel = new QLabel(this);
-    zoomLabel = new QLabel(this);
+    layout = new QHBoxLayout();
+    msgLabel = new QLabel();
+    filePathLabel = new QLabel();
+    fileSizeLabel = new QLabel();
+    imageDimensionsLabel = new QLabel();
+    zoomLabel = new QLabel();
     msgLabel->setHidden(true);
     noteModifiedLabel->setVisible(false);
     filePathLabel->setToolTip("File path of the current Image");
     hasNoteLabel->setToolTip("This file has a note associated with it. Press the note key to open");
     noteModifiedLabel->setToolTip("Note has unsaved changes. Switching to other image will delete the unsaved changes");
+    hoverFilePathLabel->setToolTip("File path of the current Image");
     sessionLabel->setToolTip("Current session");
     layout->setContentsMargins(2, 2, 2, 2);
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
@@ -25,7 +26,7 @@ void StatusBar::defaultLayout() noexcept
 {
     layout->setSpacing(10);
     layout->addWidget(msgLabel);
-    layout->addWidget(filePathLabel);
+    layout->addWidget(hoverFilePathLabel);
     layout->addStretch(1);
     layout->addWidget(hasNoteLabel);
     layout->addWidget(noteModifiedLabel);
@@ -63,6 +64,9 @@ void StatusBar::addWidget(const QString &name) noexcept
 
     if (name == "zoom")
         layout->addWidget(zoomLabel);
+
+    if (name == "path-hover")
+        layout->addWidget(hoverFilePathLabel);
 }
 
 void StatusBar::setSessionName(QString sess) noexcept
@@ -78,13 +82,16 @@ void StatusBar::updateFileInfo(const QString &filePath)
         // Update file path
         filePathLabel->setText(filePath);
 
+        hoverFilePathLabel->setFullText(filePath);
+        hoverFilePathLabel->setShowText(fileInfo.baseName());
+
         // Update file size
-        qint64 fileSize = fileInfo.size();
         QLocale locale;
-        fileSizeLabel->setText(QString("Size: %1").arg(locale.formattedDataSize(fileSize)));
+        fileSizeLabel->setText(QString("Size: %1").arg(locale.formattedDataSize(fileInfo.size())));
 
     } else {
         filePathLabel->setText("N/A");
+        hoverFilePathLabel->clear();
         fileSizeLabel->setText("Size: N/A");
     }
 }
@@ -104,6 +111,7 @@ void StatusBar::clearTexts() noexcept
 {
     this->sessionLabel->clear();
     this->filePathLabel->clear();
+    this->hoverFilePathLabel->clear();
     this->fileSizeLabel->clear();
     this->imageDimensionsLabel->clear();
 }
@@ -113,9 +121,11 @@ void StatusBar::setMsg(QString msg, int sec) noexcept
     msgLabel->setText(msg);
     msgLabel->setHidden(false);
     filePathLabel->setHidden(true);
+    hoverFilePathLabel->setHidden(true);
 
     QTimer::singleShot(sec * 1000, [&]() {
         filePathLabel->setHidden(false);
+        hoverFilePathLabel->setHidden(false);
         msgLabel->setHidden(true);
     });
 }

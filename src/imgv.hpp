@@ -111,6 +111,7 @@ private:
     QMenu *edit__zoom = new QMenu("Zoom");
     QMenu *edit__rotate = new QMenu("Rotate");
     QMenu *edit__flip = new QMenu("Flip");
+    QAction *edit__fit_on_load = new QAction("Fit on Load");
 
     QAction *zoom__in = new QAction("Zoom In");
     QAction *zoom__out = new QAction("Zoom Out");

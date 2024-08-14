@@ -9,6 +9,7 @@
 #include <QPixmap>
 #include <QShowEvent>
 #include <QHideEvent>
+#include "HoverLabel.hpp"
 
 class StatusBar : public QWidget
 {
@@ -48,6 +49,7 @@ private:
     QLabel *noteModifiedLabel = new QLabel();
     QLabel *hasNoteLabel = new QLabel();
     QLabel *zoomLabel = new QLabel();
+    HoverLabel *hoverFilePathLabel = new HoverLabel();
 
     QString formatFileSize(qint64 size) const;
     QString m_note_indicator = "NOTE";
