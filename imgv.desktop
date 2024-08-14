@@ -9,4 +9,4 @@ Keywords=Image;Viewer;
 Icon=imgv
 Categories=Utility;ImageViewer;
 StartupNotify=false
-MimeType=image/jpeg;image/png;image/svg+xml;image/webp;image/bmp;image/gif;
+MimeType=image/jpeg;image/png;image/svg+xml;image/webp;image/bmp;image/gif;image/x-xbitmap;image/x-xpixmap;image/x-portable-pixmap;image/x-portable-bitmap;image/x-portable-graymap;
