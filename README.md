@@ -23,7 +23,8 @@
 
 # Screenshots
 
-![commandline-arguments](https://github.com/user-attachments/assets/f2f912e8-a50b-45fd-b574-bc77c4b80f6a)
+![commandline-arguments](https://github.com/user-attachments/assets/f015132f-86b4-4977-a3f7-6fc11d0efcf4)
+
 
 ![image](https://github.com/user-attachments/assets/c5f42acb-0760-45e7-a41d-11fac2570c41)
 
