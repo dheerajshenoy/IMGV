@@ -4,25 +4,19 @@ StatusBar::StatusBar(QWidget *parent)
     : QWidget(parent)
 {
     layout = new QHBoxLayout(this);
-
     msgLabel = new QLabel(this);
     filePathLabel = new QLabel(this);
     fileSizeLabel = new QLabel(this);
     imageDimensionsLabel = new QLabel(this);
     zoomLabel = new QLabel(this);
-
     msgLabel->setHidden(true);
-
     noteModifiedLabel->setVisible(false);
-
     filePathLabel->setToolTip("File path of the current Image");
     hasNoteLabel->setToolTip("This file has a note associated with it. Press the note key to open");
     noteModifiedLabel->setToolTip("Note has unsaved changes. Switching to other image will delete the unsaved changes");
     sessionLabel->setToolTip("Current session");
-
     layout->setContentsMargins(2, 2, 2, 2);
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
-
 
     setLayout(layout);
 }

@@ -24,6 +24,9 @@ qt_add_executable(${PROJECT_NAME}
     src/ImagePropertiesDialog.cpp
     src/ManageSessionsDialog.cpp
     src/PixAnalyser.cpp
+    src/Minimap.cpp
+    src/MinimapRect.cpp
+
     src/ImageWidget.hpp
     src/imgv.hpp
     src/StatusBar.hpp
@@ -50,6 +53,8 @@ qt_add_executable(${PROJECT_NAME}
     src/qmarkdowntextedit/qplaintexteditsearchwidget.h
     src/sol/sol.hpp
     src/PixAnalyser.hpp
+    src/Minimap.hpp
+    src/MinimapRect.hpp
 )
 
 qt_add_resources(${PROJECT_NAME}

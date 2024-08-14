@@ -80,7 +80,10 @@ IMaGe Viewer ~ IMGV. **Original**.
 
 9. Color Picker
 
+10. Minimap
+
 <a name="installation" />
+
 
 # Installation
 
@@ -216,6 +219,9 @@ Statusbar = {
 Note that if the `keybindings` table is present in the `Defaults` table, then default keybindings will not be loaded.
 
 # Changelogs and Bug Fixes
+
+- 14 Aug 2024
+    - Minimap
 
 - 13 Aug 2024
     - Created new logo

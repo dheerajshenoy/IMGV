@@ -42,6 +42,7 @@
 #include "ManageSessionsDialog.hpp"
 #include "NoteWidget.hpp"
 #include "PixAnalyser.hpp"
+#include "Minimap.hpp"
 
 class IMGV : public QMainWindow
 {
@@ -122,6 +123,7 @@ private:
     QAction *rotate__custom = new QAction("Custom");
     QAction *rotate__reset = new QAction("Reset");
 
+    QAction *view__minimap = new QAction("Minimap");
     QAction *view__thumbnails = new QAction("Thumbnail Panel");
     QAction *view__statusbar = new QAction("Statusbar");
     QAction *view__menubar = new QAction("Menubar");
@@ -140,6 +142,8 @@ private:
     QLineEdit *m_thumbnail_search_edit = new QLineEdit();
 
     QWidget *m_right_pane = new QWidget();
+    QWidget *m_left_pane = new QWidget();
+    QVBoxLayout *m_left_pane_layout = new QVBoxLayout();
     QVBoxLayout *m_right_pane_layout = new QVBoxLayout();
     NoteWidget *m_note_holder = new NoteWidget();
     QSplitter *m_right_pane_splitter = new QSplitter(Qt::Orientation::Vertical);
@@ -149,6 +153,8 @@ private:
 
     int m_slideshow_index = -1;
     QStringList m_slideshow_files;
+
+    Minimap *m_minimap = nullptr;
 };
 
 

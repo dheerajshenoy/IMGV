@@ -6,14 +6,23 @@ ImageWidget::ImageWidget(QWidget *parent)
     m_scene = new QGraphicsScene(this);
     setScene(m_scene);
 
+    // For normal images
     m_pixmapItem = new QGraphicsPixmapItem;
+
+    QPointF bottomLeftInView = this->viewport()->rect().bottomLeft();
+    QPointF bottomLeftCornerInScene = this->mapToScene(bottomLeftInView.toPoint());
+    // For animated gifs
     m_movieItem = new MovieItem;
+
     m_scene->addItem(m_pixmapItem);
     m_scene->addItem(m_movieItem);
+
     m_movie = new QMovie;
     connect(m_movie, &QMovie::frameChanged, this, &ImageWidget::GifLoopHandler);
-    m_movie->setCacheMode(QMovie::CacheMode::CacheAll);
     m_movieItem->setMovie(m_movie);
+    /*m_movie->setCacheMode(QMovie::CacheMode::CacheAll);*/
+    /*m_pixmapItem->setCacheMode(QGraphicsPixmapItem::CacheMode::ItemCoordinateCache);*/
+    /*m_movieItem->setCacheMode(QGraphicsPixmapItem::CacheMode::ItemCoordinateCache);*/
 
     setRenderHint(QPainter::Antialiasing, false);
     setDragMode(QGraphicsView::ScrollHandDrag);
@@ -33,6 +42,9 @@ void ImageWidget::zoomOriginal() {
     m_fit = false;
     setMatrix();
     emit zoomChanged(m_zoomLevel);
+
+    /*emit getRegion(visibleRect(), m_scene->sceneRect());*/
+    emit getRegion(mapToScene(viewport()->rect()).boundingRect());
 }
 
 void ImageWidget::zoomIn() {
@@ -41,6 +53,8 @@ void ImageWidget::zoomIn() {
     m_fit = false;
     setMatrix();
     emit zoomChanged(m_zoomLevel);
+    /*emit getRegion(visibleRect(), m_scene->sceneRect());*/
+    emit getRegion(mapToScene(viewport()->rect()).boundingRect());
 }
 
 void ImageWidget::zoomOut() {
@@ -49,6 +63,8 @@ void ImageWidget::zoomOut() {
     m_fit = false;
     setMatrix();
     emit zoomChanged(m_zoomLevel);
+    /*emit getRegion(visibleRect(), m_scene->sceneRect());*/
+    emit getRegion(mapToScene(viewport()->rect()).boundingRect());
 }
 
 void ImageWidget::updateView()
@@ -98,6 +114,8 @@ void ImageWidget::zoomFit() {
 
     m_zoomLevel = int(10.0 * std::log2(scale()));
     emit zoomChanged(m_zoomLevel);
+    /*emit getRegion(visibleRect(), m_scene->sceneRect());*/
+    emit getRegion(mapToScene(viewport()->rect()).boundingRect());
     m_fit = true;
 
     if (m_aspect_ratio_mode == Qt::KeepAspectRatioByExpanding)
@@ -140,6 +158,7 @@ void ImageWidget::loadFile(QString file)
         }
         w = pix.width(); h = pix.height();
         m_pixmapItem->setPixmap(pix);
+
         m_scene->setSceneRect(m_pixmapItem->boundingRect());
     }
     emit fileLoaded(file);
@@ -314,10 +333,48 @@ void ImageWidget::resetScrollbars() noexcept
 void ImageWidget::mouseMoveEvent(QMouseEvent *e) noexcept
 {
     QGraphicsView::mouseMoveEvent(e);
-    emit mouseMoved(mapToScene(e->pos()));
+    if (m_pix_analyse_mode)
+        emit mouseMoved(mapToScene(e->pos()));
+    /*emit getRegion(visibleRect(), m_scene->sceneRect());*/
+    if (m_minimap_mode && m_panning)
+        emit getRegion(mapToScene(viewport()->rect()).boundingRect());
+}
+
+void ImageWidget::mousePressEvent(QMouseEvent *e) noexcept
+{
+    m_panning = true;
+    QGraphicsView::mousePressEvent(e);
+}
+
+void ImageWidget::mouseReleaseEvent(QMouseEvent *e) noexcept
+{
+    m_panning = false;
+    QGraphicsView::mouseReleaseEvent(e);
 }
 
 const QPixmap ImageWidget::getPixmap() noexcept
 {
     return m_pixmapItem->pixmap();
+}
+
+
+void ImageWidget::resizeEvent(QResizeEvent *e) noexcept
+{
+    QGraphicsView::resizeEvent(e);
+}
+
+const QRectF ImageWidget::visibleRect() {
+    const QRect viewportRect(QPoint(horizontalScrollBar()->value(), verticalScrollBar()->value()), viewport()->size());
+    const auto mat = transform().inverted();
+    return mat.mapRect(viewportRect);
+}
+
+void ImageWidget::setMinimapMode(const bool state) noexcept
+{
+    m_minimap_mode = state;
+}
+
+void ImageWidget::setPixAnalyseMode(const bool state) noexcept
+{
+    m_pix_analyse_mode = state;
 }

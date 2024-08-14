@@ -4,6 +4,8 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     : QMainWindow(parent)
 {
 
+    // 50 MB cache limit
+    /*QPixmapCache::setCacheLimit(10240 * 5);*/
     /*file__openSession->setIcon(QIcon(":/icons/open-session.svg"));*/
     setWindowIcon(QIcon(":/resources/images/logo.svg"));
     // Set up the main widget and layout
@@ -25,10 +27,15 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     m_note_holder->setVisible(false);
 
     splitter->setHandleWidth(0);
+    splitter->addWidget(m_left_pane);
 
-    splitter->addWidget(m_thumbnail_view);
+    m_left_pane_layout = new QVBoxLayout();
+    m_left_pane->setLayout(m_left_pane_layout);
+
+    m_left_pane_layout->addWidget(m_thumbnail_view);
     m_right_pane->setLayout(m_right_pane_layout);
 
+    m_left_pane_layout->setContentsMargins(0, 0, 0, 0);
     m_right_pane_layout->setContentsMargins(0, 0, 0, 0);
 
     m_right_pane_splitter->addWidget(m_img_widget);
@@ -40,9 +47,9 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     m_right_pane_splitter->setStretchFactor(0, 1);
     m_right_pane_layout->addWidget(m_right_pane_splitter);
-    splitter->addWidget(m_right_pane);
 
     m_thumbnail_search_edit->setVisible(false);
+    splitter->addWidget(m_right_pane);
 
     connect(m_img_widget, &ImageWidget::zoomChanged, this, [&](qreal zoom) {
         m_statusbar->setZoom("Zoom: " + QString::number(4 * zoom));
@@ -282,6 +289,7 @@ void IMGV::initMenu()
     editMenu->addMenu(edit__flip);
     editMenu->addMenu(edit__zoom);
 
+    viewMenu->addAction(view__minimap);
     viewMenu->addAction(view__thumbnails);
     viewMenu->addAction(view__statusbar);
     viewMenu->addAction(view__menubar);
@@ -293,6 +301,7 @@ void IMGV::initMenu()
     view__statusbar->setCheckable(true);
     view__menubar->setCheckable(true);
     view__notes->setCheckable(true);
+    view__minimap->setCheckable(true);
 
     toolsMenu->addAction(tools__manage_sessions);
     toolsMenu->addAction(tools__pix_analyser);
@@ -338,14 +347,17 @@ void IMGV::initMenu()
     connect(tools__pix_analyser, &QAction::triggered, this, [&](bool state) {
         if (!m_pix_analyser)
         {
+            m_img_widget->setPixAnalyseMode(true);
             m_pix_analyser = new PixAnalyser(this);
             m_pix_analyser->setPixmap(m_img_widget->getPixmap());
             m_pix_analyser->show();
             connect(m_img_widget, &ImageWidget::mouseMoved, m_pix_analyser, &PixAnalyser::analysePix);
         } else {
+            m_img_widget->setPixAnalyseMode(false);
             m_pix_analyser->close();
             delete m_pix_analyser;
             m_pix_analyser = nullptr;
+            disconnect(m_img_widget, &ImageWidget::mouseMoved, m_pix_analyser, &PixAnalyser::analysePix);
         }
     });
 
@@ -406,6 +418,29 @@ void IMGV::initMenu()
 
     connect(rotate__reset, &QAction::triggered, m_img_widget, [&]() {
         m_img_widget->resetRotation();
+    });
+
+    connect(view__minimap, &QAction::triggered, this, [&](bool state) {
+        if (state)
+        {
+            m_img_widget->setMinimapMode(true);
+            if (!m_minimap)
+            {
+                m_minimap = new Minimap();
+                m_minimap->setPixmap(m_img_widget->getPixmap());
+                m_left_pane_layout->addWidget(m_minimap);
+                m_minimap->setMainPixmapBoundingRect(m_img_widget->getPixmap().rect());
+                connect(m_img_widget, &ImageWidget::getRegion, m_minimap, &Minimap::updateRect);
+            }
+            else
+                connect(m_img_widget, &ImageWidget::getRegion, m_minimap, &Minimap::updateRect);
+        }
+        else
+        {
+            m_img_widget->setMinimapMode(false);
+            m_minimap->setVisible(false);
+            disconnect(m_minimap, 0, 0, 0);
+        }
     });
 
     connect(view__thumbnails, &QAction::triggered, this, [&](bool state) {
@@ -495,7 +530,7 @@ void IMGV::initConnections()
     connect(m_thumbnail_view, &ThumbnailView::doubleClicked, this, [&](const QModelIndex index) {
 
         // Don't load the image if already in the current image
-        if (m_thumbnail_view->currentHighlightIndex() == index.row()) return;
+        //TODO: /*if (m_thumbnail_view->currentThumbnail().filename() == text) return;*/
 
         const QString text = index.data(Qt::UserRole).toString();
         m_img_widget->loadFile(text);
