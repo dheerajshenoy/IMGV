@@ -1,5 +1,4 @@
 -- This is the config file for IMGV
--- Check out the documentation for more information about configuring IMGV
 
 Defaults = {
     menubar = true,
