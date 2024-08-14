@@ -54,7 +54,15 @@ void ThumbnailModel::clear() noexcept
 
 void ThumbnailModel::removeAt(const int index) noexcept
 {
-    m_thumbnails.removeAt(index);
+    m_thumbnails.remove(index);
+}
+
+void ThumbnailModel::removeIndexes(const QList<QModelIndex> &indexes) noexcept
+{
+    beginRemoveRows(QModelIndex(), rowCount(), rowCount());
+    for(int i=indexes.size() - 1; i >= 0; i--)
+        this->removeAt(indexes.at(i).row());
+    endRemoveRows();
 }
 
 QStringList ThumbnailModel::getFiles() noexcept
@@ -65,3 +73,5 @@ QStringList ThumbnailModel::getFiles() noexcept
         filenames[i] = m_thumbnails[i].filename();
     return filenames;
 }
+
+

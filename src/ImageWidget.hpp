@@ -1,6 +1,7 @@
 #ifndef IMAGE_WIDGET_HPP
 #define IMAGE_WIDGET_HPP
 
+#include <QCursor>
 #include <QGraphicsView>
 #include <QScrollBar>
 #include <QGraphicsScene>

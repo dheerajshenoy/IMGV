@@ -128,15 +128,82 @@ void IMGV::initConfigDirectory()
         return;
     }
 
-
     sol::optional<sol::object> defaults_table_exist = m_lua_state["Defaults"];
     if (defaults_table_exist)
     {
         sol::table defaults_table = defaults_table_exist.value();
 
-        m_statusbar->setVisible(defaults_table["statusbar"].get_or(true));
         m_menuBar->setVisible(defaults_table["menubar"].get_or(true));
-        m_thumbnail_view->setVisible(defaults_table["thumbnail_panel"].get_or(true));
+
+
+        // Thumbnails Table
+        sol::optional<sol::table> thumbnails_table_exist = defaults_table["thumbnails"];
+        if (thumbnails_table_exist)
+        {
+            sol::table thumbnails_table = thumbnails_table_exist.value();
+
+            m_thumbnail_view->setVisible(thumbnails_table["show"].get_or(true));
+            m_thumbnail_view->setUniformItemSizes(thumbnails_table["uniform"].get_or(false));
+            
+            auto mode = thumbnails_table["mode"].get_or<std::string>("icon");
+
+            if (mode == "icon")
+                m_thumbnail_view->setViewMode(QListView::IconMode);
+            else if (mode == "list")
+                m_thumbnail_view->setViewMode(QListView::ListMode);
+            else
+                m_thumbnail_view->setViewMode(QListView::IconMode);
+
+            auto selection_mode = thumbnails_table["selection"].get_or<std::string>("extended");
+
+            if (selection_mode == "extended")
+                m_thumbnail_view->setSelectionMode(QListView::SelectionMode::ExtendedSelection);
+            else if (selection_mode == "contiguous")
+                m_thumbnail_view->setSelectionMode(QListView::SelectionMode::ContiguousSelection);
+            else if (selection_mode == "single")
+                m_thumbnail_view->setSelectionMode(QListView::SelectionMode::SingleSelection);
+            else if (selection_mode == "multi")
+                m_thumbnail_view->setSelectionMode(QListView::SelectionMode::MultiSelection);
+            else
+                m_thumbnail_view->setSelectionMode(QListView::SelectionMode::ExtendedSelection);
+
+            
+            m_thumbnail_view->setSpacing(thumbnails_table["spacing"].get_or(20));  // Spacing between thumbnails
+            
+            // Icon Size
+            sol::optional<sol::table> icon_size_table_optional = thumbnails_table["icon_size"];
+            if (icon_size_table_optional)
+            {
+                auto icon_size_table = icon_size_table_optional.value();
+
+                m_thumbnail_view->setIconSize(QSize(icon_size_table["width"].get_or(100), icon_size_table["height"].get_or(100)));  // Set the size for thumbnails
+            }
+
+            auto elide = thumbnails_table["text_elide"].get_or<std::string>("none");
+
+            if (elide == "none")
+                m_thumbnail_view->setTextElideMode(Qt::TextElideMode::ElideNone);
+            else if (elide == "right")
+                m_thumbnail_view->setTextElideMode(Qt::TextElideMode::ElideRight);
+            else if (elide == "left")
+                m_thumbnail_view->setTextElideMode(Qt::TextElideMode::ElideLeft);
+            else if (elide == "middle")
+                m_thumbnail_view->setTextElideMode(Qt::TextElideMode::ElideMiddle);
+            else
+                m_thumbnail_view->setTextElideMode(Qt::TextElideMode::ElideNone);
+
+            auto resize = thumbnails_table["resize"].get_or(false);
+            if (resize)
+            {
+                m_thumbnail_view->setResizeMode(QListView::Adjust);
+            }
+            else
+            {
+                m_thumbnail_view->setResizeMode(QListView::Fixed);
+                m_thumbnail_view->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
+            }
+
+        }
 
         m_auto_notes_popup = defaults_table["auto_notes_popup"].get_or(false);
 
@@ -147,8 +214,7 @@ void IMGV::initConfigDirectory()
             maximizeImage();
         }
 
-        // keybindings
-        
+        // keybindings table
         sol::optional<sol::table> keybindings_table_exist = defaults_table["keybindings"];
         if (keybindings_table_exist)
         {
@@ -220,36 +286,57 @@ void IMGV::initConfigDirectory()
             if (defaults_table["default_keybindings"].get_or(true))
                 initKeybinds();
         }
-        
-    }
 
-    // Statusbar
-    sol::optional<sol::table> statusbar_table_exists = m_lua_state["Statusbar"];
 
-    if (statusbar_table_exists)
-    {
-        sol::table statusbar_table = statusbar_table_exists.value();
-        auto spacing = statusbar_table["spacing"].get_or(10);
-
-        auto note_indicator = statusbar_table["note_indicator"].get_or<std::string>("NOTE");
-        auto note_modified_indicator = statusbar_table["note_modified_indicator"].get_or<std::string>("[M]");
-
-        m_statusbar->setNoteIndicator(QString::fromStdString(note_indicator));
-        m_statusbar->setNoteModifiedIndicator(QString::fromStdString(note_modified_indicator));
-
-        m_statusbar->setSpacing(spacing);
-
-        sol::optional<sol::table> elements_table_exists = statusbar_table["elements"];
-
-        if (elements_table_exists)
+        // minimap table
+        sol::optional<sol::table> minimap_table_exists = defaults_table["minimap"];
+        if (minimap_table_exists)
         {
-            sol::table elements = elements_table_exists.value();
+            sol::table minimap_table = minimap_table_exists.value();
+            m_minimap_rect_color = QString::fromStdString(minimap_table["rect_color"].get_or<std::string>("#000000"));
 
-            for(const auto &element : elements)
+
+            sol::optional<sol::table> minimap_size_table_optional = minimap_table["size"];
+            if (minimap_size_table_optional)
+            {
+                auto minimap_size_table = minimap_size_table_optional.value();
+
+                m_minimap_rect_size = QSize(minimap_size_table["width"].get_or(100), minimap_size_table["height"].get_or(100));  // Set the size for thumbnails
+            }
+        }
+
+
+        // statusbar table
+        sol::optional<sol::table> statusbar_table_exists = defaults_table["statusbar"];
+
+        if (statusbar_table_exists)
+        {
+            sol::table statusbar_table = statusbar_table_exists.value();
+            m_statusbar->setVisible(statusbar_table["show"].get_or(true));
+            auto spacing = statusbar_table["spacing"].get_or(10);
+
+            auto note_indicator = statusbar_table["note_indicator"].get_or<std::string>("NOTE");
+            auto note_modified_indicator = statusbar_table["note_modified_indicator"].get_or<std::string>("[M]");
+
+            m_statusbar->setNoteIndicator(QString::fromStdString(note_indicator));
+            m_statusbar->setNoteModifiedIndicator(QString::fromStdString(note_modified_indicator));
+
+            m_statusbar->setSpacing(spacing);
+
+            sol::optional<sol::table> elements_table_exists = statusbar_table["elements"];
+
+            if (elements_table_exists)
+            {
+                sol::table elements = elements_table_exists.value();
+
+                for(const auto &element : elements)
                 m_statusbar->addWidget(QString::fromStdString(element.second.as<std::string>()));
+            }
+
         }
 
     }
+
 
 
     // create sessions folder
@@ -342,24 +429,7 @@ void IMGV::initMenu()
         md->open();
     });
 
-    connect(m_pix_analyser, &PixAnalyser::visibilityChanged, this, [&](bool state) { tools__pix_analyser->setChecked(state); });
 
-    connect(tools__pix_analyser, &QAction::triggered, this, [&](bool state) {
-        if (!m_pix_analyser)
-        {
-            m_img_widget->setPixAnalyseMode(true);
-            m_pix_analyser = new PixAnalyser(this);
-            m_pix_analyser->setPixmap(m_img_widget->getPixmap());
-            m_pix_analyser->show();
-            connect(m_img_widget, &ImageWidget::mouseMoved, m_pix_analyser, &PixAnalyser::analysePix);
-        } else {
-            m_img_widget->setPixAnalyseMode(false);
-            m_pix_analyser->close();
-            delete m_pix_analyser;
-            m_pix_analyser = nullptr;
-            disconnect(m_img_widget, &ImageWidget::mouseMoved, m_pix_analyser, &PixAnalyser::analysePix);
-        }
-    });
 
     auto session_files = getSessionFiles();
 
@@ -429,6 +499,8 @@ void IMGV::initMenu()
             if (!m_minimap)
             {
                 m_minimap = new Minimap();
+                m_minimap->setRectColor(m_minimap_rect_color);
+                m_minimap->setRectSize(m_minimap_rect_size);
                 m_minimap->setPixmap(m_img_widget->getPixmap());
                 m_left_pane_layout->addWidget(m_minimap);
                 m_minimap->setMainPixmapBoundingRect(m_img_widget->getPixmap().rect());
@@ -442,6 +514,28 @@ void IMGV::initMenu()
             m_img_widget->setMinimapMode(false);
             m_minimap->setVisible(false);
             disconnect(m_minimap, 0, 0, 0);
+        }
+    });
+
+    connect(tools__pix_analyser, &QAction::triggered, this, [&](bool state) {
+        if (state)
+        {
+            m_img_widget->setPixAnalyseMode(true);
+            m_pix_analyser = new PixAnalyser(this);
+            connect(m_pix_analyser, &PixAnalyser::visibilityChanged, tools__pix_analyser, [&](bool state) {
+                tools__pix_analyser->setChecked(state);
+                m_img_widget->setPixAnalyseMode(state);
+            });
+            m_pix_analyser->setPixmap(m_img_widget->getPixmap());
+            connect(m_img_widget, &ImageWidget::mouseMoved, m_pix_analyser, &PixAnalyser::analysePix);
+        }
+        else {
+            m_img_widget->setPixAnalyseMode(false);
+            m_pix_analyser->close();
+            disconnect(m_img_widget, &ImageWidget::mouseMoved, m_pix_analyser, &PixAnalyser::analysePix);
+            disconnect(m_pix_analyser, 0, 0, 0);
+            delete m_pix_analyser;
+            m_pix_analyser = nullptr;
         }
     });
 

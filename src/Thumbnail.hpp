@@ -29,6 +29,7 @@ private:
     QPixmap m_pix;
     QString m_note;
     QString m_filename = "";
+    unsigned int m_index = -1;
 };
 
 #endif

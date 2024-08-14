@@ -3,16 +3,9 @@
 ThumbnailView::ThumbnailView(QWidget *parent)
     : QListView(parent)
 {
+
+    setMovement(Movement::Snap);
     setWindowIcon(QIcon(":/icons/imgv.png"));
-    setViewMode(QListView::IconMode);
-    setIconSize(QSize(100, 100));  // Set the size for thumbnails
-    setResizeMode(QListView::Adjust);
-    setSpacing(20);  // Spacing between thumbnails
-    setTextElideMode(Qt::TextElideMode::ElideRight);
-    setWordWrap(true);
-    setSelectionMode(SelectionMode::ExtendedSelection);
-    /*this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);*/
-    /*setUniformItemSizes(true);*/
 
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setModel(m_model);
@@ -120,10 +113,13 @@ void ThumbnailView::showContextMenu(const QPoint &pos) noexcept
 void ThumbnailView::removeThumbnails() noexcept
 {
     auto selections = this->selectedIndexes();
-    for(const auto index : selections)
-    {
-        m_model->removeAt(index.row());
-    }
+    // Loop in reverse, to avoid erros due to shifting of elements
+    /*for (int i = selections.size() - 1; i >= 0; --i)*/
+    /*    m_model->removeAt(selections.at(i).row());*/
+    m_model->removeIndexes(selections);
+    this->clearSelection();
+    if (m_model->rowCount() == 0)
+        this->setCurrentIndex(QModelIndex());
 }
 
 void ThumbnailView::hideThumbnails() noexcept

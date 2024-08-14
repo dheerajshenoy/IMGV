@@ -151,71 +151,7 @@ For flatpak version of the app, the theming is a bit of a problem. It can be don
 
 # Configuration
 
-IMGV can be configured using the lua programming language. `config.lua` file should have already been created at the config location. The following code lists all the options possible:
-
-```lua
-Defaults = {
-    statusbar = true,
-    menubar = true,
-    thumbnail_panel = true,
-    auto_notes_popup = false,
-    scrollbars = true,
-    start_in_minimal_mode = false,
-    keybindings = {
-        zoom_in = "=",
-        zoom_out = "-",
-        zoom_reset = "0",
-        fit_width = "w",
-        fit_window = "Shift+h",
-        rotate_clockwise = ".",
-        rotate_anticlockwise = ",",
-        flip_vertical = "'",
-        flip_horizontal = ";",
-        left = "h",
-        down = "j",
-        up = "k",
-        right = "l",
-        next = "Shift+j",
-        prev = "Shift+k",
-        notes = "n",
-        maximize = "Shift+m",
-        toggle_menubar = "Ctrl+m",
-        toggle_statusbar = "Ctrl+x",
-        toggle_thumbnail_panel = "Ctrl+t",
-        search = "/",
-    }
-}
-
-Statusbar = {
-    spacing = 10,
-    note_indicator = "NOTE",
-    note_modified_indicator = "[M]",
-    --[[
-
-    Change the order or removing statusbar elements 
-
-    Elements:
-        message - shows important messages
-        path - shows full file path
-        size - file size
-        stretch - separator
-        dimension - shows the (width, height) of the image
-        session - shows the session name
-        note-indicator - shows an indicator when there is a non-empty note associated with an image file
-        note-modified-indicator - shows an indicator when there is any unsaved changes to a note for an image file
-    --]]
-    elements = {
-        "message",
-        "path",
-        "note-indicator",
-        "note-modified-indicator",
-        "stretch",
-        "size",
-        "dimension",
-        "session",
-    }
-}
-```
+IMGV can be configured using the lua programming language. `config.lua` file should have already been created at the config location. A [config.lua](./config.lua) file can be found in the repo which lists out all the options along with their different options. Just move the file to the config directory and it will be loaded the next time you open imgv.
 
 Note that if the `keybindings` table is present in the `Defaults` table, then default keybindings will not be loaded.
 
@@ -223,7 +159,10 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 - 14 Aug 2024
     - Minimap
-    - remove caching of unwanted pixmaps. It just slowed down panning.
+    - Remove caching of unwanted pixmaps. It just slowed down panning.
+    - Remove highlight after removing image from thumbnail
+    - Resize thumbnailview scrollbar after removing images
+    - Added more lua configuration options
 
 - 13 Aug 2024
     - Created new logo
@@ -283,8 +222,9 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 3. [x] Caching images
 4. [x] Lua configuration option
 5. [x] Display Image Properties
-6. [ ] Remove highlight after removing image from thumbnail
-7. [ ] Resize thumbnailview scrollbar after removing images
+6. [x] Remove highlight after removing image from thumbnail
+7. [x] Resize thumbnailview scrollbar after removing images
+8. ~~Minimap mouse move support~~
 
 <a name="thanks" />
 

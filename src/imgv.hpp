@@ -156,6 +156,8 @@ private:
     QStringList m_slideshow_files;
 
     Minimap *m_minimap = nullptr;
+    QString m_minimap_rect_color = "#FF5000";
+    QSize m_minimap_rect_size;
 };
 
 

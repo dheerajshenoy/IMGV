@@ -9,8 +9,8 @@
 #include <QGraphicsEllipseItem>
 #include <QGridLayout>
 #include <QColor>
-#include <QHideEvent>
 #include <QShowEvent>
+#include <QCloseEvent>
 #include <QResizeEvent>
 
 class PixAnalyser : public QWidget
@@ -29,7 +29,7 @@ signals:
 
 protected:
     void showEvent(QShowEvent *e) noexcept override;
-    void hideEvent(QHideEvent *e) noexcept override;
+    void closeEvent(QCloseEvent *e) noexcept override;
 
 private:
     QGridLayout *m_layout = new QGridLayout();

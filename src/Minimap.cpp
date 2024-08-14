@@ -13,9 +13,14 @@ Minimap::Minimap(QWidget *parent)
     m_gv->setInteractive(true);
 }
 
+void Minimap::setRectSize(const QSize size) noexcept
+{
+    m_pix_scale_size = size;
+}
+
 void Minimap::setPixmap(const QPixmap &pix) noexcept
 {
-    m_pix = pix.scaled(400, 400, Qt::KeepAspectRatio);
+    m_pix = pix.scaled(m_pix_scale_size, Qt::KeepAspectRatio);
     m_pixitem->setPixmap(m_pix);
 }
 
@@ -42,4 +47,11 @@ void Minimap::updateRect(const QRectF rect) noexcept
             m_rectitem->setVisible(true);
         m_rectitem->setRect(scaledRect);
     }
+}
+
+
+void Minimap::setRectColor(const QString color) noexcept
+{
+    if (QColor(color).isValid())
+        m_rectitem->setColor(color);
 }

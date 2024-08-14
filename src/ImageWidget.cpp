@@ -334,8 +334,12 @@ void ImageWidget::mouseMoveEvent(QMouseEvent *e) noexcept
 {
     QGraphicsView::mouseMoveEvent(e);
     if (m_pix_analyse_mode)
+    {
         emit mouseMoved(mapToScene(e->pos()));
+        this->viewport()->setCursor(Qt::CrossCursor);
+    }
     /*emit getRegion(visibleRect(), m_scene->sceneRect());*/
+
     if (m_minimap_mode && m_panning)
         emit getRegion(mapToScene(viewport()->rect()).boundingRect());
 }
@@ -377,4 +381,8 @@ void ImageWidget::setMinimapMode(const bool state) noexcept
 void ImageWidget::setPixAnalyseMode(const bool state) noexcept
 {
     m_pix_analyse_mode = state;
+    if (state)
+        this->viewport()->setCursor(Qt::CrossCursor);
+    else
+        this->viewport()->setCursor(Qt::OpenHandCursor);
 }

@@ -19,9 +19,11 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     void clear() noexcept;
     void removeAt(const int index) noexcept;
+    void removeIndexes(const QList<QModelIndex> &indexes) noexcept;
     Thumbnail getThumbnail(const int index) noexcept;
     void setNote(const QModelIndex &index, const QString &note) noexcept;
     QStringList getFiles() noexcept;
+
 
 private:
     QVector<Thumbnail> m_thumbnails;

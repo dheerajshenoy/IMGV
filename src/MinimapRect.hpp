@@ -12,6 +12,8 @@ class MinimapRect : public QGraphicsRectItem
 public:
     MinimapRect(QGraphicsItem *parent = nullptr);
     ~MinimapRect() {}
+
+    void setColor(const QString color) noexcept;
 };
 
 #endif

@@ -4,7 +4,6 @@ PixAnalyser::PixAnalyser(QWidget *parent)
     : QWidget(parent)
 {
     this->setLayout(m_layout);
-
     this->setWindowFlag(Qt::WindowType::Dialog);
 
     m_layout->addWidget(m_color, 0, 0, 1, 2);
@@ -19,7 +18,7 @@ PixAnalyser::PixAnalyser(QWidget *parent)
     m_color_name->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse | Qt::TextInteractionFlag::TextSelectableByKeyboard);
     m_color_rgb->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse | Qt::TextInteractionFlag::TextSelectableByKeyboard);
     m_color_hsv->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse | Qt::TextInteractionFlag::TextSelectableByKeyboard);
-
+    this->show();
 }
 
 void PixAnalyser::setPixmap(const QPixmap &pix) noexcept
@@ -32,7 +31,7 @@ void PixAnalyser::showEvent(QShowEvent *e) noexcept
     emit visibilityChanged(true);
 }
 
-void PixAnalyser::hideEvent(QHideEvent *e) noexcept
+void PixAnalyser::closeEvent(QCloseEvent *e) noexcept
 {
     emit visibilityChanged(false);
 }
