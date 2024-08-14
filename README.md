@@ -223,6 +223,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 - 14 Aug 2024
     - Minimap
+    - remove caching of unwanted pixmaps. It just slowed down panning.
 
 - 13 Aug 2024
     - Created new logo
