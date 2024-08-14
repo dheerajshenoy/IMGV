@@ -23,7 +23,8 @@
 
 # Screenshots
 
-![commandline-arguments](https://github.com/user-attachments/assets/f2f912e8-a50b-45fd-b574-bc77c4b80f6a)
+![commandline-arguments](https://github.com/user-attachments/assets/f015132f-86b4-4977-a3f7-6fc11d0efcf4)
+
 
 ![image](https://github.com/user-attachments/assets/c5f42acb-0760-45e7-a41d-11fac2570c41)
 
@@ -222,6 +223,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 - 14 Aug 2024
     - Minimap
+    - remove caching of unwanted pixmaps. It just slowed down panning.
 
 - 13 Aug 2024
     - Created new logo
