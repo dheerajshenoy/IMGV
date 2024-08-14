@@ -1,11 +1,14 @@
 -- This is the config file for IMGV
+-- Check out the documentation for more information about configuring IMGV
 
 Defaults = {
     menubar = true,
     auto_notes_popup = false,
     scrollbars = true,
     start_in_minimal_mode = false,
-
+    scroll_factor = { horizontal = 40.0, vertical = 40.0 },
+    zoom_factor = 5.0,
+    fit_on_load = false,
     minimap = {
         rect_color = "#FF5000", -- size of the overview box on the minimap
         size = { width = 200, height = 200 }, -- size of the minimap
@@ -57,6 +60,7 @@ Defaults = {
     Elements:
         message - shows important messages
         path - shows full file path
+        path-hover - shows full file path while mouse hover, short otherwise
         size - file size
         stretch - separator
         dimension - shows the (width, height) of the image
@@ -67,10 +71,10 @@ Defaults = {
     --]]
         elements = {
             "message",
-            "path",
+            "path-hover",
+            "stretch",
             "note-indicator",
             "note-modified-indicator",
-            "stretch",
             "zoom",
             "size",
             "dimension",
