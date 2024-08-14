@@ -58,6 +58,7 @@ public:
     void setMinimapMode(const bool state) noexcept;
     void setPixAnalyseMode(const bool state) noexcept;
     const QRectF visibleRect();
+    void setVisibleRectFromMinimap(const QRectF rect) noexcept;
 
 signals:
     void fileLoaded(QString);

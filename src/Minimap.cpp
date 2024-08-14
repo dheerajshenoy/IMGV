@@ -4,7 +4,6 @@ Minimap::Minimap(QWidget *parent)
     : QWidget(parent)
 {
     m_gv->setScene(m_scene);
-    m_rectitem->setPen(QPen(QColor(Qt::black)));
     m_scene->addItem(m_pixitem);
     m_scene->addItem(m_rectitem);
     m_layout->addWidget(m_gv);
@@ -16,8 +15,7 @@ Minimap::Minimap(QWidget *parent)
 
 void Minimap::setPixmap(const QPixmap &pix) noexcept
 {
-    m_pix = pix;
-    m_pix = m_pix.scaled(400, 400, Qt::KeepAspectRatio);
+    m_pix = pix.scaled(400, 400, Qt::KeepAspectRatio);
     m_pixitem->setPixmap(m_pix);
 }
 
@@ -28,7 +26,6 @@ void Minimap::setMainPixmapBoundingRect(const QRectF &rect) noexcept
 
 void Minimap::updateRect(const QRectF rect) noexcept
 {
-
     qreal scale = m_pix.width() / m_mainPixmapBoundingRect.width();
     QRectF scaledRect(
         rect.x() * scale,
@@ -37,6 +34,12 @@ void Minimap::updateRect(const QRectF rect) noexcept
         rect.height() * scale
     );
 
-    if (scaledRect.width() > m_pix.width()) return;
-    m_rectitem->setRect(scaledRect);
+    if (scaledRect.width() > m_pix.width())
+        m_rectitem->setVisible(false);
+    else
+    {
+        if (!m_rectitem->isVisible())
+            m_rectitem->setVisible(true);
+        m_rectitem->setRect(scaledRect);
+    }
 }

@@ -21,6 +21,7 @@ public:
 
 signals:
     void changeMainRegion(QRectF);
+    void rectMoved(QRectF);
 
 
 private:
@@ -28,7 +29,7 @@ private:
     QGraphicsView *m_gv = new QGraphicsView();
     QGraphicsScene *m_scene = new QGraphicsScene();
     QGraphicsPixmapItem *m_pixitem = new QGraphicsPixmapItem;
-    MinimapRect *m_rectitem = new MinimapRect;
+    MinimapRect *m_rectitem = new MinimapRect();
     QPixmap m_pix;
     QRectF m_mainPixmapBoundingRect;
 };

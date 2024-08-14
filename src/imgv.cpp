@@ -381,6 +381,8 @@ void IMGV::initMenu()
     connect(file__openNewWindowAction, &QAction::triggered, this, &IMGV::openImageInNewWindow);
     connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, [&](QString filename) {
         m_statusbar->updateFileInfo(filename);
+        if (m_minimap)
+            m_minimap->setPixmap(QPixmap(filename));
         if (m_thumbnail_view->currentThumbnail().hasNote())
         {
             // Auto Popup
@@ -442,6 +444,7 @@ void IMGV::initMenu()
             disconnect(m_minimap, 0, 0, 0);
         }
     });
+
 
     connect(view__thumbnails, &QAction::triggered, this, [&](bool state) {
         m_thumbnail_view->setVisible(state);

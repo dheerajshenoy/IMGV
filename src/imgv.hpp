@@ -79,6 +79,7 @@ private:
     void toggleMenubar() noexcept;
     void toggleStatusbar() noexcept;
 
+
     ThumbnailView *m_thumbnail_view  = new ThumbnailView();
     ImageWidget *m_img_widget = new ImageWidget();
     StatusBar *m_statusbar = new StatusBar();

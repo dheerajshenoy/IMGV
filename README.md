@@ -283,6 +283,8 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 3. [x] Caching images
 4. [x] Lua configuration option
 5. [x] Display Image Properties
+6. [ ] Remove highlight after removing image from thumbnail
+7. [ ] Resize thumbnailview scrollbar after removing images
 
 <a name="thanks" />
 
