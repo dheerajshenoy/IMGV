@@ -29,7 +29,7 @@
 # Demo
 
 [Link for the demo](https://drive.google.com/file/d/1KKOTOjRqxaw1tly8BbbVPjO5muqZQuip/view?usp=sharing)
-=======
+
 ![image](https://github.com/user-attachments/assets/a5072b5f-bc98-4caf-997c-801803ce711b)
 
 R E T R O artwork by [Xeno_Sid](https://www.artstation.com/xeno_sid/).
