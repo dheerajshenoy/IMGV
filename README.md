@@ -10,14 +10,15 @@
 # Table of Contents
 
 1. [Screenshots](#screenshots)
-2. [Introduction](#introduction)
-3. [Features](#features)
-4. [Installation](#installation)
-5. [Theming](#theming)
-6. [Configuration](#configuration)
-6. [Changelogs and Bug fixes](#changelogs)
-7. [Todo](#todo)
-8. [Thanks](#thanks)
+2. [Demo](#demo)
+3. [Introduction](#introduction)
+4. [Features](#features)
+5. [Installation](#installation)
+6. [Theming](#theming)
+7. [Configuration](#configuration)
+7. [Changelogs and Bug fixes](#changelogs)
+8. [Todo](#todo)
+9. [Thanks](#thanks)
 
 <a name="screenshots" />
 
@@ -25,6 +26,10 @@
 
 ![image](https://github.com/user-attachments/assets/2d1002cd-6847-423f-91cf-8e996c852c32)
 
+# Demo
+
+[Link for the demo](https://drive.google.com/file/d/1KKOTOjRqxaw1tly8BbbVPjO5muqZQuip/view?usp=sharing)
+=======
 ![image](https://github.com/user-attachments/assets/a5072b5f-bc98-4caf-997c-801803ce711b)
 
 R E T R O artwork by [Xeno_Sid](https://www.artstation.com/xeno_sid/).
@@ -175,23 +180,24 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 # Changelogs and Bug Fixes
 
 - 15 Aug 2024
-    - Make minimap render over the graphicsview instead of being a widget on the panel
+    - Make minimap render over the graphicsview instead of being a widget on the panel.
 
-      This is the old minimap
+      This is the old minimap:
       
       <img src="https://github.com/user-attachments/assets/91273888-b596-4001-b429-786f700cb983" width="600px" />
 
-      This is the new minimap
+      This is the new minimap:
 
       <img src="https://github.com/user-attachments/assets/b917098f-8abb-48f8-b810-fc2d32c6a9d2" width="600px" />
 
-
-
     - Add tag features
     - Create and assign tags for images in a session.
-    - Fit image on load option
-    - Added more configuration options to lua
-    - Add full path tooltip to each thumbnail
+    - Fit image on load option.
+    - Added more configuration options to lua.
+    - Add full path tooltip to each thumbnail.
+    - Add sessions to the open session menu as they are created in app.
+    - Close and clear the notes editor once the session is closed.
+    - Read binary image data from the standard input (piped input).
 
 - 14 Aug 2024
     - Minimap
