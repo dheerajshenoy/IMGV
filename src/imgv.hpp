@@ -45,6 +45,7 @@
 #include "Minimap.hpp"
 #include "ThumbnailTools.hpp"
 #include "ManageTagDialog.hpp"
+#include <QByteArray>
 
 class IMGV : public QMainWindow
 {

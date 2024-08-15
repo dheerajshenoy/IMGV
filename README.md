@@ -171,6 +171,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Create and assign tags for images in a session.
     - Fit image on load option
     - Added more configuration options to lua
+    - Add full path tooltip to each thumbnail
 
 - 14 Aug 2024
     - Minimap
@@ -231,19 +232,6 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Don't ask for save session each time after opening a session
 
 <a name="todo" />
-
-# Todo
-
-1. [x] Ability to add notes to images inside sessions
-2. [ ] ~~Load image from URL~~
-3. [x] Caching images
-4. [x] Lua configuration option
-5. [x] Display Image Properties
-6. [x] Remove highlight after removing image from thumbnail
-7. [x] Resize thumbnailview scrollbar after removing images
-8. ~~Minimap mouse move support~~
-9. [x] Minimap on the graphicsview
-10. [x] Tags
 
 <a name="thanks" />
 

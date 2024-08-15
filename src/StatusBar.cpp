@@ -114,7 +114,7 @@ void StatusBar::updateFileInfo(const QString &filePath)
         if (hoverFilePathLabel)
         {
             hoverFilePathLabel->setFullText(filePath);
-            hoverFilePathLabel->setShowText(fileInfo.baseName());
+            hoverFilePathLabel->setShowText(fileInfo.fileName());
         }
 
         if (fileSizeLabel)

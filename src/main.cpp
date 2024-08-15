@@ -1,4 +1,5 @@
 #include "imgv.hpp"
+#include <string>
 
 int main (int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -42,7 +43,7 @@ int main (int argc, char *argv[]) {
         std::cerr << parser;
         return 1;
     }
-    
+
     IMGV *imgv = new IMGV(parser);
     return app.exec();
 }

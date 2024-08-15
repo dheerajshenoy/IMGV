@@ -50,6 +50,8 @@ QVariant ThumbnailModel::data(const QModelIndex &index, int role) const
         return const_cast<Thumbnail&>(thumbnail).note();
     else if (role == Thumbnail::Tag)
         return const_cast<Thumbnail&>(thumbnail).tag();
+    else if (role == Qt::ToolTipRole)
+        return const_cast<Thumbnail &>(thumbnail).filename();
 
     return QVariant();
 }

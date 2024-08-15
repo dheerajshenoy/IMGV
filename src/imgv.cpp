@@ -6,15 +6,13 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     // 50 MB cache limit
     /*QPixmapCache::setCacheLimit(10240 * 5);*/
-    /*file__openSession->setIcon(QIcon(":/icons/open-session.svg"));*/
     setWindowIcon(QIcon(":/resources/images/logo.svg"));
-    // Set up the main widget and layout
+
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout();
     QSplitter *splitter = new QSplitter();
 
     m_note_holder->setAcceptRichText(true);
-    /*m_thumbnail_view->setModel(m_thumbnail_model);*/
     helpMenu->addAction(help__about);
 
     connect(help__about, &QAction::triggered, this, [&]() {
@@ -49,6 +47,7 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     connect(m_thumbnail_tools_widget, &ThumbnailTools::resetFilter, this, [&]() { m_thumbnail_view->filterMode(false); });
 
     /*connect(m_note_holder, &NoteWidget::visibilityChanged, m_statusbar, &StatusBar::modificationLabelVisiblity);*/
+
 
     m_right_pane_splitter->setStretchFactor(0, 1);
     m_right_pane_layout->addWidget(m_right_pane_splitter);
@@ -195,19 +194,6 @@ void IMGV::initConfigDirectory()
                 m_thumbnail_view->setIconSize(QSize(icon_size_table["width"].get_or(100), icon_size_table["height"].get_or(100)));  // Set the size for thumbnails
             }
 
-            auto elide = thumbnails_table["text_elide"].get_or<std::string>("none");
-
-            if (elide == "none")
-                m_thumbnail_view->setTextElideMode(Qt::TextElideMode::ElideNone);
-            else if (elide == "right")
-                m_thumbnail_view->setTextElideMode(Qt::TextElideMode::ElideRight);
-            else if (elide == "left")
-                m_thumbnail_view->setTextElideMode(Qt::TextElideMode::ElideLeft);
-            else if (elide == "middle")
-                m_thumbnail_view->setTextElideMode(Qt::TextElideMode::ElideMiddle);
-            else
-                m_thumbnail_view->setTextElideMode(Qt::TextElideMode::ElideNone);
-
             auto resize = thumbnails_table["resize"].get_or(false);
             if (resize)
             {
@@ -218,6 +204,20 @@ void IMGV::initConfigDirectory()
                 m_thumbnail_view->setResizeMode(QListView::Fixed);
                 m_thumbnail_view->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
             }
+
+            auto elide = thumbnails_table["text_elide"].get_or<std::string>("none");
+
+            if (elide == "none")
+                m_thumbnail_view->setTextElideMode(Qt::ElideNone);
+            else if (elide == "right")
+                m_thumbnail_view->setTextElideMode(Qt::ElideRight);
+            else if (elide == "left")
+                m_thumbnail_view->setTextElideMode(Qt::ElideLeft);
+            else if (elide == "middle")
+                m_thumbnail_view->setTextElideMode(Qt::ElideMiddle);
+            else
+                m_thumbnail_view->setTextElideMode(Qt::ElideNone);
+
 
         }
 
