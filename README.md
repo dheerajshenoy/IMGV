@@ -23,10 +23,11 @@
 
 # Screenshots
 
-![commandline-arguments](https://github.com/user-attachments/assets/f015132f-86b4-4977-a3f7-6fc11d0efcf4)
-
 ![image](https://github.com/user-attachments/assets/2d1002cd-6847-423f-91cf-8e996c852c32)
 
+![image](https://github.com/user-attachments/assets/a5072b5f-bc98-4caf-997c-801803ce711b)
+
+R E T R O artwork by [Xeno_Sid](https://www.artstation.com/xeno_sid/).
 
 <a name="introduction" />
 
@@ -258,7 +259,9 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 # Thanks
 
-I want to thank the authors of the following libraries I have integrated in this software.
+Thanks to [Xeno_Sid](https://www.artstation.com/xeno_sid/) for letting me use his artwork for the screenshot.
+
+I want to thank the authors of the following projects I have integrated in this software.
 
 1. [Sol2](https://github.com/ThePhD/sol2)
 2. [QMarkdownTextEdit](https://github.com/pbek/qmarkdowntextedit)
@@ -266,3 +269,4 @@ I want to thank the authors of the following libraries I have integrated in this
 4. [libwebp](https://github.com/webmproject/libwebp)
 5. [EasyEXIF](https://github.com/mayanklahiri/easyexif)
 6. [rapidjson](https://github.com/tencent/rapidjson)
+
