@@ -175,6 +175,17 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 - 15 Aug 2024
     - Make minimap render over the graphicsview instead of being a widget on the panel
+
+      This is the old minimap
+      
+      <img src="https://github.com/user-attachments/assets/91273888-b596-4001-b429-786f700cb983" width="600px" />
+
+      This is the new minimap
+
+      <img src="https://github.com/user-attachments/assets/b917098f-8abb-48f8-b810-fc2d32c6a9d2" width="600px" />
+
+
+
     - Add tag features
     - Create and assign tags for images in a session.
     - Fit image on load option
