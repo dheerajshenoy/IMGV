@@ -35,6 +35,32 @@ ImageWidget::ImageWidget(QWidget *parent)
     setMouseTracking(true);
     setAcceptDrops(true);
 
+    switch (m_minimap->location())
+    {
+
+        case Minimap::Location::BottomRight:
+            m_minimap->move(viewport()->width() - m_minimap->width() - 30, viewport()->height() - m_minimap->height() - 30);
+            break;
+
+        case Minimap::Location::BottomLeft:
+            m_minimap->move(10, viewport()->height() - m_minimap->height() - 10);
+            break;
+
+        case Minimap::Location::TopLeft:
+            m_minimap->move(viewport()->width() - m_minimap->width(), viewport()->height() - m_minimap->height());
+            break;
+
+        case Minimap::Location::TopRight:
+            m_minimap->move(viewport()->width() - m_minimap->width(), viewport()->height() - m_minimap->height());
+            break;
+
+        case Minimap::Location::Custom:
+            // TODO: Custom Minimap Location
+            break;
+    }
+    m_minimap->raise();
+    m_minimap->setVisible(false);
+
 }
 
 void ImageWidget::zoomOriginal() {
@@ -160,14 +186,15 @@ void ImageWidget::loadFile(QString file)
         }
         w = pix.width(); h = pix.height();
         m_pixmapItem->setPixmap(pix);
-
         m_scene->setSceneRect(m_pixmapItem->boundingRect());
+        m_minimap->setPixmap(QPixmap(file));
     }
     emit fileLoaded(file);
     emit fileDim(w, h);
 
     if (m_fit_image_on_load)
         fitToWindow();
+
 }
 
 void ImageWidget::loadPixmap(QPixmap &pix)
@@ -367,6 +394,30 @@ const QPixmap ImageWidget::getPixmap() noexcept
 
 void ImageWidget::resizeEvent(QResizeEvent *e) noexcept
 {
+    switch (m_minimap->location())
+    {
+
+        case Minimap::Location::BottomRight:
+            m_minimap->move(viewport()->width() - m_minimap->width() - 30,
+                            viewport()->height() - m_minimap->height() - 30);
+            break;
+
+        case Minimap::Location::BottomLeft:
+            m_minimap->move(10, viewport()->height() - m_minimap->height() - 10);
+            break;
+
+        case Minimap::Location::TopLeft:
+            m_minimap->move(10, 10);
+            break;
+
+        case Minimap::Location::TopRight:
+            m_minimap->move(viewport()->width() - m_minimap->width(), 10);
+            break;
+
+        case Minimap::Location::Custom:
+            // TODO: Custom Minimap Location
+            break;
+    }
     QGraphicsView::resizeEvent(e);
 }
 
@@ -379,6 +430,18 @@ const QRectF ImageWidget::visibleRect() {
 void ImageWidget::setMinimapMode(const bool state) noexcept
 {
     m_minimap_mode = state;
+
+    if (m_minimap_mode)
+    {
+        m_minimap->setVisible(true);
+        m_minimap->setPixmap(m_pixmapItem->pixmap());
+        connect(this, &ImageWidget::getRegion, m_minimap, &Minimap::updateRect);
+    }
+    else
+    {
+        m_minimap->setVisible(false);
+        disconnect(this, &ImageWidget::getRegion, m_minimap, &Minimap::updateRect);
+    }
 }
 
 void ImageWidget::setPixAnalyseMode(const bool state) noexcept
@@ -408,4 +471,36 @@ void ImageWidget::setZoomFactor(const qreal zoom) noexcept
 void ImageWidget::setFitImageOnLoad(const bool fit) noexcept
 {
     m_fit_image_on_load = fit;
+}
+
+
+void ImageWidget::setMinimapRectColor(const QString color) noexcept
+{
+    m_minimap->setRectColor(color);
+}
+
+void ImageWidget::setMinimapRectFillColor(const QString color) noexcept
+{
+    if (color.isEmpty()) return;
+    m_minimap->setRectFillColor(color);
+}
+
+void ImageWidget::setMinimapRectAlpha(const float alpha) noexcept
+{
+    m_minimap->setRectAlpha(alpha);
+}
+
+void ImageWidget::setMinimapAutoHide(const bool state) noexcept
+{
+    m_minimap->setAutoHide(state);
+}
+
+void ImageWidget::setMinimapSize(const QSize size) noexcept
+{
+    m_minimap->setSize(size);
+}
+
+void ImageWidget::setMinimapLocation(const Minimap::Location loc) noexcept
+{
+    m_minimap->setLocation(loc);
 }

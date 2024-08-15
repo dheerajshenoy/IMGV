@@ -143,7 +143,7 @@ QStringList utils::getImagesFromSessionFile(const QString &sessionfilepath) noex
     return imgfiles;
 }
 
-Custom utils::getDateandImagesFromSessionFile(const QString &sessionfilepath) noexcept
+Custom utils::getInfoFromSessionFile(const QString &sessionfilepath) noexcept
 {
     using namespace rapidjson;
     std::ifstream ifs(sessionfilepath.toStdString());
@@ -179,11 +179,19 @@ Custom utils::getDateandImagesFromSessionFile(const QString &sessionfilepath) no
         }
     }
 
+    QStringList tags;
+    if (doc.HasMember("tags") && doc["tags"].IsArray())
+    {
+        const Value& tags_arr = doc["tags"];
+        for(SizeType i=0; i < tags_arr.Size(); i++)
+            tags.push_back(QString::fromStdString(tags_arr[i].GetString()));
+    }
+
     QString date;
     if (doc.HasMember("date") && doc["date"].IsString())
         date = doc["date"].GetString();
     else
         date = "N/A";
     ifs.close();
-    return Custom{ imgfiles, date };
+    return Custom{ imgfiles, date, tags };
 }

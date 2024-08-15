@@ -22,6 +22,12 @@ void ThumbnailModel::setNote(const QModelIndex &index, const QString &note) noex
     emit dataChanged(index, index, {Thumbnail::Note});
 }
 
+void ThumbnailModel::setTag(const QModelIndex &index, const QString &tagname) noexcept
+{
+    m_thumbnails[index.row()].setTag(tagname);
+    emit dataChanged(index, index, {Thumbnail::Tag});
+}
+
 Thumbnail ThumbnailModel::getThumbnail(const int index) noexcept
 {
     return m_thumbnails[index];
@@ -33,7 +39,8 @@ QVariant ThumbnailModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     const Thumbnail &thumbnail = m_thumbnails.at(index.row());
-    if (role == Qt::UserRole)
+
+    if (role == Thumbnail::FileName)
         return const_cast<Thumbnail &>(thumbnail).filename();
     else if (role == Qt::DisplayRole)
         return QFileInfo(const_cast<Thumbnail &>(thumbnail).filename()).fileName();
@@ -41,6 +48,8 @@ QVariant ThumbnailModel::data(const QModelIndex &index, int role) const
         return QIcon(const_cast<Thumbnail&>(thumbnail).pixmap());
     else if (role == Thumbnail::Note)
         return const_cast<Thumbnail&>(thumbnail).note();
+    else if (role == Thumbnail::Tag)
+        return const_cast<Thumbnail&>(thumbnail).tag();
 
     return QVariant();
 }

@@ -27,6 +27,8 @@ qt_add_executable(${PROJECT_NAME}
     src/Minimap.cpp
     src/MinimapRect.cpp
     src/HoverLabel.cpp
+    src/ThumbnailTools.cpp
+    src/ManageTagDialog.cpp
 
     src/ImageWidget.hpp
     src/imgv.hpp
@@ -57,12 +59,17 @@ qt_add_executable(${PROJECT_NAME}
     src/Minimap.hpp
     src/MinimapRect.hpp
     src/HoverLabel.hpp
+    src/ThumbnailTools.hpp
+    src/ManageTagDialog.hpp
 )
 
 qt_add_resources(${PROJECT_NAME}
     PREFIX "resources"
     FILES
         resources/images/logo.svg
+        resources/images/search.svg
+        resources/images/filter.svg
+        resources/images/filter_reset.svg
         resources/fonts/ShureTechMono.ttf
 )
 

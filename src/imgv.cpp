@@ -32,6 +32,8 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     m_left_pane_layout = new QVBoxLayout();
     m_left_pane->setLayout(m_left_pane_layout);
 
+    m_left_pane_layout->addWidget(m_thumbnail_tools_widget);
+    m_left_pane_layout->addWidget(m_thumbnail_search_edit);
     m_left_pane_layout->addWidget(m_thumbnail_view);
     m_right_pane->setLayout(m_right_pane_layout);
 
@@ -42,6 +44,9 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     m_right_pane_splitter->addWidget(m_note_holder);
 
     connect(m_note_holder, &NoteWidget::modificationChanged, m_statusbar, &StatusBar::setNoteModified);
+    connect(m_thumbnail_tools_widget, &ThumbnailTools::search, this, &IMGV::searchThumbnails);
+    connect(m_thumbnail_tools_widget, &ThumbnailTools::filter, this, &IMGV::filterThumbnails);
+    connect(m_thumbnail_tools_widget, &ThumbnailTools::resetFilter, this, [&]() { m_thumbnail_view->filterMode(false); });
 
     /*connect(m_note_holder, &NoteWidget::visibilityChanged, m_statusbar, &StatusBar::modificationLabelVisiblity);*/
 
@@ -63,7 +68,6 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     splitter->setStretchFactor(1, 1);
     layout->addWidget(splitter);
-    layout->addWidget(m_thumbnail_search_edit);
     layout->addWidget(m_statusbar);
     setCentralWidget(centralWidget);
 
@@ -303,15 +307,43 @@ void IMGV::initConfigDirectory()
         if (minimap_table_exists)
         {
             sol::table minimap_table = minimap_table_exists.value();
-            m_minimap_rect_color = QString::fromStdString(minimap_table["rect_color"].get_or<std::string>("#000000"));
 
+            sol::optional<sol::table> rect_table_optional = minimap_table["rect"];
+
+            if (rect_table_optional)
+            {
+                sol::table rect_table = rect_table_optional.value();
+
+                m_img_widget->setMinimapRectFillColor(QString::fromStdString(rect_table["color"].get_or<std::string>("")));
+                m_img_widget->setMinimapRectColor(QString::fromStdString(rect_table["outline"].get_or<std::string>("#000000")));
+                m_img_widget->setMinimapRectAlpha(rect_table["alpha"].get_or(0.5));
+            }
+
+            m_img_widget->setMinimapAutoHide(minimap_table["auto_hide"].get_or(false));
+
+            auto location = minimap_table["location"].get_or<std::string>("bottom-right");
+
+            if (location == "bottom-right")
+                m_img_widget->setMinimapLocation(Minimap::Location::BottomRight);
+
+            else if (location == "bottom-left")
+                m_img_widget->setMinimapLocation(Minimap::Location::BottomLeft);
+
+            else if (location == "top-left")
+                m_img_widget->setMinimapLocation(Minimap::Location::TopLeft);
+
+            else if (location == "top-right")
+                m_img_widget->setMinimapLocation(Minimap::Location::TopRight);
+
+            else
+                m_img_widget->setMinimapLocation(Minimap::Location::BottomRight);
 
             sol::optional<sol::table> minimap_size_table_optional = minimap_table["size"];
             if (minimap_size_table_optional)
             {
                 auto minimap_size_table = minimap_size_table_optional.value();
 
-                m_minimap_rect_size = QSize(minimap_size_table["width"].get_or(100), minimap_size_table["height"].get_or(100));  // Set the size for thumbnails
+                m_img_widget->setMinimapSize(QSize(minimap_size_table["width"].get_or(100), minimap_size_table["height"].get_or(100)));  // Set the size for thumbnail
             }
         }
 
@@ -364,11 +396,19 @@ void IMGV::initMenu()
     fileMenu->addAction(file__openAction);
     fileMenu->addAction(file__openNewWindowAction);
     fileMenu->addMenu(file__openRecent);
-    fileMenu->addMenu(file__openSession);
-    fileMenu->addAction(file__newSession);
-    fileMenu->addAction(file__saveSession);
-    fileMenu->addAction(file__closeSession);
     fileMenu->addAction(file__exit);
+
+    sessionMenu->addMenu(session__openSession);
+    sessionMenu->addAction(session__newSession);
+    sessionMenu->addAction(session__saveSession);
+    sessionMenu->addAction(session__closeSession);
+    sessionMenu->addMenu(session__tags);
+
+    session__tags->addAction(tags_assign);
+    session__tags->addAction(tags_new);
+    session__tags->addAction(tags_manage);
+
+    tags_manage->setCheckable(true);
 
     edit__rotate->addAction(rotate__clockwise);
     edit__rotate->addAction(rotate__anticlockwise);
@@ -414,6 +454,11 @@ void IMGV::initMenu()
         m_img_widget->setFitImageOnLoad(state);
     });
 
+    connect(tags_assign, &QAction::triggered, this, &IMGV::assignTagToImage);
+    connect(tags_new, &QAction::triggered, this, &IMGV::createTag);
+    connect(tags_manage, &QAction::triggered, this, &IMGV::manageTags);
+
+
     connect(zoom__in, &QAction::triggered, m_img_widget, &ImageWidget::zoomIn);
     connect(zoom__out, &QAction::triggered, m_img_widget, &ImageWidget::zoomOut);
     connect(zoom__reset, &QAction::triggered, m_img_widget, &ImageWidget::zoomOriginal);
@@ -440,13 +485,15 @@ void IMGV::initMenu()
         toggleSlideshow();
     });
 
+    connect(session__newSession, &QAction::triggered, this, &IMGV::newSession);
+    connect(session__closeSession, &QAction::triggered, this, &IMGV::closeSession);
+    connect(session__saveSession, &QAction::triggered, this, &IMGV::saveSession);
+
     connect(tools__manage_sessions, &QAction::triggered, this, [&]() {
         ManageSessionsDialog *md = new ManageSessionsDialog(m_sessions_dir_path, this);
         connect(md, &ManageSessionsDialog::openSession, this, [&](QString name) { openSession(name); });
         md->open();
     });
-
-
 
     auto session_files = getSessionFiles();
 
@@ -460,16 +507,13 @@ void IMGV::initMenu()
             /*openSessionInNewWindow(file);*/
         });
 
-        file__openSession->addAction(action);
+        session__openSession->addAction(action);
     }
 
-    connect(file__newSession, &QAction::triggered, this, &IMGV::newSession);
     connect(file__openAction, &QAction::triggered, this, &IMGV::openImage);
     connect(file__openNewWindowAction, &QAction::triggered, this, &IMGV::openImageInNewWindow);
     connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, [&](QString filename) {
         m_statusbar->updateFileInfo(filename);
-        if (m_minimap)
-            m_minimap->setPixmap(QPixmap(filename));
         if (m_thumbnail_view->currentThumbnail().hasNote())
         {
             // Auto Popup
@@ -490,7 +534,6 @@ void IMGV::initMenu()
 
     connect(m_img_widget, &ImageWidget::droppedImage, m_thumbnail_view, &ThumbnailView::addThumbnail);
 
-    connect(file__closeSession, &QAction::triggered, this, &IMGV::closeSession);
 
     connect(flip__horizontal, &QAction::triggered, m_img_widget, &ImageWidget::flipHorizontal);
     connect(flip__vertical, &QAction::triggered, m_img_widget, &ImageWidget::flipVertical);
@@ -513,25 +556,11 @@ void IMGV::initMenu()
         if (state)
         {
             m_img_widget->setMinimapMode(true);
-            if (!m_minimap)
-            {
-                m_minimap = new Minimap();
-                m_minimap->setRectColor(m_minimap_rect_color);
-                m_minimap->setRectSize(m_minimap_rect_size);
-                m_minimap->setPixmap(m_img_widget->getPixmap());
-                m_left_pane_layout->addWidget(m_minimap);
-                m_minimap->setMainPixmapBoundingRect(m_img_widget->getPixmap().rect());
-                connect(m_img_widget, &ImageWidget::getRegion, m_minimap, &Minimap::updateRect);
-            }
-            else
-                connect(m_img_widget, &ImageWidget::getRegion, m_minimap, &Minimap::updateRect);
         }
         else
         {
             m_img_widget->setMinimapMode(false);
-            disconnect(m_img_widget, &ImageWidget::getRegion, m_minimap, &Minimap::updateRect);
         }
-        m_minimap->setVisible(state);
     });
 
     connect(tools__pix_analyser, &QAction::triggered, this, [&](bool state) {
@@ -573,7 +602,6 @@ void IMGV::initMenu()
         m_note_holder->setVisible(state);
     });
     
-    connect(file__saveSession, &QAction::triggered, this, &IMGV::saveSession);
 
     connect(view__maximize_image, &QAction::triggered, this, &IMGV::maximizeImage);
 
@@ -711,7 +739,6 @@ QStringList IMGV::getSessionFiles()
 
 void IMGV::saveSession()
 {
-    m_statusbar->setMsg("Session Saved", 2);
 
     if (!m_session_name.isEmpty())
     {
@@ -725,7 +752,15 @@ void IMGV::saveSession()
 
         document.AddMember("session-name", rapidjson::Value(sess_name.c_str(), allocator), allocator);
         document.AddMember("date", rapidjson::Value(date.c_str(), allocator), allocator);
+
+        // tags
+        rapidjson::Value tags(rapidjson::kArrayType);
+        for (int i=0; i < m_tags.size(); i++)
+            tags.PushBack(rapidjson::Value(m_tags.at(i).toStdString().c_str(), allocator), allocator);
+
+        document.AddMember("tags", tags, allocator);
         
+        // files
         rapidjson::Value files(rapidjson::kArrayType);
         
         for(unsigned int i=0; i < m_thumbnail_view->count(); i++)
@@ -734,6 +769,8 @@ void IMGV::saveSession()
             file.AddMember("path", rapidjson::Value(m_thumbnail_view->item(i, Qt::UserRole).toStdString().c_str(), allocator),
                            allocator);
             file.AddMember("note", rapidjson::Value(m_thumbnail_view->item(i, Thumbnail::Note).toStdString().c_str(), allocator),
+                           allocator);
+            file.AddMember("tag", rapidjson::Value(m_thumbnail_view->item(i, Thumbnail::Tag).toStdString().c_str(), allocator),
                            allocator);
             files.PushBack(file, allocator);
         }
@@ -752,6 +789,7 @@ void IMGV::saveSession()
         } else {
             qCritical() << "Error opening file for writing.";
         }
+        m_statusbar->setMsg("Session Saved", 2);
         return;
     }
 
@@ -834,6 +872,7 @@ void IMGV::readSessionFile(QString filename)
         return;
     }
 
+    // Read Session Name
     if (doc.HasMember("session-name") && doc["session-name"].IsString())
     {
         auto session_name = QString::fromStdString(doc["session-name"].GetString());
@@ -842,11 +881,21 @@ void IMGV::readSessionFile(QString filename)
     }
     else QMessageBox::information(this, "Session Info", "No session name found for the current session");
 
+    // Read Modified Date
     if (doc.HasMember("date") && doc["date"].IsString())
         m_session_date = QString::fromStdString(doc["date"].GetString());
     else
         QMessageBox::information(this, "Session Info", "No date found for the current session");
 
+    // Read Tags
+    if (doc.HasMember("tags") && doc["tags"].IsArray())
+    {
+        const Value &tags_arr = doc["tags"];
+        for(SizeType i=0; i < tags_arr.Size(); i++)
+            m_tags.push_back(QString::fromStdString(tags_arr[i].GetString()));
+    }
+
+    // Read Files
     if (doc.HasMember("files") && doc["files"].IsArray())
     {
         const Value& files_arr = doc["files"];
@@ -856,16 +905,22 @@ void IMGV::readSessionFile(QString filename)
             if (files_arr[i].IsObject())
             {
                 auto file = files_arr[i].GetObject();
-                if (file.HasMember("path") && file["path"].IsString() && file.HasMember("note") && file["note"].IsString())
+
+                if ((file.HasMember("path") && file["path"].IsString()) &&
+                    (file.HasMember("note") && file["note"].IsString()) &&
+                    (file.HasMember("tag") && file["tag"].IsString()))
                 {
-                    files_stringlist << Thumbnail(QString::fromStdString(file["path"].GetString()), QString::fromStdString(file["note"].GetString()));
+                    files_stringlist << Thumbnail(QString::fromStdString(file["path"].GetString()),
+                                                  QString::fromStdString(file["note"].GetString()),
+                                                  QString::fromStdString(file["tag"].GetString()));
                 }
             }
         }
         m_thumbnail_view->createThumbnails(files_stringlist);
         m_img_widget->loadFile(m_thumbnail_view->getFile(0));
     }
-    else QMessageBox::information(this, "Session Info", "No files found in the session file");
+    else
+        QMessageBox::information(this, "Session Info", "No files found in the session file");
     ifs.close();
 }
 
@@ -977,8 +1032,6 @@ void IMGV::maximizeImage()
     m_left_pane->setVisible(!m_image_maximize_mode);
     m_menuBar->setVisible(!m_image_maximize_mode);
     m_statusbar->setVisible(!m_image_maximize_mode);
-    if (m_minimap)
-        m_minimap->setVisible(!m_image_maximize_mode);
     m_img_widget->setScrollBarsVisibility(!m_image_maximize_mode);
     view__maximize_image->setChecked(m_image_maximize_mode);
 }
@@ -1015,6 +1068,7 @@ void IMGV::openSession(QString &file)
         if (msgBox.clickedButton() == thisWindowBtn)
         {
             closeSession();
+            m_tags.squeeze();
             readSessionFile(file);
         }
         else if (msgBox.clickedButton() == newWindowBtn)
@@ -1082,6 +1136,28 @@ void IMGV::searchThumbnails() noexcept
     m_thumbnail_search_edit->selectAll();
 }
 
+void IMGV::filterThumbnails() noexcept
+{
+    m_thumbnail_view->filterMode(true);
+    if (m_tags.isEmpty())
+    {
+        QMessageBox::information(this, "Filter by Tag", "No tags found in this session.");
+        return;
+    }
+
+    QInputDialog dialog;
+    dialog.setOptions(QInputDialog::UseListViewForComboBoxItems);
+    dialog.setComboBoxItems(m_tags);
+    dialog.setWindowTitle("Filter by Tag");
+
+    connect(&dialog, &QInputDialog::textValueSelected, this, [&](const QString &tag) {
+        m_thumbnail_view->filter(tag);
+    });
+
+    dialog.exec();
+
+}
+
 void IMGV::toggleThumbnailPanel() noexcept
 {
     m_thumbnail_view->setVisible(!m_thumbnail_view->isVisible());
@@ -1095,4 +1171,70 @@ void IMGV::toggleStatusbar() noexcept
 void IMGV::toggleMenubar() noexcept
 {
     m_menuBar->setVisible(!m_menuBar->isVisible());
+}
+
+void IMGV::createTag() noexcept
+{
+    QString new_tag_name = QInputDialog::getText(this, "Create Tag", "Please enter a tag name");
+    
+    if (new_tag_name.isEmpty())
+    {
+        QMessageBox::critical(this, "Error Creating Tag", "Tag name cannot be empty");
+        return;
+    }
+
+    // If the new tag name is already existing in the list of tags, do nothing
+    if (m_tags.indexOf(new_tag_name) > -1)
+    {
+        QMessageBox::critical(this, "Error Creating Tag", QString("Tag with the name `%1` already exists in this session. Please try again with a different name").arg(new_tag_name));
+        return;
+    }
+
+    m_tags.append(new_tag_name);
+}
+
+void IMGV::assignTagToImage() noexcept
+{
+    if (m_tags.isEmpty())
+    {
+        QMessageBox::information(this, "Assign Tag", "No tags found in this session. Please create one first");
+        return;
+    }
+
+    QInputDialog dialog;
+    dialog.setOptions(QInputDialog::UseListViewForComboBoxItems);
+    dialog.setComboBoxItems(m_tags);
+    dialog.setWindowTitle("Assign Tag");
+
+    connect(&dialog, &QInputDialog::textValueSelected, this, [&](const QString &tag) {
+        m_thumbnail_view->model()->setTag(m_thumbnail_view->currentIndex(), tag);
+    });
+
+    dialog.exec();
+}
+
+void IMGV::manageTags(const bool state) noexcept
+{
+    if (state)
+    {
+        if (m_tags.isEmpty())
+        {
+
+            QMessageBox::information(this, "Manage Tag", "No tags found in this session");
+            tags_manage->setChecked(false);
+            return;
+        }
+
+        m_manage_tag_dialog = new ManageTagDialog(m_tags, m_thumbnail_view->getAllThumbnails(), this);
+        m_manage_tag_dialog->open();
+        connect(m_manage_tag_dialog, &ManageTagDialog::visibilityChanged, tags_manage, [&](bool state) {
+            tags_manage->setChecked(state);
+        });
+    }
+    else
+    {
+        disconnect(m_manage_tag_dialog, 0, 0, 0);
+        delete m_manage_tag_dialog;
+        m_manage_tag_dialog = nullptr;
+    }
 }

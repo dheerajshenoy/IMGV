@@ -2,6 +2,7 @@
 #define IMAGE_WIDGET_HPP
 
 #include <QCursor>
+#include <QLabel>
 #include <QGraphicsView>
 #include <QScrollBar>
 #include <QGraphicsScene>
@@ -22,6 +23,7 @@
 #include <QResizeEvent>
 #include "MovieItem.hpp"
 #include "utils.hpp"
+#include "Minimap.hpp"
 #include "PixAnalyser.hpp"
 
 class ImageWidget : public QGraphicsView
@@ -57,6 +59,11 @@ public:
     void setPixelAnalyser(PixAnalyser *e) noexcept;
     const QPixmap getPixmap() noexcept;
     void setMinimapMode(const bool state) noexcept;
+    void setMinimapRectColor(const QString color) noexcept;
+    void setMinimapRectFillColor(const QString color) noexcept;
+    void setMinimapRectAlpha(const float alpha) noexcept;
+    void setMinimapAutoHide(const bool state) noexcept;
+    void setMinimapSize(const QSize size) noexcept;
     void setPixAnalyseMode(const bool state) noexcept;
     const QRectF visibleRect();
     void setVisibleRectFromMinimap(const QRectF rect) noexcept;
@@ -64,6 +71,7 @@ public:
     void setHorizontalScrollFactor(const qreal factor) noexcept;
     void setVerticalScrollFactor(const qreal factor) noexcept;
     void setFitImageOnLoad(const bool fit) noexcept;
+    void setMinimapLocation(const Minimap::Location loc) noexcept;
 
 signals:
     void fileLoaded(QString);
@@ -104,6 +112,7 @@ private:
     bool m_pix_analyse_mode = false, m_minimap_mode = false;
     bool m_panning = false;
     bool m_fit_image_on_load = true;
+    Minimap *m_minimap = new Minimap(this);
 };
 
 #endif

@@ -1,19 +1,16 @@
 #include "Minimap.hpp"
 
 Minimap::Minimap(QWidget *parent)
-    : QWidget(parent)
+    : QGraphicsView(parent)
 {
-    m_gv->setScene(m_scene);
+    setScene(m_scene);
     m_scene->addItem(m_pixitem);
     m_scene->addItem(m_rectitem);
-    m_layout->addWidget(m_gv);
-    this->setLayout(m_layout);
-    this->show();
-
-    m_gv->setInteractive(true);
+    setInteractive(true);
+    /*setFrameStyle);*/
 }
 
-void Minimap::setRectSize(const QSize size) noexcept
+void Minimap::setSize(const QSize size) noexcept
 {
     m_pix_scale_size = size;
 }
@@ -22,11 +19,9 @@ void Minimap::setPixmap(const QPixmap &pix) noexcept
 {
     m_pix = pix.scaled(m_pix_scale_size, Qt::KeepAspectRatio);
     m_pixitem->setPixmap(m_pix);
-}
-
-void Minimap::setMainPixmapBoundingRect(const QRectF &rect) noexcept
-{
-    m_mainPixmapBoundingRect = rect;
+    m_scene->setSceneRect(m_pixitem->boundingRect());
+    /*fitInView(m_pixitem->boundingRect(), Qt::KeepAspectRatio);*/
+    m_mainPixmapBoundingRect = pix.rect();
 }
 
 void Minimap::updateRect(const QRectF rect) noexcept
@@ -39,19 +34,41 @@ void Minimap::updateRect(const QRectF rect) noexcept
         rect.height() * scale
     );
 
-    if (scaledRect.width() > m_pix.width())
-        m_rectitem->setVisible(false);
-    else
+    if (scaledRect.width() < m_pix.width())
     {
+        if (m_auto_hide)
+            this->setVisible(true);
         if (!m_rectitem->isVisible())
             m_rectitem->setVisible(true);
         m_rectitem->setRect(scaledRect);
     }
+    else if (m_auto_hide)
+        this->setVisible(false);
+    else
+        m_rectitem->setVisible(false);
 }
-
 
 void Minimap::setRectColor(const QString color) noexcept
 {
-    if (QColor(color).isValid())
-        m_rectitem->setColor(color);
+    m_rectitem->setColor(color);
+}
+
+void Minimap::setRectFillColor(const QString color) noexcept
+{
+    m_rectitem->setFill(color);
+}
+
+void Minimap::setLocation(const Location loc) noexcept
+{
+    m_location = loc;
+}
+
+void Minimap::setRectAlpha(const float alpha) noexcept
+{
+    m_rectitem->setAlpha(alpha);
+}
+
+void Minimap::setAutoHide(const bool state) noexcept
+{
+    m_auto_hide = state;
 }

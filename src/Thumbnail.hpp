@@ -11,6 +11,7 @@ public:
     Thumbnail();
     Thumbnail(const QString &filename) noexcept;
     Thumbnail(const QString &filename, const QString &note) noexcept;
+    Thumbnail(const QString &filename, const QString &note, const QString &tag) noexcept;
     ~Thumbnail() {}
 
     void setFilename(const QString &fileName) noexcept;
@@ -19,17 +20,20 @@ public:
     bool hasNote() noexcept;
     const QString& filename() noexcept;
     QPixmap pixmap() noexcept;
+    void setTag(const QString m_tag) noexcept;
+    QString tag() noexcept;
 
     enum Data {
-        FileName = Qt::UserRole + 1,
-        Note
+        FileName = Qt::UserRole,
+        Note,
+        Tag
     };
 
 private:
     QPixmap m_pix;
     QString m_note;
     QString m_filename = "";
-    unsigned int m_index = -1;
+    QString m_tag;
 };
 
 #endif

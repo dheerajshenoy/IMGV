@@ -174,23 +174,38 @@ int ThumbnailView::count() noexcept
     return m_model->rowCount();
 }
 
-QString ThumbnailView::item(int _index, int role) noexcept
+QString ThumbnailView::item(const int _index, const int role) noexcept
 {
     auto index = this->currentIndex().siblingAtRow(_index);
     return m_model->data(index, role).toString();
 }
 
-void ThumbnailView::search(QString text) noexcept
+void ThumbnailView::search(const QString text) noexcept
 {
+    m_filter_proxy->setSearchRole(Thumbnail::FileName);
     m_filter_proxy->setFilterText(text);
 }
 
-void ThumbnailView::searchMode(bool state) noexcept
+void ThumbnailView::searchMode(const bool state) noexcept
 {
     if (state)
         this->setModel(m_filter_proxy);
     else
         this->setModel(m_model);
+}
+
+void ThumbnailView::filterMode(const bool state) noexcept
+{
+    if (state)
+        this->setModel(m_filter_proxy);
+    else
+        this->setModel(m_model);
+}
+
+void ThumbnailView::filter(const QString tag) noexcept
+{
+    m_filter_proxy->setSearchRole(Thumbnail::Tag);
+    m_filter_proxy->setFilterText(tag);
 }
 
 Thumbnail ThumbnailView::currentThumbnail() noexcept
@@ -228,4 +243,17 @@ void ThumbnailView::setHighlightIndex(const int row) noexcept
 int ThumbnailView::currentHighlightIndex() noexcept
 {
     return currentIndex().row();
+}
+
+Thumbnail ThumbnailView::thumbnail(const int index) noexcept
+{
+    if (index > m_model->rowCount() || index < 0)
+        return Thumbnail();
+
+    return m_model->getThumbnail(index);
+}
+
+QVector<Thumbnail>& ThumbnailView::getAllThumbnails() noexcept
+{
+    return m_model->thumbnails();
 }

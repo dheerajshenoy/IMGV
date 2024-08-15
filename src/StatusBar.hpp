@@ -40,17 +40,16 @@ protected:
     void hideEvent(QHideEvent *e) noexcept override;
 
 private:
-    QHBoxLayout *layout;
-    QLabel *msgLabel;
-    QLabel *filePathLabel;
-    QLabel *fileSizeLabel;
-    QLabel *imageDimensionsLabel;
-    QLabel *sessionLabel = new QLabel("No Session");
-    QLabel *noteModifiedLabel = new QLabel();
-    QLabel *hasNoteLabel = new QLabel();
-    QLabel *zoomLabel = new QLabel();
-    HoverLabel *hoverFilePathLabel = new HoverLabel();
-
+    QHBoxLayout *layout = nullptr;
+    QLabel *msgLabel = nullptr;
+    /*QLabel *filePathLabel;*/
+    QLabel *fileSizeLabel = nullptr;
+    QLabel *imageDimensionsLabel = nullptr;
+    QLabel *sessionLabel = nullptr;
+    QLabel *noteModifiedLabel = nullptr;
+    QLabel *hasNoteLabel = nullptr;
+    QLabel *zoomLabel = nullptr;
+    HoverLabel *hoverFilePathLabel = nullptr;
     QString formatFileSize(qint64 size) const;
     QString m_note_indicator = "NOTE";
     QString m_note_modified_indicator = "[M]";

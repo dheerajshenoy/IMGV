@@ -83,6 +83,10 @@ IMaGe Viewer ~ IMGV. **Original**.
 
 10. Minimap
 
+11. Tags
+
+Tags allow you to group images inside a session into a kind of sub-groups so that you can view these groups easily. You can filter them using the filter option in the thumbnail panel to view images beloging to the tags if there are any in the session.
+
 <a name="installation" />
 
 
@@ -227,6 +231,8 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 6. [x] Remove highlight after removing image from thumbnail
 7. [x] Resize thumbnailview scrollbar after removing images
 8. ~~Minimap mouse move support~~
+9. [x] Minimap on the graphicsview
+10. [x] Tags
 
 <a name="thanks" />
 

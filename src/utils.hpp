@@ -26,6 +26,7 @@ struct Custom
 {
     QStringList files;
     QString date;
+    QStringList tags;
 };
 
 class utils
@@ -40,7 +41,7 @@ public:
     static QImage decodeWebPToImage(const QString &filePath) noexcept;
     static QString imageFormatToString(const QImage::Format format) noexcept;
     static QStringList getImagesFromSessionFile(const QString &session_file) noexcept;
-    static Custom getDateandImagesFromSessionFile(const QString &session_file) noexcept;
+    static Custom getInfoFromSessionFile(const QString &session_file) noexcept;
 };
 
 #endif

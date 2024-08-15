@@ -22,7 +22,9 @@ public:
     void removeIndexes(const QList<QModelIndex> &indexes) noexcept;
     Thumbnail getThumbnail(const int index) noexcept;
     void setNote(const QModelIndex &index, const QString &note) noexcept;
+    void setTag(const QModelIndex &index, const QString &tag) noexcept;
     QStringList getFiles() noexcept;
+    QVector<Thumbnail>& thumbnails() { return m_thumbnails; }
 
 
 private:

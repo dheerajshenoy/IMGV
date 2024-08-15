@@ -33,16 +33,21 @@ public:
     void gotoNext() noexcept;
     void gotoPrev() noexcept;
     int count() noexcept;
-    QString item(int index, int role) noexcept;
+    QString item(const int index, const int role) noexcept;
+    Thumbnail thumbnail(const int index) noexcept;
     void clear() noexcept;
-    void search(QString) noexcept;
-    void searchMode(bool) noexcept;
+    void search(const QString) noexcept;
+    void searchMode(const bool) noexcept;
+    void filterMode(const bool) noexcept;
+    void filter(const QString) noexcept;
     Thumbnail currentThumbnail() noexcept;
     QString getFile(const int index) noexcept;
     const QStringList getAllFiles() noexcept;
+    QVector<Thumbnail>& getAllThumbnails() noexcept;
     void setCurrentThumbnail(const int index) noexcept;
     void setHighlightIndex(const int row) noexcept;
     int currentHighlightIndex() noexcept;
+    void setFilterByTag(const QString tagname) noexcept;
 
 signals:
     void fileChangeRequested(QString);

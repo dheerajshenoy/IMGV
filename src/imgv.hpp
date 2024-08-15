@@ -43,6 +43,8 @@
 #include "NoteWidget.hpp"
 #include "PixAnalyser.hpp"
 #include "Minimap.hpp"
+#include "ThumbnailTools.hpp"
+#include "ManageTagDialog.hpp"
 
 class IMGV : public QMainWindow
 {
@@ -64,6 +66,7 @@ private:
     void openImageInNewWindow();
     void parseCommandLineArguments(argparse::ArgumentParser &);
     QStringList getSessionFiles();
+    QStringList getSessionTags();
     void readSessionFile(QString filepath);
     void openSessionInNewWindow(QString &);
     void fullScreen();
@@ -74,10 +77,14 @@ private:
     void addNote() noexcept;
     void ThumbSearchTextChanged(QString) noexcept;
     void searchThumbnails() noexcept;
+    void filterThumbnails() noexcept;
     void toggleNotes() noexcept;
     void toggleThumbnailPanel() noexcept;
     void toggleMenubar() noexcept;
     void toggleStatusbar() noexcept;
+    void createTag() noexcept;
+    void assignTagToImage() noexcept;
+    void manageTags(const bool state) noexcept;
 
 
     ThumbnailView *m_thumbnail_view  = new ThumbnailView();
@@ -92,19 +99,26 @@ private:
 
     QMenuBar *m_menuBar = new QMenuBar();
     QMenu *fileMenu = m_menuBar->addMenu("&File");
+    QMenu *sessionMenu = m_menuBar->addMenu("&Session");
     QMenu *editMenu = m_menuBar->addMenu("&Edit");
     QMenu *toolsMenu = m_menuBar->addMenu("&Tools");
     QMenu *viewMenu = m_menuBar->addMenu("&View");
     QMenu *helpMenu = m_menuBar->addMenu("&Help");
 
-    QAction *file__newSession = new QAction("New Session");
     QAction *file__openAction = new QAction("Open");
     QMenu *file__openRecent = new QMenu("Open Recent Files");
-    QMenu *file__openSession = new QMenu("Open Session");
     QAction *file__openNewWindowAction = new QAction("Open in new &Window");
-    QAction *file__saveSession = new QAction("Save session");
-    QAction *file__closeSession = new QAction("Close session");
     QAction *file__exit = new QAction("Exit");
+
+    QAction *session__newSession = new QAction("New");
+    QMenu *session__openSession = new QMenu("Open");
+    QAction *session__saveSession = new QAction("Save");
+    QAction *session__closeSession = new QAction("Close");
+    QMenu *session__tags = new QMenu("Tag");
+
+    QAction *tags_assign = new QAction("Assign");
+    QAction *tags_new = new QAction("New");
+    QAction *tags_manage = new QAction("Manage");
 
     QAction *help__about = new QAction("About");
 
@@ -145,6 +159,7 @@ private:
 
     QWidget *m_right_pane = new QWidget();
     QWidget *m_left_pane = new QWidget();
+    ThumbnailTools *m_thumbnail_tools_widget = new ThumbnailTools();
     QVBoxLayout *m_left_pane_layout = new QVBoxLayout();
     QVBoxLayout *m_right_pane_layout = new QVBoxLayout();
     NoteWidget *m_note_holder = new NoteWidget();
@@ -156,9 +171,8 @@ private:
     int m_slideshow_index = -1;
     QStringList m_slideshow_files;
 
-    Minimap *m_minimap = nullptr;
-    QString m_minimap_rect_color = "#FF5000";
-    QSize m_minimap_rect_size;
+    ManageTagDialog *m_manage_tag_dialog = nullptr;
+    QStringList m_tags;
 };
 
 

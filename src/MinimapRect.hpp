@@ -14,6 +14,11 @@ public:
     ~MinimapRect() {}
 
     void setColor(const QString color) noexcept;
+    void setFill(const QString color) noexcept;
+    void setAlpha(const float alpha) noexcept;
+
+private:
+    QColor m_fill_color;
 };
 
 #endif

@@ -3,8 +3,8 @@
 ManageSessionsDialog::ManageSessionsDialog(QString &sessionDirPath, QWidget *parent)
     : QDialog(parent), session_path(sessionDirPath)
 {
-    table->setColumnCount(3);
-    table->setHorizontalHeaderLabels({ "Session Name", "Date Modified", "Images" });
+    table->setColumnCount(4);
+    table->setHorizontalHeaderLabels({ "Session Name", "Date Modified", "Images", "Tags" });
 
     auto files = QDir(sessionDirPath).entryList(QStringList() << "*.imgv" << "*.IMGV", QDir::Files);
     table->setRowCount(files.size());
@@ -17,14 +17,20 @@ ManageSessionsDialog::ManageSessionsDialog(QString &sessionDirPath, QWidget *par
     for(int i=0; i < files.size(); i++)
     {
         QTableWidgetItem *session_file = new QTableWidgetItem(QFileInfo(files[i]).baseName());
-        Custom date_and_files = utils::getDateandImagesFromSessionFile(QString("%1%2%3").arg(sessionDirPath).arg(QDir::separator()).arg(files[i]));
-        auto imgfiles = date_and_files.files;
+        Custom file = utils::getInfoFromSessionFile(QString("%1%2%3").arg(sessionDirPath).arg(QDir::separator()).arg(files[i]));
+        auto imgfiles = file.files;
+        auto tags = file.tags;
         QTableWidgetItem *img_count = new QTableWidgetItem(QString::number(imgfiles.size()));
-        QTableWidgetItem *date = new QTableWidgetItem(date_and_files.date);
+        QTableWidgetItem *date = new QTableWidgetItem(file.date);
+        QString _tag = tags.join(",");
+        QTableWidgetItem *tagitem = new QTableWidgetItem(_tag);
+
         img_count->setToolTip(imgfiles.join("\n"));
+
         table->setItem(i, 0, session_file);
         table->setItem(i, 1, date);
         table->setItem(i, 2, img_count);
+        table->setItem(i, 3, tagitem);
     }
 
     layout->addWidget(table);
