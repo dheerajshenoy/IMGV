@@ -7,6 +7,8 @@
 
 **IMGV**. The Image Viewer no one asked for. Written in C++. Only for **Linux**. With [features](#features) I wanted in my dream image viewer.
 
+Total lines of code excluding the external libraries (Sol, rapidjson, qmarkdowntextedit) is ~ 4500 lines (source and header file).
+
 # Table of Contents
 
 1. [Screenshots](#screenshots)
