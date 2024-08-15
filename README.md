@@ -36,8 +36,6 @@ R E T R O artwork by [Xeno_Sid](https://www.artstation.com/xeno_sid/).
 
 [Link for the demo](https://drive.google.com/file/d/1KKOTOjRqxaw1tly8BbbVPjO5muqZQuip/view?usp=sharing)
 
-
-
 <a name="introduction" />
 
 # Introduction
@@ -108,7 +106,6 @@ You can "pipe into" imgv to open the files. Best example is editing image using 
 ```shell
 magick some-file.jpg -blur 0x8 :- | imgv
 ```
-
 
 <a name="installation" />
 
@@ -202,6 +199,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Add sessions to the open session menu as they are created in app.
     - Close and clear the notes editor once the session is closed.
     - Read binary image data from the standard input (piped input).
+    - Fix the bug where spawning a new instance of imgv would freeze due to stdin
 
 - 14 Aug 2024
     - Minimap
