@@ -61,6 +61,18 @@ ImageWidget::ImageWidget(QWidget *parent)
     m_minimap->raise();
     m_minimap->setVisible(false);
 
+    m_pix_analyser = new PixAnalyser(this);
+    m_pix_analyser->raise();
+
+    connect(m_pix_analyser, &PixAnalyser::visibilityChanged, this, [&](bool state) {
+        emit pixAnalyserVisibilityChanged(state);
+        setPixAnalyseMode(state);
+    });
+
+    connect(m_pix_analyser, &PixAnalyser::pickColor, this, [&]() {
+        /*emit pix*/
+        setPixAnalyseMode(true);
+    });
 }
 
 void ImageWidget::zoomOriginal() {
@@ -194,6 +206,7 @@ void ImageWidget::loadFile(QString file)
 
     if (m_fit_image_on_load)
         fitToWindow();
+
 }
 
 void ImageWidget::loadPixmap(QPixmap &pix)
@@ -365,7 +378,8 @@ void ImageWidget::mouseMoveEvent(QMouseEvent *e) noexcept
     QGraphicsView::mouseMoveEvent(e);
     if (m_pix_analyse_mode)
     {
-        emit mouseMoved(mapToScene(e->pos()));
+        /*emit mouseMoved(mapToScene(e->pos()));*/
+        m_pix_analyser->analysePix(mapToScene(e->pos()));
         this->viewport()->setCursor(Qt::CrossCursor);
     }
 
@@ -375,6 +389,11 @@ void ImageWidget::mouseMoveEvent(QMouseEvent *e) noexcept
 
 void ImageWidget::mousePressEvent(QMouseEvent *e) noexcept
 {
+    if (m_pix_analyse_mode)
+    {
+        setPixAnalyseMode(false, false);
+        m_pix_analyser->setColorPicked(true);
+    }
     m_panning = true;
     QGraphicsView::mousePressEvent(e);
 }
@@ -443,13 +462,21 @@ void ImageWidget::setMinimapMode(const bool state) noexcept
     }
 }
 
-void ImageWidget::setPixAnalyseMode(const bool state) noexcept
+void ImageWidget::setPixAnalyseMode(const bool state, const bool closeDialog) noexcept
 {
     m_pix_analyse_mode = state;
     if (state)
+    {
+        m_pix_analyser->show();
+        m_pix_analyser->setPixmap(m_pixmapItem->pixmap());
         this->viewport()->setCursor(Qt::CrossCursor);
+    }
     else
+    {
+        if (closeDialog)
+            m_pix_analyser->close();
         this->viewport()->setCursor(Qt::OpenHandCursor);
+    }
 }
 
 void ImageWidget::setHorizontalScrollFactor(const qreal factor) noexcept

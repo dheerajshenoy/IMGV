@@ -7,11 +7,12 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsEllipseItem>
-#include <QGridLayout>
+#include <QFormLayout>
 #include <QColor>
 #include <QShowEvent>
 #include <QCloseEvent>
 #include <QResizeEvent>
+#include <QPushButton>
 
 class PixAnalyser : public QWidget
 {
@@ -23,20 +24,25 @@ public:
 
     void setPixmap(const QPixmap &img) noexcept;
     void analysePix(const QPointF &loc) noexcept;
+    void setColorPicked(bool state) noexcept;
 
 signals:
     void visibilityChanged(bool);
+    void colorPicked();
+    void pickColor();
 
 protected:
     void showEvent(QShowEvent *e) noexcept override;
     void closeEvent(QCloseEvent *e) noexcept override;
 
 private:
-    QGridLayout *m_layout = new QGridLayout();
+    QFormLayout *m_layout = new QFormLayout();
     QLabel *m_color_name = new QLabel();
     QLabel *m_color_rgb = new QLabel();
     QLabel *m_color_hsv = new QLabel();
     QLabel *m_color = new QLabel();
+    QPushButton *m_pick_btn = new QPushButton("Pick Again");
+    QPushButton *m_done_btn = new QPushButton("Done");
     QImage m_img;
 };
 

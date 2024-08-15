@@ -200,6 +200,8 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Close and clear the notes editor once the session is closed.
     - Read binary image data from the standard input (piped input).
     - Fix the bug where spawning a new instance of imgv would freeze due to stdin
+    - Add pixel analyser as member function of ImageWidget
+    - Clicking after pix analysis mode stops the color picking mode with the last pixel color clicked staying intact.
 
 - 14 Aug 2024
     - Minimap

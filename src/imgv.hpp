@@ -41,8 +41,6 @@
 #include <fstream>
 #include "ManageSessionsDialog.hpp"
 #include "NoteWidget.hpp"
-#include "PixAnalyser.hpp"
-#include "Minimap.hpp"
 #include "ThumbnailTools.hpp"
 #include "ManageTagDialog.hpp"
 #include <QByteArray>
@@ -170,8 +168,6 @@ private:
     NoteWidget *m_note_holder = new NoteWidget();
     QSplitter *m_right_pane_splitter = new QSplitter(Qt::Orientation::Vertical);
     bool m_auto_notes_popup = false;
-
-    PixAnalyser *m_pix_analyser = nullptr;
 
     int m_slideshow_index = -1;
     QStringList m_slideshow_files;

@@ -1,4 +1,5 @@
 #include "PixAnalyser.hpp"
+#include <numbers>
 
 PixAnalyser::PixAnalyser(QWidget *parent)
     : QWidget(parent)
@@ -6,19 +7,24 @@ PixAnalyser::PixAnalyser(QWidget *parent)
     this->setLayout(m_layout);
     this->setWindowFlag(Qt::WindowType::Dialog);
 
-    m_layout->addWidget(m_color, 0, 0, 1, 2);
-    m_layout->addWidget(new QLabel("HEX: "), 1, 0);
-    m_layout->addWidget(m_color_name, 1, 1);
-    m_layout->addWidget(new QLabel("RGB: "), 2, 0);
-    m_layout->addWidget(m_color_rgb, 2, 1);
-    m_layout->addWidget(new QLabel("HSV: "), 3, 0);
-    m_layout->addWidget(m_color_hsv, 3, 1);
-    m_layout->setAlignment(Qt::AlignmentFlag::AlignCenter);
+    m_layout->addRow(m_color);
+    m_layout->addRow("HEX:", m_color_name);
+    m_layout->addRow("RGB:", m_color_rgb);
+    m_layout->addRow("HSV:", m_color_hsv);
+    m_layout->addRow(m_pick_btn);
+    m_layout->addRow(m_done_btn);
+
+    m_pick_btn->setVisible(false);
+
+    connect(m_pick_btn, &QPushButton::clicked, this, [&]() {
+        emit pickColor();
+    });
+
+    connect(m_done_btn, &QPushButton::clicked, this, &QWidget::close);
 
     m_color_name->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse | Qt::TextInteractionFlag::TextSelectableByKeyboard);
     m_color_rgb->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse | Qt::TextInteractionFlag::TextSelectableByKeyboard);
     m_color_hsv->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse | Qt::TextInteractionFlag::TextSelectableByKeyboard);
-    this->show();
 }
 
 void PixAnalyser::setPixmap(const QPixmap &pix) noexcept
@@ -46,4 +52,9 @@ void PixAnalyser::analysePix(const QPointF &loc) noexcept
     m_color_hsv->setText(QString("(%1, %2, %3)").arg(hsv.hue()).arg(hsv.saturation()).arg(hsv.value()));
 
     m_color->setStyleSheet(QString("background-color: %1").arg(color.name()));
+}
+
+void PixAnalyser::setColorPicked(const bool state) noexcept
+{
+    m_pick_btn->setVisible(true);
 }

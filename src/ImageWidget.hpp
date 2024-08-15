@@ -56,7 +56,6 @@ public:
     void moveUp() noexcept;
     void moveDown() noexcept;
     void resetScrollbars() noexcept;
-    void setPixelAnalyser(PixAnalyser *e) noexcept;
     const QPixmap getPixmap() noexcept;
     void setMinimapMode(const bool state) noexcept;
     void setMinimapRectColor(const QString color) noexcept;
@@ -64,7 +63,7 @@ public:
     void setMinimapRectAlpha(const float alpha) noexcept;
     void setMinimapAutoHide(const bool state) noexcept;
     void setMinimapSize(const QSize size) noexcept;
-    void setPixAnalyseMode(const bool state) noexcept;
+    void setPixAnalyseMode(const bool state, const bool closeDialog = true) noexcept;
     const QRectF visibleRect();
     void setVisibleRectFromMinimap(const QRectF rect) noexcept;
     void setZoomFactor(const qreal zoom) noexcept;
@@ -80,6 +79,7 @@ signals:
     void mouseMoved(QPointF);
     void zoomChanged(qreal);
     void getRegion(QRectF);
+    void pixAnalyserVisibilityChanged(bool);
 
 protected:
     void wheelEvent(QWheelEvent *e) override;

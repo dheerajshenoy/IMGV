@@ -557,28 +557,11 @@ void IMGV::initMenu()
         }
     });
 
-    connect(tools__pix_analyser, &QAction::triggered, this, [&](bool state) {
-        if (state)
-        {
-            m_img_widget->setPixAnalyseMode(true);
-            m_pix_analyser = new PixAnalyser(this);
-            connect(m_pix_analyser, &PixAnalyser::visibilityChanged, tools__pix_analyser, [&](bool state) {
-                tools__pix_analyser->setChecked(state);
-                m_img_widget->setPixAnalyseMode(state);
-            });
-            m_pix_analyser->setPixmap(m_img_widget->getPixmap());
-            connect(m_img_widget, &ImageWidget::mouseMoved, m_pix_analyser, &PixAnalyser::analysePix);
-        }
-        else {
-            m_img_widget->setPixAnalyseMode(false);
-            m_pix_analyser->close();
-            disconnect(m_img_widget, &ImageWidget::mouseMoved, m_pix_analyser, &PixAnalyser::analysePix);
-            disconnect(m_pix_analyser, 0, 0, 0);
-            delete m_pix_analyser;
-            m_pix_analyser = nullptr;
-        }
+    connect(tools__pix_analyser, &QAction::triggered, m_img_widget, [&](bool state) {
+        m_img_widget->setPixAnalyseMode(state);
     });
 
+    connect(m_img_widget, &ImageWidget::pixAnalyserVisibilityChanged, tools__pix_analyser, &QAction::setChecked);
 
     connect(view__thumbnails, &QAction::triggered, this, [&](bool state) {
         m_thumbnail_view->setVisible(state);
