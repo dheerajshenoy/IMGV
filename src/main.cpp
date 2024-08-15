@@ -29,6 +29,10 @@ int main (int argc, char *argv[]) {
         .help("List all the session files")
         .flag();
 
+    parser.add_argument("-")
+        .help("Read from STDIN")
+        .flag();
+
     parser.add_argument("files")
         .remaining();
 

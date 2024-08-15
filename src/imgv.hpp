@@ -87,7 +87,9 @@ private:
     void createTag() noexcept;
     void assignTagToImage() noexcept;
     void manageTags(const bool state) noexcept;
-    void processStdin(QIODevice *inputDevice) noexcept;
+    void processStdin() noexcept;
+    void addSessionsToOpenSessionMenu() noexcept;
+    void addSessionToOpenSessionMenu(const QString &sessionName) noexcept;
 
 
     ThumbnailView *m_thumbnail_view  = new ThumbnailView();
@@ -176,6 +178,7 @@ private:
 
     ManageTagDialog *m_manage_tag_dialog = nullptr;
     QStringList m_tags;
+    bool m_stdin = false;
 };
 
 
