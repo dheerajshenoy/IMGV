@@ -1,5 +1,6 @@
 #include "imgv.hpp"
 
+
 IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     : QMainWindow(parent)
 {
@@ -48,7 +49,6 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     /*connect(m_note_holder, &NoteWidget::visibilityChanged, m_statusbar, &StatusBar::modificationLabelVisiblity);*/
 
-
     m_right_pane_splitter->setStretchFactor(0, 1);
     m_right_pane_layout->addWidget(m_right_pane_splitter);
 
@@ -88,6 +88,15 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     initMenu();
     initConnections();
     this->show();
+
+
+    if (!isatty(fileno(stdin)))
+    {
+        QFile inputFile;
+        inputFile.open(stdin, QIODevice::ReadOnly);
+        processStdin(&inputFile);
+    }
+
 }
 
 void IMGV::initDefaultConfig()
@@ -1237,4 +1246,16 @@ void IMGV::manageTags(const bool state) noexcept
         delete m_manage_tag_dialog;
         m_manage_tag_dialog = nullptr;
     }
+}
+
+void IMGV::processStdin(QIODevice *inputDevice) noexcept
+{
+    QByteArray data = inputDevice->readAll();
+    QPixmap pix;
+    if (pix.loadFromData(data))
+    {
+        m_img_widget->loadPixmap(pix);
+    }
+    else
+        qDebug() << "Unable to read the image from stdin";
 }

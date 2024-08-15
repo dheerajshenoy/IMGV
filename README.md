@@ -91,8 +91,16 @@ https://github.com/user-attachments/assets/793d495a-4149-4766-a402-439dbce5320a
 
 Tags allow you to group images inside a session into a kind of sub-groups so that you can view these groups easily. You can filter them using the filter option in the thumbnail panel to view images beloging to the tags if there are any in the session.
 
-<a name="installation" />
+12. STDIN capable (pipe capable)
 
+You can "pipe into" imgv to open the files. Best example is editing image using ImageMagick and then pipeing it into imgv to view it.
+
+```shell
+magick some-file.jpg -blur 0x8 :- | imgv
+```
+
+
+<a name="installation" />
 
 # Installation
 
@@ -232,6 +240,8 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Don't ask for save session each time after opening a session
 
 <a name="todo" />
+
+1. [ ] Nested SVG files are not loaded by Qt Pixmap. Maybe try to integrate an SVG library and render SVG through data
 
 <a name="thanks" />
 

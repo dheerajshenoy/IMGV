@@ -46,14 +46,16 @@ ThumbnailModel* ThumbnailView::model() noexcept
 
 void ThumbnailView::createThumbnails(const QStringList &fileNames) noexcept
 {
-    for (const QString &fileName : fileNames) {
-        Thumbnail thumb(fileName);
-        m_model->addThumbnail(thumb);
+    QVector<Thumbnail> thumbnails(fileNames.size());
+    for(int i=0; i < thumbnails.size(); i++)
+    {
+        Thumbnail thumb(fileNames.at(i));
+        thumbnails[i] = thumb;
     }
-
+    
+    m_model->addThumbnails(thumbnails);
     if (m_model->rowCount() >= 0)
         setCurrentIndex(m_model->index(0));
-
 }
 
 void ThumbnailView::createThumbnails(const QList<Thumbnail> &thumbnails) noexcept

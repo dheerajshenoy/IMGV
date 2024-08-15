@@ -11,6 +11,15 @@ int ThumbnailModel::addThumbnail(const Thumbnail &thumbnail) {
     return m_thumbnails.size();
 }
 
+int ThumbnailModel::addThumbnails(const QVector<Thumbnail> &thumbnails) {
+    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+    for(const auto &thumbnail: thumbnails)
+        m_thumbnails.append(thumbnail);
+    endInsertRows();
+    return m_thumbnails.size();
+}
+
+
 int ThumbnailModel::rowCount(const QModelIndex &parent) const
 {
     return static_cast<int>(m_thumbnails.size());

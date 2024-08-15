@@ -194,7 +194,6 @@ void ImageWidget::loadFile(QString file)
 
     if (m_fit_image_on_load)
         fitToWindow();
-
 }
 
 void ImageWidget::loadPixmap(QPixmap &pix)

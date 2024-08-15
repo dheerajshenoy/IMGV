@@ -15,6 +15,7 @@ public:
     ThumbnailModel(QObject *parent = nullptr);
 
     int addThumbnail(const Thumbnail &thumbnail);
+    int addThumbnails(const QVector<Thumbnail> &thumbnails);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     void clear() noexcept;

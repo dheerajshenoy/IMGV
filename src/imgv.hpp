@@ -46,6 +46,7 @@
 #include "ThumbnailTools.hpp"
 #include "ManageTagDialog.hpp"
 #include <QByteArray>
+#include <unistd.h>
 
 class IMGV : public QMainWindow
 {
@@ -86,6 +87,7 @@ private:
     void createTag() noexcept;
     void assignTagToImage() noexcept;
     void manageTags(const bool state) noexcept;
+    void processStdin(QIODevice *inputDevice) noexcept;
 
 
     ThumbnailView *m_thumbnail_view  = new ThumbnailView();
