@@ -25,8 +25,8 @@
 
 ![commandline-arguments](https://github.com/user-attachments/assets/f015132f-86b4-4977-a3f7-6fc11d0efcf4)
 
+![image](https://github.com/user-attachments/assets/2d1002cd-6847-423f-91cf-8e996c852c32)
 
-![image](https://github.com/user-attachments/assets/c5f42acb-0760-45e7-a41d-11fac2570c41)
 
 <a name="introduction" />
 
@@ -81,7 +81,11 @@ IMaGe Viewer ~ IMGV. **Original**.
 
 9. Color Picker
 
+https://github.com/user-attachments/assets/e8c96010-0017-4c47-bb98-c01d3615962a
+
 10. Minimap
+
+https://github.com/user-attachments/assets/793d495a-4149-4766-a402-439dbce5320a
 
 11. Tags
 
@@ -160,6 +164,13 @@ IMGV can be configured using the lua programming language. `config.lua` file sho
 Note that if the `keybindings` table is present in the `Defaults` table, then default keybindings will not be loaded.
 
 # Changelogs and Bug Fixes
+
+- 15 Aug 2024
+    - Make minimap render over the graphicsview instead of being a widget on the panel
+    - Add tag features
+    - Create and assign tags for images in a session.
+    - Fit image on load option
+    - Added more configuration options to lua
 
 - 14 Aug 2024
     - Minimap
