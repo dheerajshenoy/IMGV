@@ -1164,7 +1164,6 @@ void IMGV::searchThumbnails() noexcept
 
 void IMGV::filterThumbnails() noexcept
 {
-    m_thumbnail_view->filterMode(true);
     if (m_tags.isEmpty())
     {
         QMessageBox::information(this, "Filter by Tag", "No tags found in this session.");
@@ -1177,6 +1176,7 @@ void IMGV::filterThumbnails() noexcept
     dialog.setWindowTitle("Filter by Tag");
 
     connect(&dialog, &QInputDialog::textValueSelected, this, [&](const QString &tag) {
+        m_thumbnail_view->filterMode(true);
         m_thumbnail_view->filter(tag);
     });
 

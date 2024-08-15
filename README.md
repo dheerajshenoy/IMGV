@@ -202,6 +202,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Fix the bug where spawning a new instance of imgv would freeze due to stdin
     - Add pixel analyser as member function of ImageWidget
     - Clicking after pix analysis mode stops the color picking mode with the last pixel color clicked staying intact.
+    - Fixed bug in filter tag when switching tag filter
 
 - 14 Aug 2024
     - Minimap
