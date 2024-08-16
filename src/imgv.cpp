@@ -944,7 +944,6 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
     if (parser.is_used("-"))
     {
         m_stdin = true;
-        return;
     }
 
     if (parser.is_used("--no-config"))
@@ -983,7 +982,6 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
     if (parser.is_used("--session"))
     {
         readSessionFile(QString::fromStdString(parser.get<std::vector<std::string>>("--session")[0]));
-        return;
     }
 
     if (parser.is_used("--input"))
@@ -1001,25 +999,29 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
 
         for(const auto &file: files)
             m_thumbnail_view->addThumbnail(QString::fromStdString(file));
-        return;
     }
 
     if (parser.is_used("files"))
     {
         auto files = parser.get<std::vector<std::string>>("files");
-        auto file = QString::fromStdString(files[0]);
+        auto file = QString::fromStdString(files.at(0));
+
+        // If directory is mentioned, try to read all the compatible files from the directory
         if (QFileInfo(file).isDir())
         {
             auto dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
-            for(const auto &f: dirfiles)
-                m_thumbnail_view->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));
-            return;
+            m_thumbnail_view->createThumbnails(dirfiles);
+            /*for(const auto &f: dirfiles)*/
+            /*    m_thumbnail_view->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));*/
+            /*return;*/
         }
-        m_img_widget->loadFile(file);
-
-        for(const auto &file: files)
-            m_thumbnail_view->addThumbnail(QString::fromStdString(file));
-        return;
+        else {
+            QStringList _files;
+            for(const auto &file : files)
+                _files << QString::fromStdString(file);
+            m_thumbnail_view->createThumbnails(_files);
+            m_img_widget->loadFile(_files.at(0));
+        }
     }
 
 }

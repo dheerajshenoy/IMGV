@@ -180,6 +180,9 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 # Changelogs and Bug Fixes
 
+- 16 Aug 2024
+    - Fix remaining files read through the command line
+
 - 15 Aug 2024
     - Make minimap render over the graphicsview instead of being a widget on the panel.
 
