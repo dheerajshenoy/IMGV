@@ -104,7 +104,7 @@ Tags allow you to group images inside a session into a kind of sub-groups so tha
 You can "pipe into" imgv to open the files. Best example is editing image using ImageMagick and then pipeing it into imgv to view it.
 
 ```shell
-magick some-file.jpg -blur 0x8 :- | imgv
+magick some-file.jpg -blur 0x8 - | imgv -
 ```
 
 <a name="installation" />
