@@ -181,15 +181,16 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 # Changelogs and Bug Fixes
 
 - 16 Aug 2024
-    - Fix remaining files read through the command line
-    - Fix drag and drop of multiple files
-    - Fix reading image from STDIN.
     - STDIN images now create temporary files which are destroyed when the program exits.
     - Make small functions inline for increased performance.
     - Change Image properties layout to QFormLayout for less code.
     - Open session using just the name (with or without the .imgv extension) or full path.
-    - Fix minimap weird placement at startup.
-    - Minimap toggle bug fix.
+    - Fix: Minimap toggle bug.
+    - Fix: minimap weird placement at startup.
+    - Fix: STDIN file being opened as a regular file bug 
+    - Fix: remaining files read through the command line
+    - Fix: drag and drop of multiple files
+    - Fix: reading image from STDIN.
 
 - 15 Aug 2024
     - Make minimap render over the graphicsview instead of being a widget on the panel.
@@ -210,10 +211,10 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Add sessions to the open session menu as they are created in app.
     - Close and clear the notes editor once the session is closed.
     - Read binary image data from the standard input (piped input).
-    - Fix the bug where spawning a new instance of imgv would freeze due to stdin
+    - Fix: bug where spawning a new instance of imgv would freeze due to stdin
     - Add pixel analyser as member function of ImageWidget
     - Clicking after pix analysis mode stops the color picking mode with the last pixel color clicked staying intact.
-    - Fixed bug in filter tag when switching tag filter
+    - Fix: bug in filter tag when switching tag filter
 
 - 14 Aug 2024
     - Minimap
