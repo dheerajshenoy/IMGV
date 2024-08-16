@@ -13,7 +13,7 @@ Minimap::Minimap(QWidget *parent)
 void Minimap::setPixmap(const QPixmap &pix) noexcept
 {
     m_pix = pix.scaled(m_pix_scale_size, Qt::KeepAspectRatio);
-    m_pixitem->setPixmap(m_pix);
+        m_pixitem->setPixmap(m_pix);
     m_scene->setSceneRect(m_pixitem->boundingRect());
     /*fitInView(m_pixitem->boundingRect(), Qt::KeepAspectRatio);*/
     m_mainPixmapBoundingRect = pix.rect();
@@ -46,4 +46,3 @@ void Minimap::updateRect(const QRectF rect) noexcept
             m_rectitem->setVisible(false);
     }
 }
-

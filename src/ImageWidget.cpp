@@ -79,6 +79,7 @@ ImageWidget::ImageWidget(QWidget *parent)
             // TODO: Custom Minimap Location
             break;
     }
+
 }
 
 void ImageWidget::zoomOriginal() noexcept
@@ -211,13 +212,26 @@ void ImageWidget::loadFile(QString file) noexcept
         w = pix.width(); h = pix.height();
         m_pixmapItem->setPixmap(pix);
         m_scene->setSceneRect(m_pixmapItem->boundingRect());
-        m_minimap->setPixmap(QPixmap(file));
     }
     emit fileLoaded(file);
     emit fileDim(w, h);
 
     if (m_fit_image_on_load)
-        fitToWindow();
+    {
+        switch(m_fit_image_on_load_mode)
+        {
+            case FitOnLoad::FitToWidth:
+                fitToWidth();
+            break;
+
+            case FitOnLoad::FitToHeight:
+                fitToHeight();
+            break;
+
+            default:
+                break;
+        }
+    }
 }
 
 
@@ -294,7 +308,7 @@ void ImageWidget::fitToWidth() noexcept
     zoomFit();
 }
 
-void ImageWidget::fitToWindow() noexcept
+void ImageWidget::fitToHeight() noexcept
 {
     m_aspect_ratio_mode = Qt::KeepAspectRatio;
     zoomFit();
@@ -441,6 +455,7 @@ void ImageWidget::setMinimapMode(const bool state) noexcept
     if (m_minimap_mode)
     {
         m_minimap->setVisibleIfNotAutoHideMode(true);
+
         m_minimap->setPixmap(m_pixmapItem->pixmap());
         connect(this, &ImageWidget::getRegion, m_minimap, &Minimap::updateRect);
     }

@@ -60,6 +60,15 @@ void ThumbnailView::createThumbnails(const QStringList &fileNames) noexcept
     setUpdatesEnabled(true);
 }
 
+void ThumbnailView::createThumbnail(const QString &fileName) noexcept
+{
+    Thumbnail thumb(fileName);
+    
+    m_model->addThumbnail(thumb);
+    if (m_model->rowCount() >= 0)
+        setCurrentIndex(m_model->index(0));
+}
+
 void ThumbnailView::createThumbnails(const QList<Thumbnail> &thumbnails) noexcept
 {
     setUpdatesEnabled(false);
@@ -176,7 +185,6 @@ int ThumbnailView::addThumbnail(const QString &filename) noexcept
     int i = m_model->addThumbnail(filename);
     if (m_model->rowCount() == 0)
         setCurrentIndex(m_model->index(0));
-    qDebug() << "DD";
     return i;
 }
 

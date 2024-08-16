@@ -47,6 +47,7 @@
 #include <QByteArray>
 #include <QCloseEvent>
 #include <unistd.h>
+#include <QActionGroup>
 
 class IMGV : public QMainWindow
 {
@@ -134,7 +135,8 @@ private:
     QMenu *edit__zoom = new QMenu("Zoom");
     QMenu *edit__rotate = new QMenu("Rotate");
     QMenu *edit__flip = new QMenu("Flip");
-    QAction *edit__fit_on_load = new QAction("Fit on Load");
+    QMenu *edit__fit = new QMenu("Fit");
+    QMenu *edit__fit_on_load = new QMenu("Fit on Load");
 
     QAction *zoom__in = new QAction("Zoom In");
     QAction *zoom__out = new QAction("Zoom Out");
@@ -147,6 +149,15 @@ private:
     QAction *rotate__anticlockwise = new QAction("Anti Clockwise");
     QAction *rotate__custom = new QAction("Custom");
     QAction *rotate__reset = new QAction("Reset");
+
+    QAction *fit__width = new QAction("Width");
+    QAction *fit__height = new QAction("Height");
+
+    QAction *fit_on_load__none = new QAction("None");
+    QAction *fit_on_load__height = new QAction("Height");
+    QAction *fit_on_load__width = new QAction("Width");
+
+    QActionGroup *fit_on_load_action_group = new QActionGroup(edit__fit_on_load);
 
     QAction *view__minimap = new QAction("Minimap");
     QAction *view__thumbnails = new QAction("Thumbnail Panel");

@@ -185,11 +185,13 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Make small functions inline for increased performance.
     - Change Image properties layout to QFormLayout for less code.
     - Open session using just the name (with or without the .imgv extension) or full path.
+    - Add fit to width, height menu option.
+    - Add fit on load (width, height and none) menu option.
     - Fix: Minimap toggle bug.
     - Fix: minimap weird placement at startup.
-    - Fix: STDIN file being opened as a regular file bug 
-    - Fix: remaining files read through the command line
-    - Fix: drag and drop of multiple files
+    - Fix: STDIN file being opened as a regular file bug.
+    - Fix: remaining files read through the command line.
+    - Fix: drag and drop of multiple files.
     - Fix: reading image from STDIN.
 
 - 15 Aug 2024

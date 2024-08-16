@@ -46,7 +46,7 @@ public:
     void flipHorizontal() noexcept;
     void rotate(qreal degrees) noexcept;
     void fitToWidth() noexcept;
-    void fitToWindow() noexcept;
+    void fitToHeight() noexcept;
     void resetRotation() noexcept;
     void setScrollBarsVisibility(bool state) noexcept;
     void moveLeft() noexcept;
@@ -59,6 +59,11 @@ public:
     const QRectF visibleRect() noexcept;
     void setVisibleRectFromMinimap(const QRectF rect) noexcept;
 
+    enum FitOnLoad {
+        None,
+        FitToWidth,
+        FitToHeight,
+    };
 
     inline void setHorizontalScrollFactor(const qreal factor) noexcept
     {
@@ -75,11 +80,11 @@ public:
         m_zoomFactor = zoom;
     }
 
-    inline void setFitImageOnLoad(const bool fit) noexcept
+    inline void setFitImageOnLoad(const bool fit, FitOnLoad fitMode = FitOnLoad::None) noexcept
     {
         m_fit_image_on_load = fit;
+        m_fit_image_on_load_mode = fitMode;
     }
-
 
     inline void setMinimapRectColor(const QString color) noexcept
     {
@@ -171,6 +176,7 @@ private:
     bool m_pix_analyse_mode = false, m_minimap_mode = false;
     bool m_panning = false;
     bool m_fit_image_on_load = true;
+    FitOnLoad m_fit_image_on_load_mode = FitOnLoad::None;
     Minimap *m_minimap = new Minimap(this);
 };
 

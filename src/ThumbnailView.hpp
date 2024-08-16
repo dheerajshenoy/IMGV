@@ -27,6 +27,7 @@ class ThumbnailView : public QListView
 public:
     ThumbnailView(QWidget *parent = nullptr);
     ThumbnailModel* model() noexcept;
+    void createThumbnail(const QString &fileName) noexcept;
     void createThumbnails(const QStringList &fileNames) noexcept;
     void createThumbnails(const QList<Thumbnail> &thumbnails) noexcept;
     void loadFile(const QString &path) noexcept;

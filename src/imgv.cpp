@@ -92,7 +92,6 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     addSessionsToOpenSessionMenu();
 
-
     if (m_stdin && !isatty(fileno(stdin)))
         processStdin();
 
@@ -147,8 +146,31 @@ void IMGV::initConfigDirectory()
         m_img_widget->setZoomFactor(defaults_table["zoom_factor"].get_or(2.0));
         auto fit_on_load = defaults_table["fit_on_load"].get_or(false);
 
-        m_img_widget->setFitImageOnLoad(fit_on_load);
-        edit__fit_on_load->setChecked(fit_on_load);
+        if (fit_on_load)
+        {
+            auto fit_on_load_mode = defaults_table["fit_on_load_mode"].get_or<std::string>("none");
+
+            if (fit_on_load_mode == "height")
+            {
+                m_img_widget->setFitImageOnLoad(true, ImageWidget::FitOnLoad::FitToHeight);
+                fit_on_load__height->setChecked(true);
+            }
+            else if (fit_on_load_mode == "width")
+            {
+                m_img_widget->setFitImageOnLoad(true, ImageWidget::FitOnLoad::FitToWidth);
+                fit_on_load__width->setChecked(true);
+            }
+            else
+            {
+                fit_on_load__height->setChecked(true);
+                m_img_widget->setFitImageOnLoad(true, ImageWidget::FitOnLoad::FitToHeight);
+            }
+        }
+        else 
+        {
+            m_img_widget->setFitImageOnLoad(false);
+            fit_on_load__none->setChecked(true);
+        }
 
         sol::optional<sol::table> scroll_factor_table_optional = defaults_table["scroll_factor"];
 
@@ -297,8 +319,8 @@ void IMGV::initConfigDirectory()
                     QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleThumbnailPanel);
                 } else if (action == "fit_width") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWidth);
-                } else if (action == "fit_window") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWindow);
+                } else if (action == "fit_height") {
+                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::fitToHeight);
                 }
             }
         }
@@ -434,9 +456,24 @@ void IMGV::initMenu()
     editMenu->addMenu(edit__rotate);
     editMenu->addMenu(edit__flip);
     editMenu->addMenu(edit__zoom);
-    editMenu->addAction(edit__fit_on_load);
+    editMenu->addMenu(edit__fit);
+    editMenu->addMenu(edit__fit_on_load);
 
-    edit__fit_on_load->setCheckable(true);
+
+    edit__fit->addAction(fit__width);
+    edit__fit->addAction(fit__height);
+
+    edit__fit_on_load->addAction(fit_on_load__width);
+    edit__fit_on_load->addAction(fit_on_load__height);
+    edit__fit_on_load->addAction(fit_on_load__none);
+
+    fit_on_load_action_group->addAction(fit_on_load__width);
+    fit_on_load_action_group->addAction(fit_on_load__height);
+    fit_on_load_action_group->addAction(fit_on_load__none);
+
+    fit_on_load__width->setCheckable(true);
+    fit_on_load__height->setCheckable(true);
+    fit_on_load__none->setCheckable(true);
 
     viewMenu->addAction(view__minimap);
     viewMenu->addAction(view__thumbnails);
@@ -459,14 +496,31 @@ void IMGV::initMenu()
     tools__pix_analyser->setCheckable(true);
     tools__slideshow->setCheckable(true);
 
-    connect(edit__fit_on_load, &QAction::triggered, [&](bool state) {
-        m_img_widget->setFitImageOnLoad(state);
+    /*connect(edit__fit_on_load, &QAction::triggered, [&](bool state) {*/
+    /*    m_img_widget->setFitImageOnLoad(state);*/
+    /*});*/
+
+    connect(fit_on_load__width, &QAction::triggered, m_img_widget, [&](bool state) {
+        if (state)
+            m_img_widget->setFitImageOnLoad(true, ImageWidget::FitOnLoad::FitToWidth);
     });
+
+    connect(fit_on_load__height, &QAction::triggered, m_img_widget, [&](bool state) {
+        if (state)
+            m_img_widget->setFitImageOnLoad(true, ImageWidget::FitOnLoad::FitToHeight);
+    });
+
+    connect(fit_on_load__none, &QAction::triggered, m_img_widget, [&](bool state) {
+        if (state)
+            m_img_widget->setFitImageOnLoad(false);
+    });
+
+    connect(fit__width, &QAction::triggered, m_img_widget, &ImageWidget::fitToWidth);
+    connect(fit__height, &QAction::triggered, m_img_widget, &ImageWidget::fitToHeight);
 
     connect(tags_assign, &QAction::triggered, this, &IMGV::assignTagToImage);
     connect(tags_new, &QAction::triggered, this, &IMGV::createTag);
     connect(tags_manage, &QAction::triggered, this, &IMGV::manageTags);
-
 
     connect(zoom__in, &QAction::triggered, m_img_widget, &ImageWidget::zoomIn);
     connect(zoom__out, &QAction::triggered, m_img_widget, &ImageWidget::zoomOut);
@@ -504,7 +558,6 @@ void IMGV::initMenu()
         md->open();
     });
 
-
     connect(file__openAction, &QAction::triggered, this, &IMGV::openImage);
     connect(file__openNewWindowAction, &QAction::triggered, this, &IMGV::openImageInNewWindow);
     connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, [&](QString filename) {
@@ -528,7 +581,7 @@ void IMGV::initMenu()
     });
 
     connect(m_img_widget, &ImageWidget::droppedImage, [&](const QString file) {
-        m_thumbnail_view->createThumbnails(QStringList() << file);
+        m_thumbnail_view->createThumbnail(file);
     });
 
 
@@ -612,7 +665,7 @@ void IMGV::initKeybinds()
     QShortcut *kb_fliphoriz = new QShortcut(QKeySequence(";"), this);
     QShortcut *kb_flipvert= new QShortcut(QKeySequence("'"), this);
     QShortcut *kb_fit_to_width = new QShortcut(QKeySequence("w"), this);
-    QShortcut *kb_fit_to_window = new QShortcut(QKeySequence("h"), this);
+    QShortcut *kb_fit_to_height = new QShortcut(QKeySequence("h"), this);
     QShortcut *kb_toggle_menubar = new QShortcut(QKeySequence("Ctrl+M"), this);
     QShortcut *kb_goto_next = new QShortcut(QKeySequence("j"), this);
     QShortcut *kb_goto_prev = new QShortcut(QKeySequence("k"), this);
@@ -628,7 +681,7 @@ void IMGV::initKeybinds()
     connect(kb_fliphoriz, &QShortcut::activated, m_img_widget, &ImageWidget::flipHorizontal);
     connect(kb_flipvert, &QShortcut::activated, m_img_widget, &ImageWidget::flipVertical);
     connect(kb_fit_to_width, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWidth);
-    connect(kb_fit_to_window, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWindow);
+    connect(kb_fit_to_height, &QShortcut::activated, m_img_widget, &ImageWidget::fitToHeight);
     connect(kb_toggle_menubar, &QShortcut::activated, this, [&]() {
         m_menuBar->setVisible(!m_menuBar->isVisible());
     });
@@ -952,12 +1005,6 @@ void IMGV::readSessionFile(QString filename)
 void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
 {
 
-    if (parser.is_used("-"))
-    {
-        m_stdin = true;
-        return;
-    }
-
     if (parser.is_used("--no-config"))
     {
         initDefaultConfig();
@@ -1018,6 +1065,13 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         m_thumbnail_view->createThumbnails(dd);
     }
 
+
+    if (parser.is_used("-"))
+    {
+        m_stdin = true;
+        return;
+    }
+
     if (parser.is_used("files"))
     {
         auto files = parser.get<std::vector<std::string>>("files");
@@ -1040,6 +1094,7 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
             m_img_widget->loadFile(_files.at(0));
         }
     }
+
 
 }
 
@@ -1291,12 +1346,15 @@ void IMGV::processStdin() noexcept
     QTemporaryFile tempPixFile;
     tempPixFile.setAutoRemove(false);
     QByteArray data = file.readAll();
+    file.close();
     if (tempPixFile.open())
     {
         tempPixFile.write(data);
-        m_thumbnail_view->createThumbnails(QStringList() << tempPixFile.fileName());
-        m_img_widget->loadFile(tempPixFile.fileName());
-        m_temp_files << tempPixFile.fileName();
+        QString filename = tempPixFile.fileName();
+        qDebug() << "TEMP FILE: " << filename;
+        m_temp_files << filename;
+        m_thumbnail_view->createThumbnail(filename);
+        m_img_widget->loadFile(filename);
     }
     else
         qDebug() << "Unable to read the image from stdin";
@@ -1327,8 +1385,8 @@ void IMGV::closeEvent(QCloseEvent *e) noexcept
     {
         for(const auto &file : m_temp_files)
         {
-            qDebug() << file;
             QFile f(file);
+            f.close();
             f.remove();
         }
     }
