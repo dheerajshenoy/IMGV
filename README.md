@@ -187,12 +187,14 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Open session using just the name (with or without the .imgv extension) or full path.
     - Add fit to width, height menu option.
     - Add fit on load (width, height and none) menu option.
+    - Color picker functionality even for GIFs!
     - Fix: Minimap toggle bug.
     - Fix: minimap weird placement at startup.
     - Fix: STDIN file being opened as a regular file bug.
     - Fix: remaining files read through the command line.
     - Fix: drag and drop of multiple files.
     - Fix: reading image from STDIN.
+    
 
 - 15 Aug 2024
     - Make minimap render over the graphicsview instead of being a widget on the panel.
@@ -280,7 +282,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 1. [ ] Nested SVG files are not loaded by Qt Pixmap. Maybe try to integrate an SVG library and render SVG through data
 2. [ ] Highlight currently displayed file in the thumbnail panel
-3. [ ] Color picker for gifs (currently works only on static images)
+3. [x] Color picker for gifs (currently works only on static images)
 
 <a name="thanks" />
 

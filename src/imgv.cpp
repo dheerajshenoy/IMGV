@@ -74,8 +74,6 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     centralWidget->setContentsMargins(0, 0, 0, 0);
     this->setContentsMargins(0, 0, 0, 0);
 
-
-
     connect(m_thumbnail_view, &ThumbnailView::fileChangeRequested, m_img_widget, [&](QString filepath) {
         m_img_widget->loadFile(filepath);
         m_note_holder->setMarkdown(m_thumbnail_view->currentIndex().data(Thumbnail::Note).toString());
@@ -189,7 +187,7 @@ void IMGV::initConfigDirectory()
 
             m_thumbnail_view->setVisible(thumbnails_table["show"].get_or(true));
             m_thumbnail_view->setUniformItemSizes(thumbnails_table["uniform"].get_or(false));
-            
+
             auto mode = thumbnails_table["mode"].get_or<std::string>("icon");
 
             if (mode == "icon")
@@ -203,18 +201,21 @@ void IMGV::initConfigDirectory()
 
             if (selection_mode == "extended")
                 m_thumbnail_view->setSelectionMode(QListView::SelectionMode::ExtendedSelection);
+
             else if (selection_mode == "contiguous")
                 m_thumbnail_view->setSelectionMode(QListView::SelectionMode::ContiguousSelection);
+
             else if (selection_mode == "single")
                 m_thumbnail_view->setSelectionMode(QListView::SelectionMode::SingleSelection);
+
             else if (selection_mode == "multi")
                 m_thumbnail_view->setSelectionMode(QListView::SelectionMode::MultiSelection);
+
             else
                 m_thumbnail_view->setSelectionMode(QListView::SelectionMode::ExtendedSelection);
 
-            
             m_thumbnail_view->setSpacing(thumbnails_table["spacing"].get_or(20));  // Spacing between thumbnails
-            
+
             // Icon Size
             sol::optional<sol::table> icon_size_table_optional = thumbnails_table["icon_size"];
             if (icon_size_table_optional)
@@ -239,12 +240,16 @@ void IMGV::initConfigDirectory()
 
             if (elide == "none")
                 m_thumbnail_view->setTextElideMode(Qt::ElideNone);
+
             else if (elide == "right")
                 m_thumbnail_view->setTextElideMode(Qt::ElideRight);
+
             else if (elide == "left")
                 m_thumbnail_view->setTextElideMode(Qt::ElideLeft);
+
             else if (elide == "middle")
                 m_thumbnail_view->setTextElideMode(Qt::ElideMiddle);
+
             else
                 m_thumbnail_view->setTextElideMode(Qt::ElideNone);
 
@@ -281,44 +286,64 @@ void IMGV::initConfigDirectory()
 
                 if (action == "zoom_in") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomIn);
+
                 } else if (action == "zoom_out") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomOut);
+
                 } else if (action == "zoom_reset") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomOriginal);
+
                 } else if (action == "rotate_clockwise") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::rotateClockwise);
+
                 } else if (action == "rotate_anticlockwise") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::rotateAnticlockwise);
+
                 } else if (action == "flip_vertical") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::flipVertical);
+
                 } else if (action == "flip_horizontal") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::flipHorizontal);
+
                 } else if (action == "left") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveLeft);
+
                 } else if (action == "down") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveDown);
+
                 } else if (action == "up") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveUp);
+
                 } else if (action == "right") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveRight);
+
                 } else if (action == "next") {
                     QObject::connect(shortcut, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoNext);
+
                 } else if (action == "prev") {
                     QObject::connect(shortcut, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoPrev);
+
                 } else if (action == "notes") {
                     QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleNotes);
+
                 } else if (action == "maximize") {
                     QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::maximizeImage);
+
                 } else if (action == "search") {
                     QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::searchThumbnails);
+
                 } else if (action == "toggle_menubar") {
                     QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleMenubar);
+
                 } else if (action == "toggle_statusbar") {
                     QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleStatusbar);
+
                 } else if (action == "toggle_thumbnail_panel") {
                     QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleThumbnailPanel);
+
                 } else if (action == "fit_width") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWidth);
+
                 } else if (action == "fit_height") {
                     QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::fitToHeight);
                 }
@@ -380,7 +405,6 @@ void IMGV::initConfigDirectory()
             }
         }
 
-
         // statusbar table
         sol::optional<sol::table> statusbar_table_exists = defaults_table["statusbar"];
 
@@ -413,7 +437,7 @@ void IMGV::initConfigDirectory()
     }
 
     // create sessions folder
-    
+
     if (!sessions_dir.exists())
         sessions_dir.mkdir(m_sessions_dir_path);
 
@@ -426,7 +450,6 @@ void IMGV::initMenu()
 
     fileMenu->addAction(file__openAction);
     fileMenu->addAction(file__openNewWindowAction);
-    fileMenu->addMenu(file__openRecent);
     fileMenu->addAction(file__exit);
 
     sessionMenu->addMenu(session__openSession);
@@ -537,13 +560,13 @@ void IMGV::initMenu()
             connect(m_slideshow_timer, &QTimer::timeout, this, [&]() {
                 slideShow();
             });
-            m_statusbar->setMsg("Slideshow started", 2);
+            setMsg("Slideshow started", 2);
         } else {
             m_slideshow_files.squeeze();
             /*delete m_slideshow_timer;*/
             /*m_slideshow_timer = nullptr;*/
             disconnect(m_slideshow_timer, 0, 0, 0);
-            m_statusbar->setMsg("Stopping Slideshow", 2);
+            setMsg("Stopping Slideshow", 2);
         }
         toggleSlideshow();
     });
@@ -614,10 +637,18 @@ void IMGV::initMenu()
     });
 
     connect(tools__pix_analyser, &QAction::triggered, m_img_widget, [&](bool state) {
+        if (state)
+            setMsg("Click to save picked color", -1);
         m_img_widget->setPixAnalyseMode(state);
+
     });
 
-    connect(m_img_widget, &ImageWidget::pixAnalyserVisibilityChanged, tools__pix_analyser, &QAction::setChecked);
+    connect(m_img_widget, &ImageWidget::pixAnalyserVisibilityChanged, [&](bool state) {
+        tools__pix_analyser->setChecked(state);
+        if (!state)
+            m_statusbar->hideMsg();
+    });
+
     connect(m_img_widget, &ImageWidget::minimapVisibilityChanged, view__minimap, &QAction::setChecked);
 
     connect(view__thumbnails, &QAction::triggered, this, [&](bool state) {
@@ -759,9 +790,15 @@ void IMGV::slideShow() noexcept
 void IMGV::toggleSlideshow() noexcept
 {
     if (m_slideshow_timer->isActive())
+    {
         m_slideshow_timer->stop();
+        setMsg("Slideshow stopped", 5);
+    }
     else
+    {
         m_slideshow_timer->start();
+        setMsg("Slideshow resumed", 5);
+    }
 }
 
 QStringList IMGV::getSessionFiles()
@@ -827,7 +864,7 @@ void IMGV::saveSession()
         } else {
             qCritical() << "Error opening file for writing.";
         }
-        m_statusbar->setMsg("Session Saved", 2);
+        setMsg("Session Saved", 2);
         return;
     }
 
@@ -1032,7 +1069,7 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
             exit(0);
         }
         m_session_name = ses_name;
-        m_statusbar->setMsg("Session file is not saved. Please do it manually", 5);
+        setMsg("Session file is not saved. Please do it manually", 5);
         m_statusbar->setSessionName(ses_name);
         /*saveSession();*/
         return;
@@ -1095,10 +1132,9 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         }
     }
 
-
 }
 
-void IMGV::openSessionInNewWindow(QString &file)
+void IMGV::openSessionInNewWindow(const QString &file)
 {
     QString program = QCoreApplication::applicationFilePath();
 
@@ -1114,12 +1150,7 @@ void IMGV::openSessionInNewWindow(QString &file)
     else {}
 }
 
-void IMGV::fullScreen()
-{
-    this->showFullScreen();
-}
-
-void IMGV::maximizeImage()
+void IMGV::maximizeImage() noexcept
 {
     m_image_maximize_mode = !m_image_maximize_mode;
 
@@ -1131,7 +1162,7 @@ void IMGV::maximizeImage()
 }
 
 
-void IMGV::closeSession()
+void IMGV::closeSession() noexcept
 {
     m_session_name.clear();
     m_note_holder->clear();
@@ -1143,7 +1174,7 @@ void IMGV::closeSession()
     QPixmapCache::clear();
 }
 
-void IMGV::openSession(QString &file)
+void IMGV::openSession(const QString &file) noexcept
 {
     if (m_session_name.isEmpty() && m_thumbnail_view->count() == 0)
     {
@@ -1167,19 +1198,17 @@ void IMGV::openSession(QString &file)
             m_tags.squeeze();
             readSessionFile(file);
         }
+
         else if (msgBox.clickedButton() == newWindowBtn)
-        {
             openSessionInNewWindow(file);
-        }
+
         else if (msgBox.clickedButton() == add_to_this_window_btn)
-        {
             readSessionFile(file);
-        }
+
         else if (msgBox.clickedButton() == cancel_btn)
-        {
             return;
-        }
     }
+    setMsg(QString("Session %1 opened").arg(m_session_name));
 }
 
 void IMGV::newSession() noexcept
@@ -1194,7 +1223,6 @@ void IMGV::newSession() noexcept
         QMessageBox::critical(this, "Error creating session", QString("Session with the name %1 already exists. Try naming the name session with some other name").arg(sessionName));
         return;
     }
-        
 
     QString program = QCoreApplication::applicationFilePath();
 
@@ -1214,11 +1242,6 @@ void IMGV::newSession() noexcept
 
 void IMGV::addNote() noexcept
 {
-}
-
-void IMGV::ThumbSearchTextChanged(QString text) noexcept
-{
-    m_thumbnail_view->search(text);
 }
 
 void IMGV::toggleNotes() noexcept
@@ -1256,21 +1279,6 @@ void IMGV::filterThumbnails() noexcept
 
     dialog.exec();
 
-}
-
-void IMGV::toggleThumbnailPanel() noexcept
-{
-    m_thumbnail_view->setVisible(!m_thumbnail_view->isVisible());
-}
-
-void IMGV::toggleStatusbar() noexcept
-{
-    m_statusbar->setVisible(!m_statusbar->isVisible());
-}
-
-void IMGV::toggleMenubar() noexcept
-{
-    m_menuBar->setVisible(!m_menuBar->isVisible());
 }
 
 void IMGV::createTag() noexcept

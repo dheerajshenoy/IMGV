@@ -74,20 +74,15 @@ private:
     QStringList getSessionFiles();
     QStringList getSessionTags();
     void readSessionFile(QString filepath);
-    void openSessionInNewWindow(QString &);
-    void fullScreen();
-    void maximizeImage();
-    void closeSession();
-    void openSession(QString &);
+    void openSessionInNewWindow(const QString &);
+    void maximizeImage() noexcept;
+    void closeSession() noexcept;
+    void openSession(const QString &) noexcept;
     void newSession() noexcept;
     void addNote() noexcept;
-    void ThumbSearchTextChanged(QString) noexcept;
     void searchThumbnails() noexcept;
     void filterThumbnails() noexcept;
     void toggleNotes() noexcept;
-    void toggleThumbnailPanel() noexcept;
-    void toggleMenubar() noexcept;
-    void toggleStatusbar() noexcept;
     void createTag() noexcept;
     void assignTagToImage() noexcept;
     void manageTags(const bool state) noexcept;
@@ -95,6 +90,38 @@ private:
     void addSessionsToOpenSessionMenu() noexcept;
     void addSessionToOpenSessionMenu(const QString &sessionName) noexcept;
     void cleanUp() noexcept;
+
+    inline void setMsg(const QString &msg, const int sec = 1) noexcept
+    {
+        m_statusbar->setMsg(msg, sec);
+    }
+
+    inline void toggleThumbnailPanel() noexcept
+    {
+        m_thumbnail_view->setVisible(!m_thumbnail_view->isVisible());
+    }
+
+    inline void toggleStatusbar() noexcept
+    {
+        m_statusbar->setVisible(!m_statusbar->isVisible());
+    }
+
+    inline void toggleMenubar() noexcept
+    {
+        m_menuBar->setVisible(!m_menuBar->isVisible());
+    }
+
+
+    inline void ThumbSearchTextChanged(const QString text) noexcept
+    {
+        m_thumbnail_view->search(text);
+    }
+
+    inline void fullScreen() noexcept
+    {
+        this->showFullScreen();
+    }
+
 
 
     ThumbnailView *m_thumbnail_view  = new ThumbnailView();
@@ -116,7 +143,6 @@ private:
     QMenu *helpMenu = m_menuBar->addMenu("&Help");
 
     QAction *file__openAction = new QAction("Open");
-    QMenu *file__openRecent = new QMenu("Open Recent Files");
     QAction *file__openNewWindowAction = new QAction("Open in new &Window");
     QAction *file__exit = new QAction("Exit");
 

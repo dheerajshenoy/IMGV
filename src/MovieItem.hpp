@@ -6,8 +6,13 @@
 #include <QMovie>
 #include <QPainter>
 
-class MovieItem : public QGraphicsItem
+class MovieItem : public QObject, public QGraphicsItem
 {
+    Q_OBJECT
+
+signals:
+    void frameChanged();
+
 public:
     using QGraphicsItem::QGraphicsItem;
 
@@ -17,7 +22,7 @@ public:
         QObject::disconnect(mConnection); // disconnect old object
         mMovie = movie;
         if (mMovie)
-            mConnection = QObject::connect(mMovie, &QMovie::frameChanged, [&]{ update(); });
+            mConnection = QObject::connect(mMovie, &QMovie::frameChanged, [&]{ emit frameChanged(); update(); });
     }
 
     inline QRectF boundingRect() const noexcept override 
@@ -33,6 +38,12 @@ public:
         if (mMovie)
             painter->drawPixmap(mMovie->frameRect(), mMovie->currentPixmap(), mMovie->frameRect());
     }
+
+    inline const QPixmap currentPixmap() const noexcept
+    {
+        return mMovie->currentPixmap();
+    }
+
 
 private:
     QPointer<QMovie> mMovie;

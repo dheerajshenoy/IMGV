@@ -7,6 +7,13 @@ StatusBar::StatusBar(QWidget *parent)
     layout->setContentsMargins(2, 2, 2, 2);
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
     setLayout(layout);
+    m_timer.setSingleShot(true);
+
+    connect(&m_timer, &QTimer::timeout, [&]() {
+        /*filePathLabel->setHidden(false);*/
+        hoverFilePathLabel->setHidden(false);
+        msgLabel->setHidden(true);
+    });
 }
 
 void StatusBar::defaultLayout() noexcept
@@ -36,6 +43,7 @@ void StatusBar::defaultLayout() noexcept
     layout->addWidget(fileSizeLabel);
     layout->addWidget(imageDimensionsLabel);
     layout->addWidget(sessionLabel);
+
 }
 
 void StatusBar::addWidget(const QString &name) noexcept
@@ -158,11 +166,9 @@ void StatusBar::setMsg(QString msg, int sec) noexcept
         /*filePathLabel->setHidden(true);*/
         hoverFilePathLabel->setHidden(true);
 
-        QTimer::singleShot(sec * 1000, [&]() {
-            /*filePathLabel->setHidden(false);*/
-            hoverFilePathLabel->setHidden(false);
-            msgLabel->setHidden(true);
-        });
+        if (m_timer.isActive())
+            m_timer.stop();
+        m_timer.start(sec * 1000);
     }
 }
 

@@ -17,6 +17,7 @@ PixAnalyser::PixAnalyser(QWidget *parent)
     m_pick_btn->setVisible(false);
 
     connect(m_pick_btn, &QPushButton::clicked, this, [&]() {
+        m_pick_btn->setVisible(false);
         emit pickColor();
     });
 
@@ -29,7 +30,11 @@ PixAnalyser::PixAnalyser(QWidget *parent)
 
 void PixAnalyser::analysePix(const QPointF &loc) noexcept
 {
-    QColor color = QColor(m_img.pixelColor(loc.x(), loc.y()));
+    auto x = loc.x();
+    auto y = loc.y();
+    if ( (x < 0 || x > m_img.width()) || (y < 0 || y > m_img.height()) ) return;
+
+    QColor color = QColor(m_img.pixelColor(x, y));
     m_color_name->setText(color.name());
     m_color_rgb->setText(QString("(%1, %2, %3)").arg(color.red()).arg(color.green()).arg(color.blue()));
 

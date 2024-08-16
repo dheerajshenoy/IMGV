@@ -17,6 +17,7 @@ class StatusBar : public QWidget
 public:
     explicit StatusBar(QWidget *parent = nullptr);
 
+
     void updateFileInfo(const QString &filePath) noexcept;
     void setSessionName(QString) noexcept;
     void clearTexts() noexcept;
@@ -54,6 +55,11 @@ public:
             zoomLabel->setText(zoom + " %");
     }
 
+    inline void hideMsg() noexcept
+    {
+        msgLabel->hide();
+    }
+
 
 signals:
     void visibilityChanged(bool);
@@ -84,6 +90,7 @@ private:
     QString formatFileSize(qint64 size) const;
     QString m_note_indicator = "NOTE";
     QString m_note_modified_indicator = "[M]";
+    QTimer m_timer;
 };
 
 #endif

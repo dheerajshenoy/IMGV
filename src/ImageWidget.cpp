@@ -41,6 +41,12 @@ ImageWidget::ImageWidget(QWidget *parent)
     m_pix_analyser = new PixAnalyser(this);
     m_pix_analyser->raise();
 
+
+    connect(m_movieItem, &MovieItem::frameChanged, this, [&]() {
+        if (m_pix_analyse_mode && !m_pixmapItem->isVisible())
+            m_pix_analyser->setPixmap(m_movieItem->currentPixmap());
+    });
+
     connect(m_pix_analyser, &PixAnalyser::visibilityChanged, this, [&](bool state) {
         emit pixAnalyserVisibilityChanged(state);
         setPixAnalyseMode(state);
@@ -472,7 +478,10 @@ void ImageWidget::setPixAnalyseMode(const bool state, const bool closeDialog) no
     if (state)
     {
         m_pix_analyser->show();
-        m_pix_analyser->setPixmap(m_pixmapItem->pixmap());
+        if (m_pixmapItem->isVisible())
+            m_pix_analyser->setPixmap(m_pixmapItem->pixmap());
+        else
+            m_pix_analyser->setPixmap(m_movieItem->currentPixmap());
         this->viewport()->setCursor(Qt::CrossCursor);
     }
     else

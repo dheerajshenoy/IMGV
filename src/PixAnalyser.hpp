@@ -43,6 +43,7 @@ protected:
 
     inline void showEvent(QShowEvent *e) noexcept override
     {
+        m_pick_btn->setVisible(false);
         emit visibilityChanged(true);
     }
 
