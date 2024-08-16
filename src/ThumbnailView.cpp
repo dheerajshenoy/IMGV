@@ -169,7 +169,11 @@ void ThumbnailView::showEvent(QShowEvent *e) noexcept
 
 int ThumbnailView::addThumbnail(const QString &filename) noexcept
 {
-    return m_model->addThumbnail(filename);
+    int i = m_model->addThumbnail(filename);
+    if (m_model->rowCount() == 0)
+        setCurrentIndex(m_model->index(0));
+    qDebug() << "DD";
+    return i;
 }
 
 int ThumbnailView::count() noexcept

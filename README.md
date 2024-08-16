@@ -182,6 +182,9 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 - 16 Aug 2024
     - Fix remaining files read through the command line
+    - Fix drag and drop of multiple files
+    - Fix reading image from STDIN.
+    - STDIN images now create temporary files which are destroyed when the program exits
 
 - 15 Aug 2024
     - Make minimap render over the graphicsview instead of being a widget on the panel.

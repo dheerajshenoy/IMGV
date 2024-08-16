@@ -25,6 +25,7 @@
 #include "utils.hpp"
 #include "Minimap.hpp"
 #include "PixAnalyser.hpp"
+#include "Thumbnail.hpp"
 
 class ImageWidget : public QGraphicsView
 {
@@ -36,7 +37,6 @@ public:
     ~ImageWidget(){}
 
     void loadFile(QString file);
-    void loadPixmap(QPixmap &pix);
     void closeFile();
     void zoomIn();
     void zoomOut();

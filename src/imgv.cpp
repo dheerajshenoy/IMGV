@@ -526,7 +526,9 @@ void IMGV::initMenu()
         }
     });
 
-    connect(m_img_widget, &ImageWidget::droppedImage, m_thumbnail_view, &ThumbnailView::addThumbnail);
+    connect(m_img_widget, &ImageWidget::droppedImage, [&](const QString file) {
+        m_thumbnail_view->createThumbnails(QStringList() << file);
+    });
 
 
     connect(flip__horizontal, &QAction::triggered, m_img_widget, &ImageWidget::flipHorizontal);
@@ -944,6 +946,7 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
     if (parser.is_used("-"))
     {
         m_stdin = true;
+        return;
     }
 
     if (parser.is_used("--no-config"))
@@ -991,14 +994,19 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         if (QFileInfo(file).isDir())
         {
             auto dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
-            for(const auto &f: dirfiles)
-                m_thumbnail_view->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));
+            for(int i=0; i < dirfiles.size(); i++)
+                dirfiles[i] = QString("%1%2%3").arg(file).arg(QDir::separator()).arg(dirfiles.at(i));
+
+            m_thumbnail_view->createThumbnails(dirfiles);
             return;
         }
         m_img_widget->loadFile(file);
 
+        QStringList dd;
         for(const auto &file: files)
-            m_thumbnail_view->addThumbnail(QString::fromStdString(file));
+            dd << QString::fromStdString(file);
+            
+        m_thumbnail_view->createThumbnails(dd);
     }
 
     if (parser.is_used("files"))
@@ -1271,10 +1279,16 @@ void IMGV::processStdin() noexcept
 {
     QFile file;
     file.open(fileno(stdin), QIODevice::ReadOnly);
+    QTemporaryFile tempPixFile;
+    tempPixFile.setAutoRemove(false);
     QByteArray data = file.readAll();
-    QPixmap pix;
-    if (pix.loadFromData(data))
-        m_img_widget->loadPixmap(pix);
+    if (tempPixFile.open())
+    {
+        tempPixFile.write(data);
+        m_thumbnail_view->createThumbnails(QStringList() << tempPixFile.fileName());
+        m_img_widget->loadFile(tempPixFile.fileName());
+        m_temp_files << tempPixFile.fileName();
+    }
     else
         qDebug() << "Unable to read the image from stdin";
 }
@@ -1295,5 +1309,18 @@ void IMGV::addSessionsToOpenSessionMenu() noexcept
         });
 
         session__openSession->addAction(action);
+    }
+}
+
+void IMGV::closeEvent(QCloseEvent *e) noexcept
+{
+    if (!m_temp_files.isEmpty())
+    {
+        for(const auto &file : m_temp_files)
+        {
+            qDebug() << file;
+            QFile f(file);
+            f.remove();
+        }
     }
 }

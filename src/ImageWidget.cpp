@@ -206,16 +206,8 @@ void ImageWidget::loadFile(QString file)
 
     if (m_fit_image_on_load)
         fitToWindow();
-
 }
 
-void ImageWidget::loadPixmap(QPixmap &pix)
-{
-    m_movieItem->hide();
-    m_pixmapItem->show();
-    m_pixmapItem->setPixmap(pix);
-    m_scene->setSceneRect(m_pixmapItem->boundingRect());
-}
 
 void ImageWidget::wheelEvent(QWheelEvent *e)
 {

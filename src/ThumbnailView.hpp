@@ -18,6 +18,7 @@
 #include "utils.hpp"
 #include "ThumbnailModel.hpp"
 #include "ThumbnailFilterProxy.hpp"
+#include "Thumbnail.hpp"
 #include "ImagePropertiesDialog.hpp"
 
 class ThumbnailView : public QListView
@@ -28,7 +29,6 @@ public:
     ThumbnailModel* model() noexcept;
     void createThumbnails(const QStringList &fileNames) noexcept;
     void createThumbnails(const QList<Thumbnail> &thumbnails) noexcept;
-    int addThumbnail(const QString &filename) noexcept;
     void loadFile(const QString &path) noexcept;
     void gotoNext() noexcept;
     void gotoPrev() noexcept;
@@ -63,6 +63,7 @@ protected:
 
 private:
 
+    int addThumbnail(const QString &filename) noexcept;
     ThumbnailModel *m_model = new ThumbnailModel();
     void showContextMenu(const QPoint &pos) noexcept;
     void removeThumbnails() noexcept;

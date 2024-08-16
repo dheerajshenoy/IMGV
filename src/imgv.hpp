@@ -3,6 +3,7 @@
 
 #include "argparse.hpp"
 #include <QApplication>
+#include <QTemporaryFile>
 #include <QMessageBox>
 #include <QTextEdit>
 #include <QLineEdit>
@@ -44,6 +45,7 @@
 #include "ThumbnailTools.hpp"
 #include "ManageTagDialog.hpp"
 #include <QByteArray>
+#include <QCloseEvent>
 #include <unistd.h>
 
 class IMGV : public QMainWindow
@@ -51,7 +53,10 @@ class IMGV : public QMainWindow
 
 public:
     IMGV(argparse::ArgumentParser &parser, QWidget *parent = nullptr);
-    ~IMGV(){}
+    ~IMGV() {}
+
+protected:
+    void closeEvent(QCloseEvent *e) noexcept override;
 
 private:
     void initConfigDirectory();
@@ -88,6 +93,7 @@ private:
     void processStdin() noexcept;
     void addSessionsToOpenSessionMenu() noexcept;
     void addSessionToOpenSessionMenu(const QString &sessionName) noexcept;
+    void cleanUp() noexcept;
 
 
     ThumbnailView *m_thumbnail_view  = new ThumbnailView();
@@ -175,7 +181,9 @@ private:
     ManageTagDialog *m_manage_tag_dialog = nullptr;
     QStringList m_tags;
     bool m_stdin = false;
+    QStringList m_temp_files;
 };
 
 
 #endif
+

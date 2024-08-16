@@ -10,6 +10,7 @@ class Thumbnail
 public:
     Thumbnail();
     Thumbnail(const QString &filename) noexcept;
+    Thumbnail(const QString &filename, const QPixmap &pixmap) noexcept;
     Thumbnail(const QString &filename, const QString &note) noexcept;
     Thumbnail(const QString &filename, const QString &note, const QString &tag) noexcept;
     ~Thumbnail() {}

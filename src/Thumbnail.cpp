@@ -17,6 +17,23 @@ Thumbnail::Thumbnail(const QString &fileName) noexcept
     m_note = "";
 }
 
+Thumbnail::Thumbnail(const QString &fileName, const QPixmap &pix) noexcept
+{
+    /*if (utils::detectImageFormat(fileName) != "WEBP")*/
+    /*{*/
+    /*    QPixmap pixmap(fileName);*/
+    /*    if (pixmap.isNull()) return;*/
+    /*    m_pix = pixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);*/
+    /*}*/
+    /*else*/
+    /*    m_pix = utils::decodeWebPToPixmap(fileName).scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);*/
+    if (pix.isNull()) return;
+    m_pix = pix.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_filename = fileName;
+    m_note = "";
+}
+
+
 Thumbnail::Thumbnail(const QString &fileName, const QString &note) noexcept
 {
     if (utils::detectImageFormat(fileName) != "WEBP")
