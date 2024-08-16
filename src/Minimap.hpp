@@ -3,6 +3,8 @@
 
 #include <QGraphicsView>
 #include <QWidget>
+#include <QShowEvent>
+#include <QCloseEvent>
 #include <QGraphicsScene>
 #include <QGraphicsRectItem>
 #include <QVBoxLayout>
@@ -11,6 +13,7 @@
 
 class Minimap : public QGraphicsView
 {
+    Q_OBJECT
 public:
     Minimap(QWidget *parent = nullptr);
     ~Minimap() {}
@@ -27,6 +30,13 @@ public:
     void setPixmap(const QPixmap &pix) noexcept;
     void updateRect(const QRectF rect) noexcept;
     Location location() noexcept { return m_location; }
+
+    inline void setVisibleIfNotAutoHideMode(const bool state) noexcept
+    {
+        if (!isVisible() && !m_auto_hide)
+            this->setVisible(state);
+        emit visibilityChanged(true);
+    }
 
     inline void setSize(const QSize size) noexcept
     {
@@ -56,6 +66,15 @@ public:
     inline void setAutoHide(const bool state) noexcept
     {
         m_auto_hide = state;
+    }
+
+signals:
+    void visibilityChanged(bool);
+
+protected:
+    inline void closeEvent(QCloseEvent *e) noexcept override
+    {
+        emit visibilityChanged(false);
     }
 
 private:

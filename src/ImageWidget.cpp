@@ -35,29 +35,6 @@ ImageWidget::ImageWidget(QWidget *parent)
     setMouseTracking(true);
     setAcceptDrops(true);
 
-    switch (m_minimap->location())
-    {
-
-        case Minimap::Location::BottomRight:
-            m_minimap->move(viewport()->width() - m_minimap->width() - 30, viewport()->height() - m_minimap->height() - 30);
-            break;
-
-        case Minimap::Location::BottomLeft:
-            m_minimap->move(10, viewport()->height() - m_minimap->height() - 10);
-            break;
-
-        case Minimap::Location::TopLeft:
-            m_minimap->move(viewport()->width() - m_minimap->width(), viewport()->height() - m_minimap->height());
-            break;
-
-        case Minimap::Location::TopRight:
-            m_minimap->move(viewport()->width() - m_minimap->width(), viewport()->height() - m_minimap->height());
-            break;
-
-        case Minimap::Location::Custom:
-            // TODO: Custom Minimap Location
-            break;
-    }
     m_minimap->raise();
     m_minimap->setVisible(false);
 
@@ -69,10 +46,39 @@ ImageWidget::ImageWidget(QWidget *parent)
         setPixAnalyseMode(state);
     });
 
+    connect(m_minimap, &Minimap::visibilityChanged, this, [&](bool state) {
+        emit minimapVisibilityChanged(state);
+    });
+
     connect(m_pix_analyser, &PixAnalyser::pickColor, this, [&]() {
         /*emit pix*/
         setPixAnalyseMode(true);
     });
+
+    switch (m_minimap->location())
+    {
+
+        case Minimap::Location::BottomRight:
+            m_minimap->move(viewport()->width() - m_minimap->width() - 30,
+                            viewport()->height() - m_minimap->height() - 30);
+            break;
+
+        case Minimap::Location::BottomLeft:
+            m_minimap->move(10, viewport()->height() - m_minimap->height() - 10);
+            break;
+
+        case Minimap::Location::TopLeft:
+            m_minimap->move(10, 10);
+            break;
+
+        case Minimap::Location::TopRight:
+            m_minimap->move(viewport()->width() - m_minimap->width(), 10);
+            break;
+
+        case Minimap::Location::Custom:
+            // TODO: Custom Minimap Location
+            break;
+    }
 }
 
 void ImageWidget::zoomOriginal() noexcept
@@ -434,7 +440,7 @@ void ImageWidget::setMinimapMode(const bool state) noexcept
 
     if (m_minimap_mode)
     {
-        m_minimap->setVisible(true);
+        m_minimap->setVisibleIfNotAutoHideMode(true);
         m_minimap->setPixmap(m_pixmapItem->pixmap());
         connect(this, &ImageWidget::getRegion, m_minimap, &Minimap::updateRect);
     }

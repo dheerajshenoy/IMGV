@@ -327,6 +327,9 @@ void IMGV::initConfigDirectory()
                 m_img_widget->setMinimapRectAlpha(rect_table["alpha"].get_or(0.5));
             }
 
+            auto show = minimap_table["show"].get_or(false);
+            view__minimap->setChecked(show);
+            m_img_widget->setMinimapMode(show);
             m_img_widget->setMinimapAutoHide(minimap_table["auto_hide"].get_or(false));
 
             auto location = minimap_table["location"].get_or<std::string>("bottom-right");
@@ -562,6 +565,7 @@ void IMGV::initMenu()
     });
 
     connect(m_img_widget, &ImageWidget::pixAnalyserVisibilityChanged, tools__pix_analyser, &QAction::setChecked);
+    connect(m_img_widget, &ImageWidget::minimapVisibilityChanged, view__minimap, &QAction::setChecked);
 
     connect(view__thumbnails, &QAction::triggered, this, [&](bool state) {
         m_thumbnail_view->setVisible(state);
@@ -868,8 +872,11 @@ void IMGV::readSessionFile(QString filename)
 {
     using namespace rapidjson;
 
+    if (!filename.endsWith(".imgv"))
+        filename = filename + ".imgv";
+
     auto sessions = getSessionFiles();
-    if (sessions.indexOf(filename) > -1)
+    if (sessions.indexOf(filename)> -1)
         filename = m_sessions_dir_path + QDir::separator() + filename;
 
     std::ifstream ifs(filename.toStdString());

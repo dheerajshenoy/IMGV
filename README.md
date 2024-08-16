@@ -184,9 +184,12 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Fix remaining files read through the command line
     - Fix drag and drop of multiple files
     - Fix reading image from STDIN.
-    - STDIN images now create temporary files which are destroyed when the program exits
-    - Make small functions inline for increased performance
-    - Change Image properties layout to QFormLayout for less code
+    - STDIN images now create temporary files which are destroyed when the program exits.
+    - Make small functions inline for increased performance.
+    - Change Image properties layout to QFormLayout for less code.
+    - Open session using just the name (with or without the .imgv extension) or full path.
+    - Fix minimap weird placement at startup.
+    - Minimap toggle bug fix.
 
 - 15 Aug 2024
     - Make minimap render over the graphicsview instead of being a widget on the panel.
@@ -274,6 +277,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 1. [ ] Nested SVG files are not loaded by Qt Pixmap. Maybe try to integrate an SVG library and render SVG through data
 2. [ ] Highlight currently displayed file in the thumbnail panel
+3. [ ] Color picker for gifs (currently works only on static images)
 
 <a name="thanks" />
 

@@ -8,23 +8,30 @@ Defaults = {
     start_in_minimal_mode = false,
     scroll_factor = { horizontal = 40.0, vertical = 40.0 },
     zoom_factor = 5.0,
-    fit_on_load = false,
+    fit_on_load = true,
     minimap = {
-        rect_color = "#FF5000", -- size of the overview box on the minimap
+        show = false,
+        auto_hide = true, -- hide minimap when not necessary
         size = { width = 200, height = 200 }, -- size of the minimap
+        rect = {
+            outline = "#FF5000", -- color of the overview box on the minimap
+            color = "#FF5000", -- fill color, if empty, no color is filled
+            alpha = 0.5, -- 0 is opaque and 1 is transparent
+        },
+        location = "bottom-right", -- "bottom-right", "bottom-left", "top-right", "top-left",
     },
 
     thumbnails = {
         show = true, -- show panel or not
-        mode = "icon", -- icon or list
+        mode = "list", -- icon or list
         resize = true,
         uniform = true,
         selection = "extended", -- "extended", "multi", "single", "contiguous",
         spacing = 20,
-        icon_size = { width = 100, height = 100 },
-        text_elide = "middle", -- "none", "left", "right", "middle"
+        icon_size = { width = 200, height = 200 },
+        text_elide = "left", -- "none", "left", "right", "middle"
     },
-    
+
     keybindings = {
         zoom_in = "=",
         zoom_out = "-",
@@ -59,8 +66,7 @@ Defaults = {
 
     Elements:
         message - shows important messages
-        path - shows full file path
-        path-hover - shows full file path while mouse hover, short otherwise
+        path - shows full file path while mouse hover, short otherwise
         size - file size
         stretch - separator
         dimension - shows the (width, height) of the image
@@ -71,7 +77,7 @@ Defaults = {
     --]]
         elements = {
             "message",
-            "path-hover",
+            "path",
             "stretch",
             "note-indicator",
             "note-modified-indicator",

@@ -29,6 +29,7 @@ void Minimap::updateRect(const QRectF rect) noexcept
         rect.height() * scale
     );
 
+    // If user is viewing the image zoomed into a region, then show the minimap if auto hide is enabled and hide it when the viewing region is the complete image.
     if (scaledRect.width() < m_pix.width())
     {
         if (m_auto_hide)
@@ -37,9 +38,12 @@ void Minimap::updateRect(const QRectF rect) noexcept
             m_rectitem->setVisible(true);
         m_rectitem->setRect(scaledRect);
     }
-    else if (m_auto_hide)
-        this->setVisible(false);
     else
-        m_rectitem->setVisible(false);
+    {
+        if (m_auto_hide)
+            this->setVisible(false);
+        else
+            m_rectitem->setVisible(false);
+    }
 }
 

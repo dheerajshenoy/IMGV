@@ -136,6 +136,7 @@ signals:
     void zoomChanged(qreal);
     void getRegion(QRectF);
     void pixAnalyserVisibilityChanged(bool);
+    void minimapVisibilityChanged(bool);
 
 protected:
     void wheelEvent(QWheelEvent *e) noexcept override;
