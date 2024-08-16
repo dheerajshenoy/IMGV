@@ -19,22 +19,6 @@ NoteWidget::NoteWidget(QWidget *parent)
     connect(this->document(), &QTextDocument::modificationChanged, this, [&](bool state) { emit modificationChanged(state); });
 
 }
-
-void NoteWidget::showEvent(QShowEvent *e) noexcept
-{
-    emit visibilityChanged(true);
-}
-
-void NoteWidget::hideEvent(QHideEvent *e) noexcept
-{
-    emit visibilityChanged(false);
-}
-
-void NoteWidget::setModified(bool state) noexcept
-{
-    this->document()->setModified(state);
-}
-
 void NoteWidget::keyPressEvent(QKeyEvent *e) noexcept
 {
     if (e->key() == Qt::Key_Escape)

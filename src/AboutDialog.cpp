@@ -57,6 +57,3 @@ AboutDialog::AboutDialog(QWidget *parent)
     this->setFixedSize(300, 200);
     this->setLayout(layout);
 }
-
-AboutDialog::~AboutDialog()
-{}

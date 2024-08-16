@@ -62,11 +62,6 @@ void ManageSessionsDialog::OpenSession() noexcept
         emit openSession(session_path + QDir::separator() + sessions[i]->text() + ".imgv");
 }
 
-void ManageSessionsDialog::showContextMenu(const QPointF loc) noexcept
-{
-    contextMenu->exec(mapToGlobal(loc.toPoint()));
-}
-
 void ManageSessionsDialog::DeleteSession() noexcept
 {
     auto sessions = table->selectedItems();
@@ -139,10 +134,4 @@ void ManageSessionsDialog::RenameSession() noexcept
 
     if (!file.rename(session_path + QDir::separator() + new_sess_name + ".imgv"))
         QMessageBox::critical(this, "Rename Unsuccessful", QString("%1 could not be renamed due to some reason.").arg(session));
-}
-
-void ManageSessionsDialog::OpenInExplorer() noexcept
-{
-    auto session = table->selectedItems()[0]->text();
-    QDesktopServices::openUrl(session_path);
 }

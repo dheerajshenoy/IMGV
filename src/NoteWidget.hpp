@@ -15,7 +15,10 @@ class NoteWidget : public QTextEdit
 public:
     NoteWidget(QWidget *parent = nullptr);
     ~NoteWidget(){}
-    void setModified(bool) noexcept;
+    inline void setModified(const bool state) noexcept
+    {
+        this->document()->setModified(state);
+    }
 
 signals:
     void saveRequested();
@@ -23,12 +26,23 @@ signals:
     void visibilityChanged(bool);
 
 
+
+
+
 protected:
-    void showEvent(QShowEvent *e) noexcept override;
-    void hideEvent(QHideEvent *e) noexcept override;
     void keyPressEvent(QKeyEvent *e) noexcept override;
 
-private:
+
+    inline void showEvent(QShowEvent *e) noexcept override
+    {
+        emit visibilityChanged(true);
+    }
+
+    inline void hideEvent(QHideEvent *e) noexcept override
+    {
+        emit visibilityChanged(false);
+    }
+
 };
 
 #endif

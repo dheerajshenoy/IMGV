@@ -11,7 +11,7 @@ class MovieItem : public QGraphicsItem
 public:
     using QGraphicsItem::QGraphicsItem;
 
-    void setMovie(QMovie* movie)
+    void setMovie(QMovie* movie) noexcept
     {
         prepareGeometryChange();
         QObject::disconnect(mConnection); // disconnect old object
@@ -20,7 +20,7 @@ public:
             mConnection = QObject::connect(mMovie, &QMovie::frameChanged, [&]{ update(); });
     }
 
-    QRectF boundingRect() const override
+    inline QRectF boundingRect() const noexcept override 
     {
         if (mMovie)
             return mMovie->frameRect();
@@ -28,7 +28,7 @@ public:
             return QRectF();
     }
 
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override
+    inline void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) noexcept override
     {
         if (mMovie)
             painter->drawPixmap(mMovie->frameRect(), mMovie->currentPixmap(), mMovie->frameRect());

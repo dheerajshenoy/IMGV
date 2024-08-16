@@ -22,8 +22,16 @@ signals:
     void visibilityChanged(bool);
 
 protected:
-    void showEvent(QShowEvent *e) noexcept override;
-    void hideEvent(QHideEvent *e) noexcept override;
+
+    inline void showEvent(QShowEvent *e) noexcept override
+    {
+        emit visibilityChanged(isVisible());
+    }
+
+    inline void hideEvent(QHideEvent *e) noexcept override
+    {
+        emit visibilityChanged(isVisible());
+    }
 
 private:
     QFormLayout *m_layout = new QFormLayout();

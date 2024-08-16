@@ -2,7 +2,7 @@
 #define IMAGE_PROPERTIES_DIALOG_HPP
 
 #include <QDialog>
-#include <QGridLayout>
+#include <QFormLayout>
 #include <QPushButton>
 #include <QMessageBox>
 #include <QLabel>
@@ -15,8 +15,6 @@ class ImagePropertiesDialog : public QDialog
 public:
     ImagePropertiesDialog(QString filename, QWidget *parent = nullptr);
     ~ImagePropertiesDialog() {}
-
-
 
 private:
 

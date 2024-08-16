@@ -36,12 +36,20 @@ private:
 
     void OpenSession() noexcept;
     void RenameSession() noexcept;
-    void OpenInExplorer() noexcept;
     void DeleteSession() noexcept;
-    void showContextMenu(const QPointF loc) noexcept;
     QStringList getSessions() noexcept;
-
     QString session_path;
+
+    inline void showContextMenu(const QPointF loc) noexcept
+    {
+        contextMenu->exec(mapToGlobal(loc.toPoint()));
+    }
+
+    inline void OpenInExplorer() noexcept
+    {
+        auto session = table->selectedItems()[0]->text();
+        QDesktopServices::openUrl(session_path);
+    }
 };
 
 #endif

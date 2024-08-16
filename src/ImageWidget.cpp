@@ -75,7 +75,8 @@ ImageWidget::ImageWidget(QWidget *parent)
     });
 }
 
-void ImageWidget::zoomOriginal() {
+void ImageWidget::zoomOriginal() noexcept
+{
     m_zoomLevel = 0;
     m_fit = false;
     setMatrix();
@@ -86,7 +87,8 @@ void ImageWidget::zoomOriginal() {
         emit getRegion(mapToScene(viewport()->rect()).boundingRect());
 }
 
-void ImageWidget::zoomIn() {
+void ImageWidget::zoomIn() noexcept
+{
     if (m_zoomLevel + m_zoomFactor >= 200) return;
     m_zoomLevel += m_zoomFactor;
     m_fit = false;
@@ -96,7 +98,8 @@ void ImageWidget::zoomIn() {
         emit getRegion(mapToScene(viewport()->rect()).boundingRect());
 }
 
-void ImageWidget::zoomOut() {
+void ImageWidget::zoomOut() noexcept
+{
     if (m_zoomLevel - m_zoomFactor < -50) return;
     m_zoomLevel -= m_zoomFactor;
     m_fit = false;
@@ -106,19 +109,21 @@ void ImageWidget::zoomOut() {
         emit getRegion(mapToScene(viewport()->rect()).boundingRect());
 }
 
-void ImageWidget::updateView()
+void ImageWidget::updateView() noexcept
 {
     setTransform(QTransform::fromScale(m_zoomLevel, m_zoomLevel));
     fitInView(m_pixmapItem, Qt::KeepAspectRatio);  // Ensure the item is centered and scaled properly
     fitInView(m_movieItem, Qt::KeepAspectRatio);  // Ensure the item is centered and scaled properly
 }
 
-qreal ImageWidget::scale() const {
+qreal ImageWidget::scale() const noexcept
+{
     auto square = [](qreal value) { return value * value; };
     return std::sqrt(square(this->transform().m11()) + square(this->transform().m12()));
 }
 
-void ImageWidget::setMatrix() {
+void ImageWidget::setMatrix() noexcept
+{
     qreal newScale = std::pow(2.0, m_zoomLevel / 10.0);
 
     QTransform mat;
@@ -139,7 +144,8 @@ void ImageWidget::setMatrix() {
     /*emit zoomChanged(scale());*/
 }
 
-void ImageWidget::zoomFit() {
+void ImageWidget::zoomFit() noexcept
+{
     /* Fit in view by KeepAspectRatioByExpanding does not keep the position
      * find out the current viewport center move back to that position after
      * fitting. It is done here instead of inside the resize event handler
@@ -164,7 +170,7 @@ void ImageWidget::zoomFit() {
     /*emit zoomChanged(scale());*/
 }
 
-void ImageWidget::loadFile(QString file)
+void ImageWidget::loadFile(QString file) noexcept
 {
     /*m_rotate = 0.0f;*/
     /*m_zoomLevel = 0.0f;*/
@@ -209,7 +215,7 @@ void ImageWidget::loadFile(QString file)
 }
 
 
-void ImageWidget::wheelEvent(QWheelEvent *e)
+void ImageWidget::wheelEvent(QWheelEvent *e) noexcept
 {
     if (e->angleDelta().y() > 0)
         zoomIn();
@@ -219,7 +225,7 @@ void ImageWidget::wheelEvent(QWheelEvent *e)
     /*QGraphicsView::wheelEvent(e);*/
 }
 
-void ImageWidget::dragEnterEvent(QDragEnterEvent *e)
+void ImageWidget::dragEnterEvent(QDragEnterEvent *e) noexcept
 {
     const QMimeData *mimedata = e->mimeData();
     if (mimedata->hasUrls())
@@ -227,18 +233,18 @@ void ImageWidget::dragEnterEvent(QDragEnterEvent *e)
 
 }
 
-void ImageWidget::dragLeaveEvent(QDragLeaveEvent *e)
+void ImageWidget::dragLeaveEvent(QDragLeaveEvent *e) noexcept
 {
     e->accept();
 }
 
-void ImageWidget::dragMoveEvent(QDragMoveEvent *e)
+void ImageWidget::dragMoveEvent(QDragMoveEvent *e) noexcept
 {
     e->accept();
     e->acceptProposedAction();
 }
 
-void ImageWidget::dropEvent(QDropEvent *e)
+void ImageWidget::dropEvent(QDropEvent *e) noexcept
 {
     /*if (e->source() == this) return;*/
     if (e->mimeData()->hasUrls())
@@ -258,47 +264,37 @@ void ImageWidget::dropEvent(QDropEvent *e)
     e->acceptProposedAction();
 }
 
-void ImageWidget::rotate(qreal degrees)
+void ImageWidget::rotate(qreal degrees) noexcept
 {
     m_rotate += degrees;
     setMatrix();
 }
 
-void ImageWidget::rotateAnticlockwise()
-{
-    rotate(-90);
-}
-
-void ImageWidget::rotateClockwise()
-{
-    rotate(90);
-}
-
-void ImageWidget::flipVertical()
+void ImageWidget::flipVertical() noexcept
 {
     m_vertical_flip = !m_vertical_flip;
     setMatrix();
 }
 
-void ImageWidget::flipHorizontal()
+void ImageWidget::flipHorizontal() noexcept
 {
     m_horizontal_flip = !m_horizontal_flip;
     setMatrix();
 }
 
-void ImageWidget::fitToWidth()
+void ImageWidget::fitToWidth() noexcept
 {
     m_aspect_ratio_mode = Qt::IgnoreAspectRatio;
     zoomFit();
 }
 
-void ImageWidget::fitToWindow()
+void ImageWidget::fitToWindow() noexcept
 {
     m_aspect_ratio_mode = Qt::KeepAspectRatio;
     zoomFit();
 }
 
-void ImageWidget::GifLoopHandler(int frameNumber)
+void ImageWidget::GifLoopHandler(int frameNumber) noexcept
 {
     static int loopCount = 0;
     if(frameNumber == (m_movie->frameCount()-1)) {
@@ -327,7 +323,7 @@ void ImageWidget::setScrollBarsVisibility(bool state) noexcept
     }
 }
 
-void ImageWidget::closeFile()
+void ImageWidget::closeFile() noexcept
 {
     m_pixmapItem->hide();
     m_movieItem->hide();
@@ -396,12 +392,6 @@ void ImageWidget::mouseReleaseEvent(QMouseEvent *e) noexcept
     QGraphicsView::mouseReleaseEvent(e);
 }
 
-const QPixmap ImageWidget::getPixmap() noexcept
-{
-    return m_pixmapItem->pixmap();
-}
-
-
 void ImageWidget::resizeEvent(QResizeEvent *e) noexcept
 {
     switch (m_minimap->location())
@@ -431,7 +421,8 @@ void ImageWidget::resizeEvent(QResizeEvent *e) noexcept
     QGraphicsView::resizeEvent(e);
 }
 
-const QRectF ImageWidget::visibleRect() {
+const QRectF ImageWidget::visibleRect() noexcept
+{
     const QRect viewportRect(QPoint(horizontalScrollBar()->value(), verticalScrollBar()->value()), viewport()->size());
     const auto mat = transform().inverted();
     return mat.mapRect(viewportRect);
@@ -469,56 +460,4 @@ void ImageWidget::setPixAnalyseMode(const bool state, const bool closeDialog) no
             m_pix_analyser->close();
         this->viewport()->setCursor(Qt::OpenHandCursor);
     }
-}
-
-void ImageWidget::setHorizontalScrollFactor(const qreal factor) noexcept
-{
-    m_horizontal_scroll_factor = factor;
-}
-
-void ImageWidget::setVerticalScrollFactor(const qreal factor) noexcept
-{
-    m_vertical_scroll_factor = factor;
-}
-
-void ImageWidget::setZoomFactor(const qreal zoom) noexcept
-{
-    m_zoomFactor = zoom;
-}
-
-void ImageWidget::setFitImageOnLoad(const bool fit) noexcept
-{
-    m_fit_image_on_load = fit;
-}
-
-
-void ImageWidget::setMinimapRectColor(const QString color) noexcept
-{
-    m_minimap->setRectColor(color);
-}
-
-void ImageWidget::setMinimapRectFillColor(const QString color) noexcept
-{
-    if (color.isEmpty()) return;
-    m_minimap->setRectFillColor(color);
-}
-
-void ImageWidget::setMinimapRectAlpha(const float alpha) noexcept
-{
-    m_minimap->setRectAlpha(alpha);
-}
-
-void ImageWidget::setMinimapAutoHide(const bool state) noexcept
-{
-    m_minimap->setAutoHide(state);
-}
-
-void ImageWidget::setMinimapSize(const QSize size) noexcept
-{
-    m_minimap->setSize(size);
-}
-
-void ImageWidget::setMinimapLocation(const Minimap::Location loc) noexcept
-{
-    m_minimap->setLocation(loc);
 }

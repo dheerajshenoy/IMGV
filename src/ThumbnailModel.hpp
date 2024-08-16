@@ -9,24 +9,36 @@
 
 class ThumbnailModel : public QAbstractListModel
 {
-    Q_OBJECT
 public:
 
     ThumbnailModel(QObject *parent = nullptr);
 
-    int addThumbnail(const Thumbnail &thumbnail);
-    int addThumbnails(const QVector<Thumbnail> &thumbnails);
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
+    int addThumbnail(const Thumbnail &thumbnail) noexcept;
+    int addThumbnails(const QVector<Thumbnail> &thumbnails) noexcept;
+    /*int rowCount(const QModelIndex &parent = QModelIndex()) const noexcept override;*/
+    QVariant data(const QModelIndex &index, int role) const noexcept override;
     void clear() noexcept;
-    void removeAt(const int index) noexcept;
+
+    inline void removeAt(const int index) noexcept
+    {
+        m_thumbnails.remove(index);
+    }
+
     void removeIndexes(const QList<QModelIndex> &indexes) noexcept;
     Thumbnail getThumbnail(const int index) noexcept;
     void setNote(const QModelIndex &index, const QString &note) noexcept;
     void setTag(const QModelIndex &index, const QString &tag) noexcept;
     QStringList getFiles() noexcept;
-    QVector<Thumbnail>& thumbnails() { return m_thumbnails; }
 
+    inline QVector<Thumbnail>& thumbnails() noexcept
+    {
+        return m_thumbnails;
+    }
+
+    inline int rowCount(const QModelIndex &parent = QModelIndex()) const noexcept override
+    {
+        return static_cast<int>(m_thumbnails.size());
+    }
 
 private:
     QVector<Thumbnail> m_thumbnails;

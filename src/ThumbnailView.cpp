@@ -53,19 +53,23 @@ void ThumbnailView::createThumbnails(const QStringList &fileNames) noexcept
         thumbnails[i] = thumb;
     }
     
+    setUpdatesEnabled(false);
     m_model->addThumbnails(thumbnails);
     if (m_model->rowCount() >= 0)
         setCurrentIndex(m_model->index(0));
+    setUpdatesEnabled(true);
 }
 
 void ThumbnailView::createThumbnails(const QList<Thumbnail> &thumbnails) noexcept
 {
+    setUpdatesEnabled(false);
     for (const Thumbnail &thumb : thumbnails) {
         m_model->addThumbnail(thumb);
     }
 
     if (m_model->rowCount() >= 0)
         setCurrentIndex(m_model->index(0));
+    setUpdatesEnabled(true);
 }
 
 void ThumbnailView::dragEnterEvent(QDragEnterEvent *e)

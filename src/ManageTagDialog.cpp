@@ -29,13 +29,3 @@ void ManageTagDialog::deleteTag() noexcept
 
 
 }
-
-void ManageTagDialog::showEvent(QShowEvent *e) noexcept
-{
-    emit visibilityChanged(isVisible());
-}
-
-void ManageTagDialog::hideEvent(QHideEvent *e) noexcept
-{
-    emit visibilityChanged(isVisible());
-}

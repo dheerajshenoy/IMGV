@@ -12,70 +12,45 @@ ImagePropertiesDialog::ImagePropertiesDialog(QString _filename, QWidget *parent)
         img = QImage(_filename);
 
     QLocale locale;
-    QGridLayout *layout = new QGridLayout(this);
-    QLabel *label_filename = new QLabel("Name:");
+    QFormLayout *layout = new QFormLayout(this);
     QLabel *filename = new QLabel(QFileInfo(_filename).baseName());
-    QLabel *label_filepath = new QLabel("Path:");
     QLabel *filepath = new QLabel(_filename);
-    QLabel *label_colorspace = new QLabel("Colorspace:");
     QLabel *label_filesize = new QLabel("Filesize:");
-    QLabel *label_width = new QLabel("Width:");
-    QLabel *label_height = new QLabel("Height:");
     QLabel *width = new QLabel(QString::number(img.width()));
     QLabel *height = new QLabel(QString::number(img.height()));
     QLabel *filesize = new QLabel(locale.formattedDataSize(img.sizeInBytes()));
     QLabel *colorspace = new QLabel(utils::imageFormatToString(img.format()));
-    QLabel *label_format = new QLabel("Format:");
     QLabel *format = new QLabel(_format);
-    QLabel *label_aspect_ratio = new QLabel("Aspect Ratio:");
     QLabel *aspect_ratio = new QLabel(QString::number(img.width() / img.height()));
-    QLabel *label_bits_per_pixel = new QLabel("Bits Per Pixel:");
     QLabel *bits_per_pixel = new QLabel(QString::number(img.depth()));
-    QLabel *label_has_alpha_channel = new QLabel("Has Alpha Channel ?");
     QLabel *has_alpha_channel = new QLabel(QString::number(img.hasAlphaChannel()));
-    QLabel *label_is_grayscale = new QLabel("Is grayscale ?");
     QLabel *is_grayscale = new QLabel(QString::number(img.isGrayscale()));
-    QLabel *label_dpi_x = new QLabel("DPI x:");
-    QLabel *label_dpi_y = new QLabel("DPI y:");
     QLabel *dpi_x = new QLabel(QString::number(int(img.dotsPerMeterX() * 0.0254)));
     QLabel *dpi_y = new QLabel(QString::number(int(img.dotsPerMeterY() * 0.0254)));
 
-    layout->addWidget(label_filename, 0, 0);
-    layout->addWidget(filename, 0, 1);
-    layout->addWidget(label_filepath, 1, 0);
-    layout->addWidget(filepath, 1, 1);
-    layout->addWidget(label_filesize, 2, 0);
-    layout->addWidget(filesize, 2, 1);
-    layout->addWidget(label_width, 3, 0);
-    layout->addWidget(width, 3, 1);
-    layout->addWidget(label_height, 4, 0);
-    layout->addWidget(height, 4, 1);
-    layout->addWidget(label_colorspace, 5, 0);
-    layout->addWidget(colorspace, 5, 1);
-    layout->addWidget(label_format, 6, 0);
-    layout->addWidget(format, 6, 1);
-    layout->addWidget(label_aspect_ratio, 7, 0);
-    layout->addWidget(aspect_ratio, 7, 1);
-    layout->addWidget(label_bits_per_pixel, 8, 0);
-    layout->addWidget(bits_per_pixel, 8, 1);
-    layout->addWidget(label_has_alpha_channel, 9, 0);
-    layout->addWidget(has_alpha_channel, 9, 1);
-    layout->addWidget(label_is_grayscale, 10, 0);
-    layout->addWidget(is_grayscale, 10, 1);
-    layout->addWidget(label_dpi_x, 11, 0);
-    layout->addWidget(dpi_x, 11, 1);
-    layout->addWidget(label_dpi_y, 12, 0);
-    layout->addWidget(dpi_y, 12, 1);
+    layout->addRow("File Name: ", filename);
+    layout->addRow("Path: ", filepath);
+    layout->addRow("Size: ", filesize);
+    layout->addRow("Width: ", width);
+    layout->addRow("Height: ", height);
+    layout->addRow("Colorspace: ", colorspace);
+    layout->addRow("Format: ", format);
+    layout->addRow("Aspect Ratio: ", aspect_ratio);
+    layout->addRow("Bits per pixel: ", bits_per_pixel);
+    layout->addRow("Has alpha channel: ", has_alpha_channel);
+    layout->addRow("Is grayscale: ", is_grayscale);
+    layout->addRow("DPI x: ", dpi_x);
+    layout->addRow("DPI y: ", dpi_y);
 
     if (_format == "JPEG")
     {
             QPushButton *exif_btn = new QPushButton("EXIF Metadata");
             connect(exif_btn, &QPushButton::clicked, this, [&, _filename]() { showEXIFProperties(_filename); });
-            layout->addWidget(exif_btn, 13, 0, 1, 2);
+            layout->addWidget(exif_btn);
     }
 
     QPushButton *ok_btn = new QPushButton("Ok");
-    layout->addWidget(ok_btn, 14, 0, 1, 2);
+    layout->addWidget(ok_btn);
     connect(ok_btn, &QPushButton::clicked, this, &QDialog::done);
 }
 

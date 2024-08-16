@@ -13,9 +13,25 @@ public:
     MinimapRect(QGraphicsItem *parent = nullptr);
     ~MinimapRect() {}
 
-    void setColor(const QString color) noexcept;
-    void setFill(const QString color) noexcept;
-    void setAlpha(const float alpha) noexcept;
+    inline void setColor(const QString color) noexcept
+    {
+        if (QColor(color).isValid())
+            this->setPen(QPen(QColor::fromString(color)));
+    }
+
+    inline void setFill(const QString color) noexcept
+    {
+        if (QColor(color).isValid())
+        {
+            m_fill_color = QColor::fromString(color);
+            this->setBrush(QBrush(m_fill_color));
+        }
+    }
+
+    inline void setAlpha(const float alpha) noexcept
+    {
+        this->setOpacity(alpha);
+    }
 
 private:
     QColor m_fill_color;

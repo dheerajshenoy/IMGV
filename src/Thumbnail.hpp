@@ -15,20 +15,52 @@ public:
     Thumbnail(const QString &filename, const QString &note, const QString &tag) noexcept;
     ~Thumbnail() {}
 
-    void setFilename(const QString &fileName) noexcept;
-    void setNote(const QString &note) noexcept;
-    const QString& note() noexcept;
-    bool hasNote() noexcept;
-    const QString& filename() noexcept;
-    QPixmap pixmap() noexcept;
-    void setTag(const QString m_tag) noexcept;
-    QString tag() noexcept;
-
     enum Data {
         FileName = Qt::UserRole,
         Note,
         Tag
     };
+
+    inline const QString& note() noexcept
+    {
+        return m_note;
+    }
+
+    inline QPixmap pixmap() noexcept
+    {
+        return m_pix;
+    }
+
+    inline const QString& filename() noexcept
+    {
+        return m_filename;
+    }
+
+    inline void setFilename(const QString &filename) noexcept
+    {
+        m_filename = filename;
+    }
+
+    inline void setNote(const QString &note) noexcept
+    {
+        if (!note.isEmpty()) m_note = note;
+    }
+
+    inline bool hasNote() noexcept
+    {
+        return !m_note.isEmpty();
+    }
+
+    inline void setTag(const QString tag) noexcept
+    {
+        m_tag = tag;
+    }
+
+    inline QString tag() noexcept
+    {
+        return m_tag;
+    }
+
 
 private:
     QPixmap m_pix;

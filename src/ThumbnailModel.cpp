@@ -1,28 +1,23 @@
 #include "ThumbnailModel.hpp"
 ThumbnailModel::ThumbnailModel(QObject *parent)
     : QAbstractListModel(parent)
-{
-}
+{}
 
-int ThumbnailModel::addThumbnail(const Thumbnail &thumbnail) {
+int ThumbnailModel::addThumbnail(const Thumbnail &thumbnail) noexcept
+{
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_thumbnails.append(thumbnail);
     endInsertRows();
     return m_thumbnails.size();
 }
 
-int ThumbnailModel::addThumbnails(const QVector<Thumbnail> &thumbnails) {
+int ThumbnailModel::addThumbnails(const QVector<Thumbnail> &thumbnails) noexcept
+{
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     for(const auto &thumbnail: thumbnails)
         m_thumbnails.append(thumbnail);
     endInsertRows();
     return m_thumbnails.size();
-}
-
-
-int ThumbnailModel::rowCount(const QModelIndex &parent) const
-{
-    return static_cast<int>(m_thumbnails.size());
 }
 
 void ThumbnailModel::setNote(const QModelIndex &index, const QString &note) noexcept
@@ -42,7 +37,7 @@ Thumbnail ThumbnailModel::getThumbnail(const int index) noexcept
     return m_thumbnails[index];
 }
 
-QVariant ThumbnailModel::data(const QModelIndex &index, int role) const
+QVariant ThumbnailModel::data(const QModelIndex &index, int role) const noexcept
 {
     if (!index.isValid() || index.row() >= rowCount())
         return QVariant();
@@ -72,11 +67,6 @@ void ThumbnailModel::clear() noexcept
     endResetModel();
 }
 
-void ThumbnailModel::removeAt(const int index) noexcept
-{
-    m_thumbnails.remove(index);
-}
-
 void ThumbnailModel::removeIndexes(const QList<QModelIndex> &indexes) noexcept
 {
     beginRemoveRows(QModelIndex(), rowCount(), rowCount());
@@ -93,5 +83,3 @@ QStringList ThumbnailModel::getFiles() noexcept
         filenames[i] = m_thumbnails[i].filename();
     return filenames;
 }
-
-

@@ -10,11 +10,6 @@ Minimap::Minimap(QWidget *parent)
     /*setFrameStyle);*/
 }
 
-void Minimap::setSize(const QSize size) noexcept
-{
-    m_pix_scale_size = size;
-}
-
 void Minimap::setPixmap(const QPixmap &pix) noexcept
 {
     m_pix = pix.scaled(m_pix_scale_size, Qt::KeepAspectRatio);
@@ -48,27 +43,3 @@ void Minimap::updateRect(const QRectF rect) noexcept
         m_rectitem->setVisible(false);
 }
 
-void Minimap::setRectColor(const QString color) noexcept
-{
-    m_rectitem->setColor(color);
-}
-
-void Minimap::setRectFillColor(const QString color) noexcept
-{
-    m_rectitem->setFill(color);
-}
-
-void Minimap::setLocation(const Location loc) noexcept
-{
-    m_location = loc;
-}
-
-void Minimap::setRectAlpha(const float alpha) noexcept
-{
-    m_rectitem->setAlpha(alpha);
-}
-
-void Minimap::setAutoHide(const bool state) noexcept
-{
-    m_auto_hide = state;
-}

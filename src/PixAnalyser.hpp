@@ -22,9 +22,17 @@ public:
     explicit PixAnalyser(QWidget *parent = nullptr);
     ~PixAnalyser() {}
 
-    void setPixmap(const QPixmap &img) noexcept;
     void analysePix(const QPointF &loc) noexcept;
-    void setColorPicked(bool state) noexcept;
+
+    inline void setColorPicked(const bool state) noexcept
+    {
+        m_pick_btn->setVisible(true);
+    }
+    inline void setPixmap(const QPixmap &pix) noexcept
+    {
+        m_img = pix.toImage();
+    }
+
 
 signals:
     void visibilityChanged(bool);
@@ -32,8 +40,17 @@ signals:
     void pickColor();
 
 protected:
-    void showEvent(QShowEvent *e) noexcept override;
-    void closeEvent(QCloseEvent *e) noexcept override;
+
+    inline void showEvent(QShowEvent *e) noexcept override
+    {
+        emit visibilityChanged(true);
+    }
+
+    inline void closeEvent(QCloseEvent *e) noexcept override
+    {
+        emit visibilityChanged(false);
+    }
+
 
 private:
     QFormLayout *m_layout = new QFormLayout();

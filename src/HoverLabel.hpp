@@ -12,12 +12,27 @@ public:
     HoverLabel(QWidget *parent = nullptr);
     ~HoverLabel() {}
 
-    void setFullText(const QString full_text) noexcept;
-    void setShowText(const QString show_text) noexcept;
+    inline void setShowText(const QString text) noexcept
+    {
+        m_show_text = text;
+        this->setText(m_show_text);
+    }
+
+    inline void setFullText(const QString text) noexcept
+    {
+        m_full_text = text;
+    }
 
 protected:
-    void enterEvent(QEnterEvent *e) noexcept override;
-    void leaveEvent(QEvent *e) noexcept override;
+    inline void enterEvent(QEnterEvent *e) noexcept override
+    {
+        this->setText(m_full_text);
+    }
+
+    inline void leaveEvent(QEvent *e) noexcept override
+    {
+        this->setText(m_show_text);
+    }
 
 
 private:

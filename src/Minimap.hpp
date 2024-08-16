@@ -9,8 +9,6 @@
 #include <QPixmap>
 #include "MinimapRect.hpp"
 
-
-
 class Minimap : public QGraphicsView
 {
 public:
@@ -28,13 +26,37 @@ public:
 
     void setPixmap(const QPixmap &pix) noexcept;
     void updateRect(const QRectF rect) noexcept;
-    void setRectColor(const QString color) noexcept;
-    void setRectFillColor(const QString color) noexcept;
-    void setRectAlpha(const float alpha) noexcept;
-    void setSize(const QSize size) noexcept;
-    void setLocation(const Location location) noexcept;
     Location location() noexcept { return m_location; }
-    void setAutoHide(const bool state) noexcept;
+
+    inline void setSize(const QSize size) noexcept
+    {
+        m_pix_scale_size = size;
+    }
+
+    inline void setRectColor(const QString color) noexcept
+    {
+        m_rectitem->setColor(color);
+    }
+
+    inline void setRectFillColor(const QString color) noexcept
+    {
+        m_rectitem->setFill(color);
+    }
+
+    inline void setLocation(const Location loc) noexcept
+    {
+        m_location = loc;
+    }
+
+    inline void setRectAlpha(const float alpha) noexcept
+    {
+        m_rectitem->setAlpha(alpha);
+    }
+
+    inline void setAutoHide(const bool state) noexcept
+    {
+        m_auto_hide = state;
+    }
 
 private:
     QVBoxLayout *m_layout = new QVBoxLayout();

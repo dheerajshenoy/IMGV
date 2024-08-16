@@ -47,49 +47,49 @@ void StatusBar::addWidget(const QString &name) noexcept
         msgLabel->setHidden(true);
     }
 
-    if (name == "note-indicator")
+    else if (name == "note-indicator")
     {
         hasNoteLabel = new QLabel();
         layout->addWidget(hasNoteLabel);
         hasNoteLabel->setToolTip("This file has a note associated with it. Press the note key to open");
     }
 
-    if (name == "note-modified-indicator")
+    else if (name == "note-modified-indicator")
     {
         noteModifiedLabel = new QLabel();
         layout->addWidget(noteModifiedLabel);
         noteModifiedLabel->setVisible(false);
     }
 
-    if (name == "size")
+    else if (name == "size")
     {
         fileSizeLabel = new QLabel();
         layout->addWidget(fileSizeLabel);
     }
 
-    if (name == "dimension")
+    else if (name == "dimension")
     {
         imageDimensionsLabel = new QLabel();
         layout->addWidget(imageDimensionsLabel);
     }
 
-    if (name == "stretch")
+    else if (name == "stretch")
         layout->addStretch(1);
 
-    if (name == "session")
+    else if (name == "session")
     {
         sessionLabel = new QLabel("No Session");
         layout->addWidget(sessionLabel);
         sessionLabel->setToolTip("Current session");
     }
 
-    if (name == "zoom")
+    else if (name == "zoom")
     {
         zoomLabel = new QLabel();
         layout->addWidget(zoomLabel);
     }
 
-    if (name == "path")
+    else if (name == "path")
     {
         hoverFilePathLabel = new HoverLabel();
         layout->addWidget(hoverFilePathLabel);
@@ -103,7 +103,7 @@ void StatusBar::setSessionName(QString sess) noexcept
         sessionLabel->setText(sess);
 }
 
-void StatusBar::updateFileInfo(const QString &filePath)
+void StatusBar::updateFileInfo(const QString &filePath) noexcept
 {
     QFileInfo fileInfo(filePath);
 
@@ -134,19 +134,8 @@ void StatusBar::updateFileInfo(const QString &filePath)
 }
 
 
-void StatusBar::hideEvent(QHideEvent *e) noexcept
-{
-    emit visibilityChanged(isVisible());
-}
-
-void StatusBar::showEvent(QShowEvent *e) noexcept
-{
-    emit visibilityChanged(isVisible());
-}
-
 void StatusBar::clearTexts() noexcept
 {
-
     if (sessionLabel)
         sessionLabel->clear();
 
@@ -175,12 +164,6 @@ void StatusBar::setMsg(QString msg, int sec) noexcept
             msgLabel->setHidden(true);
         });
     }
-}
-
-void StatusBar::setImgDimension(const int w, const int h) noexcept
-{
-    if (imageDimensionsLabel)
-        imageDimensionsLabel->setText(QString("(%1,%2)").arg(w).arg(h));
 }
 
 void StatusBar::setNoteModified(bool state) noexcept
@@ -221,23 +204,3 @@ void StatusBar::setHasNote(bool state) noexcept
     }
 }
 
-void StatusBar::setSpacing(const int spacing) noexcept
-{
-    layout->setSpacing(spacing);
-}
-
-void StatusBar::setNoteIndicator(const QString &indicator) noexcept
-{
-    m_note_indicator = indicator;
-}
-
-void StatusBar::setNoteModifiedIndicator(const QString &indicator) noexcept
-{
-    m_note_modified_indicator = indicator;
-}
-
-void StatusBar::setZoom(const QString &zoom) noexcept
-{
-    if (zoomLabel)
-        zoomLabel->setText(zoom + " %");
-}

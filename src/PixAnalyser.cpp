@@ -27,21 +27,6 @@ PixAnalyser::PixAnalyser(QWidget *parent)
     m_color_hsv->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse | Qt::TextInteractionFlag::TextSelectableByKeyboard);
 }
 
-void PixAnalyser::setPixmap(const QPixmap &pix) noexcept
-{
-    m_img = pix.toImage();
-}
-
-void PixAnalyser::showEvent(QShowEvent *e) noexcept
-{
-    emit visibilityChanged(true);
-}
-
-void PixAnalyser::closeEvent(QCloseEvent *e) noexcept
-{
-    emit visibilityChanged(false);
-}
-
 void PixAnalyser::analysePix(const QPointF &loc) noexcept
 {
     QColor color = QColor(m_img.pixelColor(loc.x(), loc.y()));
@@ -54,7 +39,3 @@ void PixAnalyser::analysePix(const QPointF &loc) noexcept
     m_color->setStyleSheet(QString("background-color: %1").arg(color.name()));
 }
 
-void PixAnalyser::setColorPicked(const bool state) noexcept
-{
-    m_pick_btn->setVisible(true);
-}

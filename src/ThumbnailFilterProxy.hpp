@@ -9,26 +9,25 @@ class ThumbnailFilterProxy : public QSortFilterProxyModel
     Q_OBJECT
 
     public:
-    ThumbnailFilterProxy(QObject *parent = nullptr) : QSortFilterProxyModel(parent) {
-    }
+    ThumbnailFilterProxy(QObject *parent = nullptr) : QSortFilterProxyModel(parent)
+    {}
 
-    void setFilterText(const QString &text)
+    inline void setFilterText(const QString &text) noexcept
     {
-        filterText = text;
-        qDebug() << filterText;
+        m_filterText = text;
         invalidateFilter();
     }
 
-    void setSearchRole(const Thumbnail::Data role)
+    inline void setSearchRole(const Thumbnail::Data role) noexcept
     {
         m_role = role;
     }
 
 
 protected:
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override
+    bool filterAcceptsRow(const int sourceRow, const QModelIndex &sourceParent) const noexcept override
     {
-        if (filterText.isEmpty())
+        if (m_filterText.isEmpty())
             return true;
         QString data;
 
@@ -47,13 +46,12 @@ protected:
             data = sourceModel()->data(index, Thumbnail::Note).toString();
 
 
-        QRegularExpression regex(filterText, QRegularExpression::CaseInsensitiveOption);
+        QRegularExpression regex(m_filterText, QRegularExpression::CaseInsensitiveOption);
         return regex.match(data).hasMatch();
     }
 
 private:
-    QString filterText;
-
+    QString m_filterText;
     Thumbnail::Data m_role;
 };
 

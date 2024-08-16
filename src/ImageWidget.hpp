@@ -36,19 +36,17 @@ public:
     ImageWidget(QWidget *parent = nullptr);
     ~ImageWidget(){}
 
-    void loadFile(QString file);
-    void closeFile();
-    void zoomIn();
-    void zoomOut();
-    void zoomOriginal();
-    void zoomFit();
-    void flipVertical();
-    void flipHorizontal();
-    void rotate(qreal degrees);
-    void rotateAnticlockwise();
-    void rotateClockwise();
-    void fitToWidth();
-    void fitToWindow();
+    void loadFile(QString file) noexcept;
+    void closeFile() noexcept;
+    void zoomIn() noexcept;
+    void zoomOut() noexcept;
+    void zoomOriginal() noexcept;
+    void zoomFit() noexcept;
+    void flipVertical() noexcept;
+    void flipHorizontal() noexcept;
+    void rotate(qreal degrees) noexcept;
+    void fitToWidth() noexcept;
+    void fitToWindow() noexcept;
     void resetRotation() noexcept;
     void setScrollBarsVisibility(bool state) noexcept;
     void moveLeft() noexcept;
@@ -56,21 +54,79 @@ public:
     void moveUp() noexcept;
     void moveDown() noexcept;
     void resetScrollbars() noexcept;
-    const QPixmap getPixmap() noexcept;
     void setMinimapMode(const bool state) noexcept;
-    void setMinimapRectColor(const QString color) noexcept;
-    void setMinimapRectFillColor(const QString color) noexcept;
-    void setMinimapRectAlpha(const float alpha) noexcept;
-    void setMinimapAutoHide(const bool state) noexcept;
-    void setMinimapSize(const QSize size) noexcept;
     void setPixAnalyseMode(const bool state, const bool closeDialog = true) noexcept;
-    const QRectF visibleRect();
+    const QRectF visibleRect() noexcept;
     void setVisibleRectFromMinimap(const QRectF rect) noexcept;
-    void setZoomFactor(const qreal zoom) noexcept;
-    void setHorizontalScrollFactor(const qreal factor) noexcept;
-    void setVerticalScrollFactor(const qreal factor) noexcept;
-    void setFitImageOnLoad(const bool fit) noexcept;
-    void setMinimapLocation(const Minimap::Location loc) noexcept;
+
+
+    inline void setHorizontalScrollFactor(const qreal factor) noexcept
+    {
+        m_horizontal_scroll_factor = factor;
+    }
+
+    inline void setVerticalScrollFactor(const qreal factor) noexcept
+    {
+        m_vertical_scroll_factor = factor;
+    }
+
+    inline void setZoomFactor(const qreal zoom) noexcept
+    {
+        m_zoomFactor = zoom;
+    }
+
+    inline void setFitImageOnLoad(const bool fit) noexcept
+    {
+        m_fit_image_on_load = fit;
+    }
+
+
+    inline void setMinimapRectColor(const QString color) noexcept
+    {
+        m_minimap->setRectColor(color);
+    }
+
+    inline void setMinimapRectFillColor(const QString color) noexcept
+    {
+        if (color.isEmpty()) return;
+        m_minimap->setRectFillColor(color);
+    }
+
+    inline void setMinimapRectAlpha(const float alpha) noexcept
+    {
+        m_minimap->setRectAlpha(alpha);
+    }
+
+    inline void setMinimapAutoHide(const bool state) noexcept
+    {
+        m_minimap->setAutoHide(state);
+    }
+
+    inline void setMinimapSize(const QSize size) noexcept
+    {
+        m_minimap->setSize(size);
+    }
+
+    inline void setMinimapLocation(const Minimap::Location loc) noexcept
+    {
+        m_minimap->setLocation(loc);
+    }
+
+    inline const QPixmap getPixmap() noexcept
+    {
+        return m_pixmapItem->pixmap();
+    }
+
+    inline void rotateAnticlockwise() noexcept
+    {
+        rotate(-90);
+    }
+
+    inline void rotateClockwise() noexcept
+    {
+        rotate(90);
+    }
+
 
 signals:
     void fileLoaded(QString);
@@ -82,27 +138,29 @@ signals:
     void pixAnalyserVisibilityChanged(bool);
 
 protected:
-    void wheelEvent(QWheelEvent *e) override;
-    void dragEnterEvent(QDragEnterEvent *e) override;
-    void dragLeaveEvent(QDragLeaveEvent *e) override;
-    void dragMoveEvent(QDragMoveEvent *e) override;
-    void dropEvent(QDropEvent *e) override;
+    void wheelEvent(QWheelEvent *e) noexcept override;
+    void dragEnterEvent(QDragEnterEvent *e) noexcept override;
+    void dragLeaveEvent(QDragLeaveEvent *e) noexcept override;
+    void dragMoveEvent(QDragMoveEvent *e) noexcept override;
+    void dropEvent(QDropEvent *e) noexcept override;
     void mouseMoveEvent(QMouseEvent *e) noexcept override;
     void mousePressEvent(QMouseEvent *e) noexcept override;
     void mouseReleaseEvent(QMouseEvent *e) noexcept override;
     void resizeEvent(QResizeEvent *e) noexcept override;
 
 private:
+
+    void updateView() noexcept;
+    void GifLoopHandler(int frameNumber) noexcept;
+    qreal scale() const noexcept;
+    void setMatrix() noexcept;
+
     QGraphicsScene *m_scene = nullptr;
     QGraphicsPixmapItem *m_pixmapItem = nullptr;
     MovieItem *m_movieItem = nullptr;
     qreal m_zoomLevel = 1.0f, m_zoomFactor = 2.0f;
     qreal m_rotate = 0.0f;
     qreal m_horizontal_scroll_factor = 20.0, m_vertical_scroll_factor = 20.0;
-    void updateView();
-    void GifLoopHandler(int frameNumber);
-    qreal scale() const;
-    void setMatrix();
     Qt::AspectRatioMode m_aspect_ratio_mode = Qt::KeepAspectRatio;
     bool m_fit;
     bool m_horizontal_flip = false, m_vertical_flip = false;
