@@ -7,8 +7,8 @@ Defaults = {
     scrollbars = true,
     start_in_minimal_mode = false,
     scroll_factor = { horizontal = 40.0, vertical = 40.0 },
-    zoom_factor = 5.0, -- (default : 2.0)
-    fit_on_load = true, -- (default : false)
+    zoom_factor = 5.0, 
+    fit_on_load = true, 
     fit_on_load_mode = "height", -- fit to "height" or "width" or "none" ; (default : "none")
     minimap = {
         show = false,
