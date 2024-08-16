@@ -387,8 +387,6 @@ void IMGV::initConfigDirectory()
 
     }
 
-
-
     // create sessions folder
     
     if (!sessions_dir.exists())
@@ -869,8 +867,12 @@ void IMGV::addSessionToOpenSessionMenu(const QString &sessionName) noexcept
 void IMGV::readSessionFile(QString filename)
 {
     using namespace rapidjson;
-    std::ifstream ifs(filename.toStdString());
 
+    auto sessions = getSessionFiles();
+    if (sessions.indexOf(filename) > -1)
+        filename = m_sessions_dir_path + QDir::separator() + filename;
+
+    std::ifstream ifs(filename.toStdString());
 
     if (!ifs.is_open()) {
         QMessageBox::critical(this, "File not found", "The specified session file was not found");
@@ -984,7 +986,7 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
 
     if (parser.is_used("--session"))
     {
-        readSessionFile(QString::fromStdString(parser.get<std::vector<std::string>>("--session")[0]));
+        readSessionFile(QString::fromStdString(parser.get<std::string>("--session")));
     }
 
     if (parser.is_used("--input"))
