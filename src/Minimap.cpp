@@ -19,7 +19,7 @@ void Minimap::setPixmap(const QPixmap &pix) noexcept
     m_mainPixmapBoundingRect = pix.rect();
 }
 
-void Minimap::updateRect(const QRectF rect) noexcept
+void Minimap::updateRect(QRectF rect) noexcept
 {
     qreal scale = m_pix.width() / m_mainPixmapBoundingRect.width();
     QRectF scaledRect(

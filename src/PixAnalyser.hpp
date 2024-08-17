@@ -20,11 +20,10 @@ class PixAnalyser : public QWidget
 
 public:
     explicit PixAnalyser(QWidget *parent = nullptr);
-    ~PixAnalyser() {}
 
-    void analysePix(const QPointF &loc) noexcept;
+    void analysePix(const QPointF &loc) const noexcept;
 
-    inline void setColorPicked(const bool state) noexcept
+    inline void setColorPicked(const bool &state) const noexcept
     {
         m_pick_btn->setVisible(true);
     }
@@ -51,7 +50,6 @@ protected:
     {
         emit visibilityChanged(false);
     }
-
 
 private:
     QFormLayout *m_layout = new QFormLayout();

@@ -180,6 +180,12 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 # Changelogs and Bug Fixes
 
+- 17 Aug 2024
+
+    - Add `const`, `noexcept` to functions.
+    - Make function arguments `const` if not being changed.
+    - Pass function arguments by reference and allow function arguments to get value by rvalue.
+
 - 16 Aug 2024
     - STDIN images now create temporary files which are destroyed when the program exits.
     - Make small functions inline for increased performance.
@@ -283,6 +289,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 1. [ ] Nested SVG files are not loaded by Qt Pixmap. Maybe try to integrate an SVG library and render SVG through data
 2. [ ] Highlight currently displayed file in the thumbnail panel
 3. [x] Color picker for gifs (currently works only on static images)
+4. [ ] Slideshow show current progress, pause and play instead of starting from the beginning each time
 
 <a name="thanks" />
 

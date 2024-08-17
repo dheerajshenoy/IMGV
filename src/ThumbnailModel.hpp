@@ -19,16 +19,22 @@ public:
     QVariant data(const QModelIndex &index, int role) const noexcept override;
     void clear() noexcept;
 
-    inline void removeAt(const int index) noexcept
+    inline void removeAt(const int &index) noexcept
+    {
+        m_thumbnails.remove(index);
+    }
+
+    inline void removeAt(const int&& index) noexcept
     {
         m_thumbnails.remove(index);
     }
 
     void removeIndexes(const QList<QModelIndex> &indexes) noexcept;
-    Thumbnail getThumbnail(const int index) noexcept;
+    Thumbnail getThumbnail(const int& index) const noexcept;
     void setNote(const QModelIndex &index, const QString &note) noexcept;
+    void setNote(const QModelIndex &index, QString&& note) noexcept;
     void setTag(const QModelIndex &index, const QString &tag) noexcept;
-    QStringList getFiles() noexcept;
+    QStringList getFiles() const noexcept;
 
     inline QVector<Thumbnail>& thumbnails() noexcept
     {

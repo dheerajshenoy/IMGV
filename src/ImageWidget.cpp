@@ -183,7 +183,64 @@ void ImageWidget::zoomFit() noexcept
     /*emit zoomChanged(scale());*/
 }
 
-void ImageWidget::loadFile(QString file) noexcept
+void ImageWidget::loadFile(QString&& file) noexcept
+{
+    /*m_rotate = 0.0f;*/
+    /*m_zoomLevel = 0.0f;*/
+    /*setMatrix();*/
+    resetScrollbars();
+    int w = 0, h = 0;
+    QImageReader imreader(file);
+    if (imreader.supportsAnimation())
+    {
+        m_pixmapItem->hide();
+        m_movieItem->show();
+        m_movie->stop();
+        m_movie->setFileName(file);
+        w = m_movie->currentPixmap().width();
+        h = m_movie->currentPixmap().height();
+        m_movie->start();
+        m_scene->setSceneRect(m_movieItem->boundingRect());
+    }
+    else
+    {
+        m_movieItem->hide();
+        m_pixmapItem->show();
+        QPixmap pix;
+        if (!QPixmapCache::find(file, &pix))
+        {
+            if (utils::detectImageFormat(file) == "WEBP")
+                pix = utils::decodeWebPToPixmap(file);
+            else
+                pix.load(file);
+            QPixmapCache::insert(file, pix);
+        }
+        w = pix.width(); h = pix.height();
+        m_pixmapItem->setPixmap(pix);
+        m_scene->setSceneRect(m_pixmapItem->boundingRect());
+    }
+    emit fileLoaded(file);
+    emit fileDim(w, h);
+
+    if (m_fit_image_on_load)
+    {
+        switch(m_fit_image_on_load_mode)
+        {
+            case FitOnLoad::FitToWidth:
+                fitToWidth();
+            break;
+
+            case FitOnLoad::FitToHeight:
+                fitToHeight();
+            break;
+
+            default:
+                break;
+        }
+    }
+}
+
+void ImageWidget::loadFile(const QString& file) noexcept
 {
     /*m_rotate = 0.0f;*/
     /*m_zoomLevel = 0.0f;*/
@@ -290,7 +347,13 @@ void ImageWidget::dropEvent(QDropEvent *e) noexcept
     e->acceptProposedAction();
 }
 
-void ImageWidget::rotate(qreal degrees) noexcept
+void ImageWidget::rotate(const qreal& degrees) noexcept
+{
+    m_rotate += degrees;
+    setMatrix();
+}
+
+void ImageWidget::rotate(qreal&& degrees) noexcept
 {
     m_rotate += degrees;
     setMatrix();
@@ -320,7 +383,7 @@ void ImageWidget::fitToHeight() noexcept
     zoomFit();
 }
 
-void ImageWidget::GifLoopHandler(int frameNumber) noexcept
+void ImageWidget::GifLoopHandler(const int& frameNumber) noexcept
 {
     static int loopCount = 0;
     if(frameNumber == (m_movie->frameCount()-1)) {
@@ -336,7 +399,7 @@ void ImageWidget::resetRotation() noexcept
     setMatrix();
 }
 
-void ImageWidget::setScrollBarsVisibility(bool state) noexcept
+void ImageWidget::setScrollBarsVisibility(const bool& state) noexcept
 {
     if (state)
     {
@@ -349,7 +412,20 @@ void ImageWidget::setScrollBarsVisibility(bool state) noexcept
     }
 }
 
-void ImageWidget::closeFile() noexcept
+void ImageWidget::setScrollBarsVisibility(bool&& state) noexcept
+{
+    if (state)
+    {
+        this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    }
+    else {
+        this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    }
+}
+
+void ImageWidget::closeFile() const noexcept
 {
     m_pixmapItem->hide();
     m_movieItem->hide();
@@ -381,7 +457,7 @@ void ImageWidget::moveRight() noexcept
     scrollbar->setValue(scrollbar->value() + m_vertical_scroll_factor);
 }
 
-void ImageWidget::resetScrollbars() noexcept
+void ImageWidget::resetScrollbars() const noexcept
 {
     this->horizontalScrollBar()->setValue(0);
     this->verticalScrollBar()->setValue(0);
@@ -447,14 +523,14 @@ void ImageWidget::resizeEvent(QResizeEvent *e) noexcept
     QGraphicsView::resizeEvent(e);
 }
 
-const QRectF ImageWidget::visibleRect() noexcept
+const QRectF ImageWidget::visibleRect() const noexcept
 {
     const QRect viewportRect(QPoint(horizontalScrollBar()->value(), verticalScrollBar()->value()), viewport()->size());
     const auto mat = transform().inverted();
     return mat.mapRect(viewportRect);
 }
 
-void ImageWidget::setMinimapMode(const bool state) noexcept
+void ImageWidget::setMinimapMode(const bool& state) noexcept
 {
     m_minimap_mode = state;
 
@@ -472,7 +548,7 @@ void ImageWidget::setMinimapMode(const bool state) noexcept
     }
 }
 
-void ImageWidget::setPixAnalyseMode(const bool state, const bool closeDialog) noexcept
+void ImageWidget::setPixAnalyseMode(const bool& state, const bool&& closeDialog) noexcept
 {
     m_pix_analyse_mode = state;
     if (state)
@@ -490,4 +566,10 @@ void ImageWidget::setPixAnalyseMode(const bool state, const bool closeDialog) no
             m_pix_analyser->close();
         this->viewport()->setCursor(Qt::OpenHandCursor);
     }
+}
+
+ImageWidget::~ImageWidget()
+{
+    delete m_pix_analyser;
+    m_pix_analyser = nullptr;
 }

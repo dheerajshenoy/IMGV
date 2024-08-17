@@ -28,7 +28,7 @@ PixAnalyser::PixAnalyser(QWidget *parent)
     m_color_hsv->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse | Qt::TextInteractionFlag::TextSelectableByKeyboard);
 }
 
-void PixAnalyser::analysePix(const QPointF &loc) noexcept
+void PixAnalyser::analysePix(const QPointF &loc) const noexcept
 {
     auto x = loc.x();
     auto y = loc.y();

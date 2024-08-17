@@ -18,7 +18,7 @@ class ThumbnailFilterProxy : public QSortFilterProxyModel
         invalidateFilter();
     }
 
-    inline void setSearchRole(const Thumbnail::Data role) noexcept
+    inline void setSearchRole(const Thumbnail::Data& role) noexcept
     {
         m_role = role;
     }
@@ -34,17 +34,13 @@ protected:
         QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
         if (m_role == Thumbnail::Tag)
-        {
-            qDebug() << "TAG ROLE";
             data = sourceModel()->data(index, Thumbnail::Tag).toString();
-        }
 
         else if (m_role == Thumbnail::FileName)
             data = sourceModel()->data(index, Thumbnail::FileName).toString();
 
         else if (m_role == Thumbnail::Note)
             data = sourceModel()->data(index, Thumbnail::Note).toString();
-
 
         QRegularExpression regex(m_filterText, QRegularExpression::CaseInsensitiveOption);
         return regex.match(data).hasMatch();

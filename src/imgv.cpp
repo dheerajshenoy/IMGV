@@ -16,7 +16,7 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     m_note_holder->setAcceptRichText(true);
     helpMenu->addAction(help__about);
 
-    connect(help__about, &QAction::triggered, this, [&]() {
+    connect(help__about, &QAction::triggered, [&]() {
         AboutDialog *about = new AboutDialog(this);
         about->open();
     });
@@ -45,7 +45,7 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     connect(m_note_holder, &NoteWidget::modificationChanged, m_statusbar, &StatusBar::setNoteModified);
     connect(m_thumbnail_tools_widget, &ThumbnailTools::search, this, &IMGV::searchThumbnails);
     connect(m_thumbnail_tools_widget, &ThumbnailTools::filter, this, &IMGV::filterThumbnails);
-    connect(m_thumbnail_tools_widget, &ThumbnailTools::resetFilter, this, [&]() { m_thumbnail_view->filterMode(false); });
+    connect(m_thumbnail_tools_widget, &ThumbnailTools::resetFilter, [&]() { m_thumbnail_view->filterMode(false); });
 
     /*connect(m_note_holder, &NoteWidget::visibilityChanged, m_statusbar, &StatusBar::modificationLabelVisiblity);*/
 
@@ -55,8 +55,8 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     m_thumbnail_search_edit->setVisible(false);
     splitter->addWidget(m_right_pane);
 
-    connect(m_img_widget, &ImageWidget::zoomChanged, this, [&](qreal zoom) {
-        m_statusbar->setZoom("Zoom: " + QString::number(4 * zoom));
+    connect(m_img_widget, &ImageWidget::zoomChanged, [&](const qreal &zoom) {
+        m_statusbar->setZoom("Zoom: " + QString::number(4 * zoom)); // map zoom from (-50 to 200) to (0 to 500) ish
     });
 
     connect(m_thumbnail_search_edit, &QLineEdit::textChanged, this, &IMGV::ThumbSearchTextChanged);
@@ -74,36 +74,34 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     centralWidget->setContentsMargins(0, 0, 0, 0);
     this->setContentsMargins(0, 0, 0, 0);
 
-    connect(m_thumbnail_view, &ThumbnailView::fileChangeRequested, m_img_widget, [&](QString filepath) {
+    connect(m_thumbnail_view, &ThumbnailView::fileChangeRequested, m_img_widget, [&](const QString &filepath) {
         m_img_widget->loadFile(filepath);
         m_note_holder->setMarkdown(m_thumbnail_view->currentIndex().data(Thumbnail::Note).toString());
     });
 
-    connect(m_img_widget, &ImageWidget::fileDim, this, [&](int w, int h) {
+    connect(m_img_widget, &ImageWidget::fileDim, this, [&](const int &w, const int &h) {
         m_statusbar->setImgDimension(w, h);
     });
 
     parseCommandLineArguments(parser);
     initMenu();
     initConnections();
-    this->show();
-
     addSessionsToOpenSessionMenu();
 
     if (m_stdin && !isatty(fileno(stdin)))
         processStdin();
 
+    this->show();
 }
 
-void IMGV::initDefaultConfig()
+void IMGV::initDefaultConfig() noexcept
 {
     m_statusbar->setSpacing(10);
-    for(const auto &s : QStringList() << "message" << "path" << "note-indicator" << "note-modified-indicator" << "stretch" << "size" << "dimension" << "session")
-        m_statusbar->addWidget(s);
+    m_statusbar->addWidgets(QStringList() << "message" << "path" << "note-indicator" << "note-modified-indicator" << "stretch" << "size" << "dimension" << "session");
     initKeybinds();
 }
 
-void IMGV::initConfigDirectory()
+void IMGV::initConfigDirectory() noexcept
 {
     m_config_dir_path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
     auto config_dir = QDir(m_config_dir_path);
@@ -285,67 +283,67 @@ void IMGV::initConfigDirectory()
                 QShortcut *shortcut = new QShortcut(QKeySequence(key), this);
 
                 if (action == "zoom_in") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomIn);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomIn);
 
                 } else if (action == "zoom_out") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomOut);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomOut);
 
                 } else if (action == "zoom_reset") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomOriginal);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::zoomOriginal);
 
                 } else if (action == "rotate_clockwise") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::rotateClockwise);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::rotateClockwise);
 
                 } else if (action == "rotate_anticlockwise") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::rotateAnticlockwise);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::rotateAnticlockwise);
 
                 } else if (action == "flip_vertical") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::flipVertical);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::flipVertical);
 
                 } else if (action == "flip_horizontal") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::flipHorizontal);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::flipHorizontal);
 
                 } else if (action == "left") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveLeft);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveLeft);
 
                 } else if (action == "down") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveDown);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveDown);
 
                 } else if (action == "up") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveUp);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveUp);
 
                 } else if (action == "right") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveRight);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::moveRight);
 
                 } else if (action == "next") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoNext);
+                    connect(shortcut, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoNext);
 
                 } else if (action == "prev") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoPrev);
+                    connect(shortcut, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoPrev);
 
                 } else if (action == "notes") {
-                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleNotes);
+                    connect(shortcut, &QShortcut::activated, this, &IMGV::toggleNotes);
 
                 } else if (action == "maximize") {
-                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::maximizeImage);
+                    connect(shortcut, &QShortcut::activated, this, &IMGV::maximizeImage);
 
                 } else if (action == "search") {
-                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::searchThumbnails);
+                    connect(shortcut, &QShortcut::activated, this, &IMGV::searchThumbnails);
 
                 } else if (action == "toggle_menubar") {
-                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleMenubar);
+                    connect(shortcut, &QShortcut::activated, this, &IMGV::toggleMenubar);
 
                 } else if (action == "toggle_statusbar") {
-                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleStatusbar);
+                    connect(shortcut, &QShortcut::activated, this, &IMGV::toggleStatusbar);
 
                 } else if (action == "toggle_thumbnail_panel") {
-                    QObject::connect(shortcut, &QShortcut::activated, this, &IMGV::toggleThumbnailPanel);
+                    connect(shortcut, &QShortcut::activated, this, &IMGV::toggleThumbnailPanel);
 
                 } else if (action == "fit_width") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWidth);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWidth);
 
                 } else if (action == "fit_height") {
-                    QObject::connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::fitToHeight);
+                    connect(shortcut, &QShortcut::activated, m_img_widget, &ImageWidget::fitToHeight);
                 }
             }
         }
@@ -355,7 +353,6 @@ void IMGV::initConfigDirectory()
             if (defaults_table["default_keybindings"].get_or(true))
                 initKeybinds();
         }
-
 
         // minimap table
         sol::optional<sol::table> minimap_table_exists = defaults_table["minimap"];
@@ -443,7 +440,7 @@ void IMGV::initConfigDirectory()
 
 }
 
-void IMGV::initMenu()
+void IMGV::initMenu() noexcept
 {
 
     setMenuBar(m_menuBar);
@@ -482,7 +479,6 @@ void IMGV::initMenu()
     editMenu->addMenu(edit__fit);
     editMenu->addMenu(edit__fit_on_load);
 
-
     edit__fit->addAction(fit__width);
     edit__fit->addAction(fit__height);
 
@@ -519,21 +515,17 @@ void IMGV::initMenu()
     tools__pix_analyser->setCheckable(true);
     tools__slideshow->setCheckable(true);
 
-    /*connect(edit__fit_on_load, &QAction::triggered, [&](bool state) {*/
-    /*    m_img_widget->setFitImageOnLoad(state);*/
-    /*});*/
-
-    connect(fit_on_load__width, &QAction::triggered, m_img_widget, [&](bool state) {
+    connect(fit_on_load__width, &QAction::triggered, m_img_widget, [&](const bool &state) {
         if (state)
             m_img_widget->setFitImageOnLoad(true, ImageWidget::FitOnLoad::FitToWidth);
     });
 
-    connect(fit_on_load__height, &QAction::triggered, m_img_widget, [&](bool state) {
+    connect(fit_on_load__height, &QAction::triggered, m_img_widget, [&](const bool &state) {
         if (state)
             m_img_widget->setFitImageOnLoad(true, ImageWidget::FitOnLoad::FitToHeight);
     });
 
-    connect(fit_on_load__none, &QAction::triggered, m_img_widget, [&](bool state) {
+    connect(fit_on_load__none, &QAction::triggered, m_img_widget, [&](const bool &state) {
         if (state)
             m_img_widget->setFitImageOnLoad(false);
     });
@@ -549,41 +541,48 @@ void IMGV::initMenu()
     connect(zoom__out, &QAction::triggered, m_img_widget, &ImageWidget::zoomOut);
     connect(zoom__reset, &QAction::triggered, m_img_widget, &ImageWidget::zoomOriginal);
 
-    connect(tools__slideshow, &QAction::triggered, this, [&](bool state) {
+    connect(tools__slideshow, &QAction::triggered, this, [&](const bool &state) {
         if (state)
         {
             if (!m_slideshow_timer)
+            {
                 m_slideshow_timer = new QTimer();
-            m_slideshow_timer->setInterval(2 * 1000);
+                m_slideshow_timer->setInterval(2 * 1000);
+                connect(m_slideshow_timer, &QTimer::timeout, this, [&]() {
+                    slideShow();
+                });
+            }
+
+            // TODO: Don't start it from the beginning each time
             m_slideshow_index = -1;
             m_slideshow_files = m_thumbnail_view->getAllFiles();
-            connect(m_slideshow_timer, &QTimer::timeout, this, [&]() {
-                slideShow();
-            });
             setMsg("Slideshow started", 2);
         } else {
-            m_slideshow_files.squeeze();
             /*delete m_slideshow_timer;*/
             /*m_slideshow_timer = nullptr;*/
-            disconnect(m_slideshow_timer, 0, 0, 0);
+            disconnect(m_slideshow_timer);
             setMsg("Stopping Slideshow", 2);
         }
         toggleSlideshow();
     });
 
+    session__closeSession->setEnabled(false);
+
     connect(session__newSession, &QAction::triggered, this, &IMGV::newSession);
     connect(session__closeSession, &QAction::triggered, this, &IMGV::closeSession);
+
+
     connect(session__saveSession, &QAction::triggered, this, &IMGV::saveSession);
 
-    connect(tools__manage_sessions, &QAction::triggered, this, [&]() {
+    connect(tools__manage_sessions, &QAction::triggered, [&]() {
         ManageSessionsDialog *md = new ManageSessionsDialog(m_sessions_dir_path, this);
-        connect(md, &ManageSessionsDialog::openSession, this, [&](QString name) { openSession(name); });
+        connect(md, &ManageSessionsDialog::openSession, [&](QString name) { openSession(name); });
         md->open();
     });
 
     connect(file__openAction, &QAction::triggered, this, &IMGV::openImage);
     connect(file__openNewWindowAction, &QAction::triggered, this, &IMGV::openImageInNewWindow);
-    connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, [&](QString filename) {
+    connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, [&](const QString &filename) {
         m_statusbar->updateFileInfo(filename);
         if (m_thumbnail_view->currentThumbnail().hasNote())
         {
@@ -603,7 +602,7 @@ void IMGV::initMenu()
         }
     });
 
-    connect(m_img_widget, &ImageWidget::droppedImage, [&](const QString file) {
+    connect(m_img_widget, &ImageWidget::droppedImage, [&](const QString& file) {
         m_thumbnail_view->createThumbnail(file);
     });
 
@@ -625,25 +624,18 @@ void IMGV::initMenu()
         m_img_widget->resetRotation();
     });
 
-    connect(view__minimap, &QAction::triggered, this, [&](bool state) {
-        if (state)
-        {
-            m_img_widget->setMinimapMode(true);
-        }
-        else
-        {
-            m_img_widget->setMinimapMode(false);
-        }
+    connect(view__minimap, &QAction::triggered, this, [&](const bool &state) {
+        m_img_widget->setMinimapMode(state);
     });
 
-    connect(tools__pix_analyser, &QAction::triggered, m_img_widget, [&](bool state) {
+    connect(tools__pix_analyser, &QAction::triggered, m_img_widget, [&](const bool &state) {
         if (state)
             setMsg("Click to save picked color", -1);
         m_img_widget->setPixAnalyseMode(state);
 
     });
 
-    connect(m_img_widget, &ImageWidget::pixAnalyserVisibilityChanged, [&](bool state) {
+    connect(m_img_widget, &ImageWidget::pixAnalyserVisibilityChanged, [&](const bool &state) {
         tools__pix_analyser->setChecked(state);
         if (!state)
             m_statusbar->hideMsg();
@@ -651,19 +643,19 @@ void IMGV::initMenu()
 
     connect(m_img_widget, &ImageWidget::minimapVisibilityChanged, view__minimap, &QAction::setChecked);
 
-    connect(view__thumbnails, &QAction::triggered, this, [&](bool state) {
+    connect(view__thumbnails, &QAction::triggered, this, [&](const bool &state) {
         m_thumbnail_view->setVisible(state);
     });
 
-    connect(view__statusbar, &QAction::triggered, this, [&](bool state) {
+    connect(view__statusbar, &QAction::triggered, this, [&](const bool &state) {
         m_statusbar->setVisible(state);
     });
 
-    connect(view__menubar, &QAction::triggered, this, [&](bool state) {
+    connect(view__menubar, &QAction::triggered, this, [&](const bool &state) {
         m_menuBar->setVisible(state);
     });
 
-    connect(view__notes, &QAction::triggered, this, [&](bool state) {
+    connect(view__notes, &QAction::triggered, this, [&](const bool &state) {
         m_note_holder->setVisible(state);
     });
     
@@ -672,21 +664,21 @@ void IMGV::initMenu()
 
     connect(file__exit, &QAction::triggered, this, &QApplication::exit);
 
-    connect(m_thumbnail_view, &ThumbnailView::visibilityChanged, this, [&](bool state) {
+    connect(m_thumbnail_view, &ThumbnailView::visibilityChanged, [&](const bool &state) {
         view__thumbnails->setChecked(state);
     });
 
-    connect(m_statusbar, &StatusBar::visibilityChanged, this, [&](bool state) {
+    connect(m_statusbar, &StatusBar::visibilityChanged, [&](const bool &state) {
         view__statusbar->setChecked(state);
     });
 
-    connect(m_note_holder, &NoteWidget::visibilityChanged, this, [&](bool state) {
+    connect(m_note_holder, &NoteWidget::visibilityChanged, [&](const bool &state) {
         view__notes->setChecked(state);
     });
 
 }
 
-void IMGV::initKeybinds()
+void IMGV::initKeybinds() noexcept
 {
     QShortcut *kb_clockwise = new QShortcut(QKeySequence("."), this);
     QShortcut *kb_anticlockwise = new QShortcut(QKeySequence(","), this);
@@ -713,46 +705,48 @@ void IMGV::initKeybinds()
     connect(kb_flipvert, &QShortcut::activated, m_img_widget, &ImageWidget::flipVertical);
     connect(kb_fit_to_width, &QShortcut::activated, m_img_widget, &ImageWidget::fitToWidth);
     connect(kb_fit_to_height, &QShortcut::activated, m_img_widget, &ImageWidget::fitToHeight);
-    connect(kb_toggle_menubar, &QShortcut::activated, this, [&]() {
+
+    connect(kb_toggle_menubar, &QShortcut::activated, [&]() {
         m_menuBar->setVisible(!m_menuBar->isVisible());
     });
 
-    connect(kb_thumbnail_panel, &QShortcut::activated, this, [&]() {
+    connect(kb_thumbnail_panel, &QShortcut::activated, [&]() {
         m_left_pane->setVisible(!m_left_pane->isVisible());
     });
 
     connect(kb_goto_next, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoNext);
     connect(kb_goto_prev, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoPrev);
-    connect(kb_img_maximize, &QShortcut::activated, this, [&]() {
+    connect(kb_search_thumbnail, &QShortcut::activated, this, &IMGV::searchThumbnails);
+
+    connect(kb_img_maximize, &QShortcut::activated, [&]() {
         maximizeImage();
         view__maximize_image->setChecked(m_image_maximize_mode);
     });
 
-    connect(kb_search_thumbnail, &QShortcut::activated, this, &IMGV::searchThumbnails);
 
 }
 
-void IMGV::initConnections()
+void IMGV::initConnections() const noexcept
 {
-    connect(m_thumbnail_view, &ThumbnailView::doubleClicked, this, [&](const QModelIndex index) {
+    connect(m_thumbnail_view, &ThumbnailView::doubleClicked, [&](const QModelIndex &index) {
 
         // Don't load the image if already in the current image
         //TODO: /*if (m_thumbnail_view->currentThumbnail().filename() == text) return;*/
 
         const QString text = index.data(Qt::UserRole).toString();
         m_img_widget->loadFile(text);
-        m_note_holder->blockSignals(true);
+        m_note_holder->blockSignals(true); // FIX : is this necessary ?
         m_note_holder->setMarkdown(index.data(Thumbnail::Note).toString());
         m_note_holder->blockSignals(false);
     });
     
-    connect(m_note_holder, &NoteWidget::saveRequested, this, [&]() {
+    connect(m_note_holder, &NoteWidget::saveRequested, [&]() {
         m_thumbnail_view->model()->setNote(m_thumbnail_view->currentIndex(), m_note_holder->toMarkdown());
         m_note_holder->document()->setModified(false);
     });
 }
 
-void IMGV::openImageInNewWindow()
+void IMGV::openImageInNewWindow() noexcept
 {
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp)"));
     if (!files.isEmpty()) {
@@ -769,7 +763,7 @@ void IMGV::openImageInNewWindow()
     }
 }
 
-void IMGV::openImage()
+void IMGV::openImage() noexcept
 {
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp)"));
     if (!files.isEmpty()) {
@@ -787,7 +781,7 @@ void IMGV::slideShow() noexcept
     m_img_widget->loadFile(m_slideshow_files.at(m_slideshow_index));
 }
 
-void IMGV::toggleSlideshow() noexcept
+void IMGV::toggleSlideshow() const noexcept
 {
     if (m_slideshow_timer->isActive())
     {
@@ -801,14 +795,12 @@ void IMGV::toggleSlideshow() noexcept
     }
 }
 
-QStringList IMGV::getSessionFiles()
+QStringList IMGV::getSessionFiles() const noexcept
 {
-    if (m_config_dir_path.isEmpty()) return {};
-
     return QDir(m_sessions_dir_path).entryList(QStringList() << "*.imgv" << "*.IMGV", QDir::Files);
 }
 
-void IMGV::saveSession()
+void IMGV::saveSession() noexcept
 {
 
     if (!m_session_name.isEmpty())
@@ -826,7 +818,7 @@ void IMGV::saveSession()
 
         // tags
         rapidjson::Value tags(rapidjson::kArrayType);
-        for (int i=0; i < m_tags.size(); i++)
+        for (unsigned int i=0; i < m_tags.size(); i++)
             tags.PushBack(rapidjson::Value(m_tags.at(i).toStdString().c_str(), allocator), allocator);
 
         document.AddMember("tags", tags, allocator);
@@ -855,6 +847,7 @@ void IMGV::saveSession()
         rapidjson::StringBuffer buffer;
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
         document.Accept(writer);
+
         // Save JSON string to file
         auto sess_file = QString("%1%2%3.imgv").arg(m_sessions_dir_path).arg(QDir::separator()).arg(m_session_name);
         std::ofstream ofs(sess_file.toStdString());
@@ -958,7 +951,7 @@ void IMGV::addSessionToOpenSessionMenu(const QString &sessionName) noexcept
     session__openSession->addAction(action);
 }
 
-void IMGV::readSessionFile(QString filename)
+void IMGV::readSessionFile(QString& filename) noexcept
 {
     using namespace rapidjson;
 
@@ -1007,7 +1000,7 @@ void IMGV::readSessionFile(QString filename)
     {
         const Value &tags_arr = doc["tags"];
         for(SizeType i=0; i < tags_arr.Size(); i++)
-            m_tags.push_back(QString::fromStdString(tags_arr[i].GetString()));
+            m_tags.emplaceBack(QString::fromStdString(tags_arr[i].GetString()));
     }
 
     // Read Files
@@ -1025,9 +1018,9 @@ void IMGV::readSessionFile(QString filename)
                     (file.HasMember("note") && file["note"].IsString()) &&
                     (file.HasMember("tag") && file["tag"].IsString()))
                 {
-                    files_stringlist << Thumbnail(QString::fromStdString(file["path"].GetString()),
+                    files_stringlist.emplaceBack(Thumbnail(QString::fromStdString(file["path"].GetString()),
                                                   QString::fromStdString(file["note"].GetString()),
-                                                  QString::fromStdString(file["tag"].GetString()));
+                                                  QString::fromStdString(file["tag"].GetString())));
                 }
             }
         }
@@ -1039,23 +1032,103 @@ void IMGV::readSessionFile(QString filename)
     ifs.close();
 }
 
-void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
+void IMGV::readSessionFile(QString&& filename) noexcept
+{
+    using namespace rapidjson;
+
+    if (!filename.endsWith(".imgv"))
+        filename = filename + ".imgv";
+
+    auto sessions = getSessionFiles();
+    if (sessions.indexOf(filename)> -1)
+        filename = m_sessions_dir_path + QDir::separator() + filename;
+
+    std::ifstream ifs(filename.toStdString());
+
+    if (!ifs.is_open()) {
+        QMessageBox::critical(this, "File not found", "The specified session file was not found");
+        return;
+    }
+
+    IStreamWrapper isw(ifs);
+
+    Document doc;
+    doc.ParseStream(isw);
+
+    if (doc.HasParseError())
+    {
+        QMessageBox::critical(this, "Error Parsing Session File", "There seems to be a problem reading the session file");
+        return;
+    }
+
+    // Read Session Name
+    if (doc.HasMember("session-name") && doc["session-name"].IsString())
+    {
+        auto session_name = QString::fromStdString(doc["session-name"].GetString());
+        m_session_name = session_name;
+        m_statusbar->setSessionName(session_name);
+    }
+    else QMessageBox::information(this, "Session Info", "No session name found for the current session");
+
+    // Read Modified Date
+    if (doc.HasMember("date") && doc["date"].IsString())
+        m_session_date = QString::fromStdString(doc["date"].GetString());
+    else
+        QMessageBox::information(this, "Session Info", "No date found for the current session");
+
+    // Read Tags
+    if (doc.HasMember("tags") && doc["tags"].IsArray())
+    {
+        const Value &tags_arr = doc["tags"];
+        for(SizeType i=0; i < tags_arr.Size(); i++)
+            m_tags.emplaceBack(QString::fromStdString(tags_arr[i].GetString()));
+    }
+
+    // Read Files
+    if (doc.HasMember("files") && doc["files"].IsArray())
+    {
+        const Value& files_arr = doc["files"];
+        QList<Thumbnail> files_stringlist;
+        for(SizeType i=0; i < files_arr.Size(); i++)
+        {
+            if (files_arr[i].IsObject())
+            {
+                auto file = files_arr[i].GetObject();
+
+                if ((file.HasMember("path") && file["path"].IsString()) &&
+                    (file.HasMember("note") && file["note"].IsString()) &&
+                    (file.HasMember("tag") && file["tag"].IsString()))
+                {
+                    files_stringlist.emplaceBack(Thumbnail(QString::fromStdString(file["path"].GetString()),
+                                                  QString::fromStdString(file["note"].GetString()),
+                                                  QString::fromStdString(file["tag"].GetString())));
+                }
+            }
+        }
+        m_thumbnail_view->createThumbnails(files_stringlist);
+        m_img_widget->loadFile(m_thumbnail_view->getFile(0));
+    }
+    else
+        QMessageBox::information(this, "Session Info", "No files found in the session file");
+    ifs.close();
+}
+
+void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noexcept
 {
 
     if (parser.is_used("--no-config"))
-    {
         initDefaultConfig();
-    }
-    else {
+    else
         initConfigDirectory();
-    }
 
     if (parser.is_used("--list-sessions"))
     {
         auto ses_files = getSessionFiles();
         qInfo() << "Session files found: " << ses_files.size();
+
         for(const QString &file: ses_files)
-        qInfo() << file;
+            qInfo() << file;
+
         exit(0);
     }
 
@@ -1072,21 +1145,19 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         setMsg("Session file is not saved. Please do it manually", 5);
         m_statusbar->setSessionName(ses_name);
         /*saveSession();*/
-        return;
     }
 
     if (parser.is_used("--session"))
-    {
         readSessionFile(QString::fromStdString(parser.get<std::string>("--session")));
-    }
 
     if (parser.is_used("--input"))
     {
-        auto files = parser.get<std::vector<std::string>>("--input");
-        auto file = QString::fromStdString(files[0]);
+        std::vector<std::string> files = parser.get<std::vector<std::string>>("--input");
+        QString file = QString::fromStdString(files[0]);
+
         if (QFileInfo(file).isDir())
         {
-            auto dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
+            QStringList dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
             for(int i=0; i < dirfiles.size(); i++)
                 dirfiles[i] = QString("%1%2%3").arg(file).arg(QDir::separator()).arg(dirfiles.at(i));
 
@@ -1096,9 +1167,10 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
         m_img_widget->loadFile(file);
 
         QStringList dd;
-        for(const auto &file: files)
-            dd << QString::fromStdString(file);
-            
+
+        for (const auto &file : files)
+            dd.push_back(QString::fromStdString(file));
+
         m_thumbnail_view->createThumbnails(dd);
     }
 
@@ -1106,19 +1178,17 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
     if (parser.is_used("-"))
     {
         m_stdin = true;
-        return;
     }
 
     if (parser.is_used("files"))
     {
-        auto files = parser.get<std::vector<std::string>>("files");
-        auto file = QString::fromStdString(files.at(0));
+        std::vector<std::string> files = parser.get<std::vector<std::string>>("files");
+        QString file = QString::fromStdString(files.at(0));
 
         // If directory is mentioned, try to read all the compatible files from the directory
         if (QFileInfo(file).isDir())
         {
-            auto dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
-            m_thumbnail_view->createThumbnails(dirfiles);
+            m_thumbnail_view->createThumbnails(QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files));
             /*for(const auto &f: dirfiles)*/
             /*    m_thumbnail_view->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));*/
             /*return;*/
@@ -1134,7 +1204,7 @@ void IMGV::parseCommandLineArguments(argparse::ArgumentParser &parser)
 
 }
 
-void IMGV::openSessionInNewWindow(const QString &file)
+void IMGV::openSessionInNewWindow(const QString &file) noexcept
 {
     QString program = QCoreApplication::applicationFilePath();
 
@@ -1147,13 +1217,11 @@ void IMGV::openSessionInNewWindow(const QString &file)
 
     if (!process->waitForStarted())
         qDebug() << "FAILED";
-    else {}
 }
 
 void IMGV::maximizeImage() noexcept
 {
     m_image_maximize_mode = !m_image_maximize_mode;
-
     m_left_pane->setVisible(!m_image_maximize_mode);
     m_menuBar->setVisible(!m_image_maximize_mode);
     m_statusbar->setVisible(!m_image_maximize_mode);
@@ -1165,6 +1233,16 @@ void IMGV::maximizeImage() noexcept
 void IMGV::closeSession() noexcept
 {
     m_session_name.clear();
+
+    if (!m_tags.isEmpty())
+        m_tags.squeeze();
+
+    if (!m_slideshow_files.isEmpty())
+        m_slideshow_files.squeeze();
+
+    if (!m_temp_files.isEmpty())
+        m_temp_files.squeeze();
+
     m_note_holder->clear();
     m_note_holder->hide();
     m_thumbnail_view->model()->clear();
@@ -1174,7 +1252,7 @@ void IMGV::closeSession() noexcept
     QPixmapCache::clear();
 }
 
-void IMGV::openSession(const QString &file) noexcept
+void IMGV::openSession(QString &file) noexcept
 {
     if (m_session_name.isEmpty() && m_thumbnail_view->count() == 0)
     {
@@ -1209,6 +1287,7 @@ void IMGV::openSession(const QString &file) noexcept
             return;
     }
     setMsg(QString("Session %1 opened").arg(m_session_name));
+    session__closeSession->setEnabled(true);
 }
 
 void IMGV::newSession() noexcept
@@ -1217,7 +1296,10 @@ void IMGV::newSession() noexcept
     QString sessionName;
 
     sessionName = QInputDialog::getText(this, "New Session", "Please enter a name for the session");
-    if (sessionName.isEmpty()) return;
+
+    if (sessionName.isEmpty())
+        return;
+
     if (sessions.indexOf(sessionName + ".imgv") > -1)
     {
         QMessageBox::critical(this, "Error creating session", QString("Session with the name %1 already exists. Try naming the name session with some other name").arg(sessionName));
@@ -1238,20 +1320,23 @@ void IMGV::newSession() noexcept
     else {
         qDebug() << "STARTED DETACHED PROCESS";
     }
+
+    session__closeSession->setEnabled(true);
 }
 
+// TODO: addNote() function
 void IMGV::addNote() noexcept
 {
 }
 
-void IMGV::toggleNotes() noexcept
+void IMGV::toggleNotes() const noexcept
 {
     m_note_holder->setVisible(!m_note_holder->isVisible());
-    if (m_note_holder->isVisible())
-        m_note_holder->setFocus();
+    /*if (m_note_holder->isVisible())*/
+    /*    m_note_holder->setFocus();*/
 }
 
-void IMGV::searchThumbnails() noexcept
+void IMGV::searchThumbnails() const noexcept
 {
     m_thumbnail_view->searchMode(true);
     m_thumbnail_search_edit->setVisible(true);
@@ -1272,7 +1357,7 @@ void IMGV::filterThumbnails() noexcept
     dialog.setComboBoxItems(m_tags);
     dialog.setWindowTitle("Filter by Tag");
 
-    connect(&dialog, &QInputDialog::textValueSelected, this, [&](const QString &tag) {
+    connect(&dialog, &QInputDialog::textValueSelected, [&](const QString &tag) {
         m_thumbnail_view->filterMode(true);
         m_thumbnail_view->filter(tag);
     });
@@ -1298,7 +1383,7 @@ void IMGV::createTag() noexcept
         return;
     }
 
-    m_tags.append(new_tag_name);
+    m_tags.emplaceBack(new_tag_name);
 }
 
 void IMGV::assignTagToImage() noexcept
@@ -1314,14 +1399,14 @@ void IMGV::assignTagToImage() noexcept
     dialog.setComboBoxItems(m_tags);
     dialog.setWindowTitle("Assign Tag");
 
-    connect(&dialog, &QInputDialog::textValueSelected, this, [&](const QString &tag) {
+    connect(&dialog, &QInputDialog::textValueSelected, [&](const QString &tag) {
         m_thumbnail_view->model()->setTag(m_thumbnail_view->currentIndex(), tag);
     });
 
     dialog.exec();
 }
 
-void IMGV::manageTags(const bool state) noexcept
+void IMGV::manageTags(const bool &state) noexcept
 {
     if (state)
     {
@@ -1350,8 +1435,9 @@ void IMGV::manageTags(const bool state) noexcept
 void IMGV::processStdin() noexcept
 {
     QFile file;
-    file.open(fileno(stdin), QIODevice::ReadOnly);
     QTemporaryFile tempPixFile;
+
+    file.open(fileno(stdin), QIODevice::ReadOnly);
     tempPixFile.setAutoRemove(false);
     QByteArray data = file.readAll();
     file.close();
@@ -1359,8 +1445,7 @@ void IMGV::processStdin() noexcept
     {
         tempPixFile.write(data);
         QString filename = tempPixFile.fileName();
-        qDebug() << "TEMP FILE: " << filename;
-        m_temp_files << filename;
+        m_temp_files.emplaceBack(filename);
         m_thumbnail_view->createThumbnail(filename);
         m_img_widget->loadFile(filename);
     }
@@ -1376,8 +1461,8 @@ void IMGV::addSessionsToOpenSessionMenu() noexcept
     for(const auto &file: session_files)
     {
         QAction *action = new QAction(file);
-        connect(action, &QAction::triggered, this, [&]() {
-            auto filename = reinterpret_cast<QAction*>(sender())->text();
+        connect(action, &QAction::triggered, [&]() {
+            QString filename = reinterpret_cast<QAction*>(sender())->text();
             QString file = QString("%1%2%3").arg(m_sessions_dir_path).arg(QDir::separator()).arg(filename);
             openSession(file);
             /*openSessionInNewWindow(file);*/

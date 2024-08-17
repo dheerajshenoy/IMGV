@@ -13,12 +13,11 @@ class ImagePropertiesDialog : public QDialog
 {
 
 public:
-    ImagePropertiesDialog(QString filename, QWidget *parent = nullptr);
-    ~ImagePropertiesDialog() {}
+    ImagePropertiesDialog(const QString& filename, QWidget *parent = nullptr);
 
 private:
 
-    void showEXIFProperties(const QString filename) noexcept;
+    void showEXIFProperties(const QString& filename) noexcept;
 };
 
 #endif

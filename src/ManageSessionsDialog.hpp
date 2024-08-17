@@ -18,13 +18,29 @@ class ManageSessionsDialog : public QDialog
 {
     Q_OBJECT
 public:
-    ManageSessionsDialog(QString &sessionDirPath, QWidget *parent = nullptr);
-    ~ManageSessionsDialog() {}
+    ManageSessionsDialog(const QString &sessionDirPath, QWidget *parent = nullptr);
 
 signals:
     void openSession(QString);
 
 private:
+
+    void OpenSession() noexcept;
+    void RenameSession() noexcept;
+    void DeleteSession() const noexcept;
+    QStringList getSessions() const noexcept;
+
+    inline void showContextMenu(QPointF loc) const noexcept
+    {
+        contextMenu->exec(mapToGlobal(loc.toPoint()));
+    }
+
+    inline void OpenInExplorer() const noexcept
+    {
+        auto session = table->selectedItems()[0]->text();
+        QDesktopServices::openUrl(session_path);
+    }
+
     QVBoxLayout *layout = new QVBoxLayout();
     QTableWidget *table = new QTableWidget();
     QMenu *contextMenu = new QMenu();
@@ -33,23 +49,8 @@ private:
     QAction *openInExplorer = new QAction("Open in Explorer");
     QAction *_openSession = new QAction("Open Session");
     QPushButton *done_btn = new QPushButton("Done");
-
-    void OpenSession() noexcept;
-    void RenameSession() noexcept;
-    void DeleteSession() noexcept;
-    QStringList getSessions() noexcept;
     QString session_path;
 
-    inline void showContextMenu(const QPointF loc) noexcept
-    {
-        contextMenu->exec(mapToGlobal(loc.toPoint()));
-    }
-
-    inline void OpenInExplorer() noexcept
-    {
-        auto session = table->selectedItems()[0]->text();
-        QDesktopServices::openUrl(session_path);
-    }
 };
 
 #endif

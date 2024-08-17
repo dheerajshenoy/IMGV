@@ -22,6 +22,7 @@ struct Dimension
     int height;
 };
 
+// Utility struct for getting info from session files
 struct Custom
 {
     QStringList files;
@@ -39,7 +40,7 @@ public:
     static QString detectImageFormat(const QString &filePath) noexcept;
     static QPixmap decodeWebPToPixmap(const QString &filePath) noexcept;
     static QImage decodeWebPToImage(const QString &filePath) noexcept;
-    static QString imageFormatToString(const QImage::Format format) noexcept;
+    static QString imageFormatToString(QImage::Format&& format) noexcept;
     static QStringList getImagesFromSessionFile(const QString &session_file) noexcept;
     static Custom getInfoFromSessionFile(const QString &session_file) noexcept;
 };

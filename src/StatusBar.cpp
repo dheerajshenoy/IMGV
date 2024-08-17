@@ -105,13 +105,75 @@ void StatusBar::addWidget(const QString &name) noexcept
     }
 }
 
-void StatusBar::setSessionName(QString sess) noexcept
+void StatusBar::addWidgets(const QStringList &widgets) noexcept
+{
+    for(const auto &name : widgets)
+    {
+        if (name == "message")
+        {
+            msgLabel = new QLabel();
+            layout->addWidget(msgLabel);
+            msgLabel->setHidden(true);
+        }
+
+        else if (name == "note-indicator")
+        {
+            hasNoteLabel = new QLabel();
+            layout->addWidget(hasNoteLabel);
+            hasNoteLabel->setToolTip("This file has a note associated with it. Press the note key to open");
+        }
+
+        else if (name == "note-modified-indicator")
+        {
+            noteModifiedLabel = new QLabel();
+            layout->addWidget(noteModifiedLabel);
+            noteModifiedLabel->setVisible(false);
+        }
+
+        else if (name == "size")
+        {
+            fileSizeLabel = new QLabel();
+            layout->addWidget(fileSizeLabel);
+        }
+
+        else if (name == "dimension")
+        {
+            imageDimensionsLabel = new QLabel();
+            layout->addWidget(imageDimensionsLabel);
+        }
+
+        else if (name == "stretch")
+            layout->addStretch(1);
+
+        else if (name == "session")
+        {
+            sessionLabel = new QLabel("No Session");
+            layout->addWidget(sessionLabel);
+            sessionLabel->setToolTip("Current session");
+        }
+
+        else if (name == "zoom")
+        {
+            zoomLabel = new QLabel();
+            layout->addWidget(zoomLabel);
+        }
+
+        else if (name == "path")
+        {
+            hoverFilePathLabel = new HoverLabel();
+            layout->addWidget(hoverFilePathLabel);
+            hoverFilePathLabel->setToolTip("File path of the current Image");
+        }
+    }
+}
+
+void StatusBar::setSessionName(const QString &sess) const noexcept
 {
     if (sessionLabel)
         sessionLabel->setText(sess);
 }
 
-void StatusBar::updateFileInfo(const QString &filePath) noexcept
+void StatusBar::updateFileInfo(const QString &filePath) const noexcept
 {
     QFileInfo fileInfo(filePath);
 
@@ -142,7 +204,7 @@ void StatusBar::updateFileInfo(const QString &filePath) noexcept
 }
 
 
-void StatusBar::clearTexts() noexcept
+void StatusBar::clearTexts() const noexcept
 {
     if (sessionLabel)
         sessionLabel->clear();
@@ -157,7 +219,7 @@ void StatusBar::clearTexts() noexcept
         imageDimensionsLabel->clear();
 }
 
-void StatusBar::setMsg(QString msg, int sec) noexcept
+void StatusBar::setMsg(QString&& msg, const int &sec) noexcept
 {
     if (msgLabel)
     {
@@ -172,7 +234,22 @@ void StatusBar::setMsg(QString msg, int sec) noexcept
     }
 }
 
-void StatusBar::setNoteModified(bool state) noexcept
+void StatusBar::setMsg(const QString& msg, const int &sec) noexcept
+{
+    if (msgLabel)
+    {
+        msgLabel->setText(msg);
+        msgLabel->setHidden(false);
+        /*filePathLabel->setHidden(true);*/
+        hoverFilePathLabel->setHidden(true);
+
+        if (m_timer.isActive())
+            m_timer.stop();
+        m_timer.start(sec * 1000);
+    }
+}
+
+void StatusBar::setNoteModified(const bool &state) noexcept
 {
     if (noteModifiedLabel)
     {
@@ -187,7 +264,7 @@ void StatusBar::setNoteModified(bool state) noexcept
 
 }
 
-void StatusBar::modificationLabelVisiblity(bool state) noexcept
+void StatusBar::modificationLabelVisiblity(const bool &state) noexcept
 {
     /*if (state)*/
     /*    this->noteModifiedLabel->setVisible(true);*/
@@ -196,7 +273,7 @@ void StatusBar::modificationLabelVisiblity(bool state) noexcept
     /*    this->noteModifiedLabel->setVisible(false);*/
 }
 
-void StatusBar::setHasNote(bool state) noexcept
+void StatusBar::setHasNote(const bool &state) noexcept
 {
     if (hasNoteLabel)
     {

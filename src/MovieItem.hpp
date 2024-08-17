@@ -44,7 +44,6 @@ public:
         return mMovie->currentPixmap();
     }
 
-
 private:
     QPointer<QMovie> mMovie;
     QMetaObject::Connection mConnection;

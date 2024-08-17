@@ -14,10 +14,10 @@ class NoteWidget : public QTextEdit
     Q_OBJECT
 public:
     NoteWidget(QWidget *parent = nullptr);
-    ~NoteWidget(){}
-    inline void setModified(const bool state) noexcept
+
+    inline void setModified(const bool &state) const noexcept
     {
-        this->document()->setModified(state);
+        document()->setModified(state);
     }
 
 signals:
@@ -25,13 +25,8 @@ signals:
     void modificationChanged(bool);
     void visibilityChanged(bool);
 
-
-
-
-
 protected:
     void keyPressEvent(QKeyEvent *e) noexcept override;
-
 
     inline void showEvent(QShowEvent *e) noexcept override
     {

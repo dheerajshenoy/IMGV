@@ -33,13 +33,13 @@ ThumbnailView::ThumbnailView(QWidget *parent)
     m_filter_proxy->setSourceModel(m_model);
 }
 
-void ThumbnailView::loadFile(const QString &file) noexcept
+void ThumbnailView::loadFile(const QString &file) const noexcept
 {
     Thumbnail thumb(file);
     m_model->addThumbnail(thumb);
 }
 
-ThumbnailModel* ThumbnailView::model() noexcept
+ThumbnailModel* ThumbnailView::model() const noexcept
 {
     return m_model;
 }
@@ -61,6 +61,15 @@ void ThumbnailView::createThumbnails(const QStringList &fileNames) noexcept
 }
 
 void ThumbnailView::createThumbnail(const QString &fileName) noexcept
+{
+    Thumbnail thumb(fileName);
+    
+    m_model->addThumbnail(thumb);
+    if (m_model->rowCount() >= 0)
+        setCurrentIndex(m_model->index(0));
+}
+
+void ThumbnailView::createThumbnail(QString&& fileName) noexcept
 {
     Thumbnail thumb(fileName);
     
@@ -117,7 +126,7 @@ void ThumbnailView::dropEvent(QDropEvent *e)
     e->acceptProposedAction();
 }
 
-void ThumbnailView::showContextMenu(const QPoint &pos) noexcept
+void ThumbnailView::showContextMenu(const QPoint &pos) const noexcept
 {
     if (this->selectedIndexes().size() > 0 || this->indexAt(pos).isValid())
         m_contextMenu->exec(mapToGlobal(pos));
@@ -188,24 +197,36 @@ int ThumbnailView::addThumbnail(const QString &filename) noexcept
     return i;
 }
 
-int ThumbnailView::count() noexcept
+int ThumbnailView::count() const noexcept
 {
     return m_model->rowCount();
 }
 
-QString ThumbnailView::item(const int _index, const int role) noexcept
+QString ThumbnailView::item(int&& _index, int&& role) noexcept
 {
     auto index = this->currentIndex().siblingAtRow(_index);
     return m_model->data(index, role).toString();
 }
 
-void ThumbnailView::search(const QString text) noexcept
+QString ThumbnailView::item(const int& _index, const int& role) noexcept
+{
+    auto index = this->currentIndex().siblingAtRow(_index);
+    return m_model->data(index, role).toString();
+}
+
+void ThumbnailView::search(QString&& text) const noexcept
 {
     m_filter_proxy->setSearchRole(Thumbnail::FileName);
     m_filter_proxy->setFilterText(text);
 }
 
-void ThumbnailView::searchMode(const bool state) noexcept
+void ThumbnailView::search(const QString& text) const noexcept
+{
+    m_filter_proxy->setSearchRole(Thumbnail::FileName);
+    m_filter_proxy->setFilterText(text);
+}
+
+void ThumbnailView::searchMode(const bool &state) noexcept
 {
     if (state)
         this->setModel(m_filter_proxy);
@@ -213,7 +234,7 @@ void ThumbnailView::searchMode(const bool state) noexcept
         this->setModel(m_model);
 }
 
-void ThumbnailView::filterMode(const bool state) noexcept
+void ThumbnailView::filterMode(const bool &state) noexcept
 {
     if (state)
         this->setModel(m_filter_proxy);
@@ -221,18 +242,18 @@ void ThumbnailView::filterMode(const bool state) noexcept
         this->setModel(m_model);
 }
 
-void ThumbnailView::filter(const QString tag) noexcept
+void ThumbnailView::filter(const QString& tag) const noexcept
 {
     m_filter_proxy->setSearchRole(Thumbnail::Tag);
     m_filter_proxy->setFilterText(tag);
 }
 
-Thumbnail ThumbnailView::currentThumbnail() noexcept
+Thumbnail ThumbnailView::currentThumbnail() const noexcept
 {
     return m_model->getThumbnail(currentIndex().row());
 }
 
-QString ThumbnailView::getFile(const int index) noexcept
+QString ThumbnailView::getFile(const int& index) const noexcept
 {
     return m_model->index(index).data(Qt::UserRole).toString();
 }
@@ -243,28 +264,28 @@ void ThumbnailView::showProperties() noexcept
     pd->open();
 }
 
-const QStringList ThumbnailView::getAllFiles() noexcept
+const QStringList ThumbnailView::getAllFiles() const noexcept
 {
     return m_model->getFiles();
 }
 
-void ThumbnailView::setCurrentThumbnail(const int index) noexcept
+void ThumbnailView::setCurrentThumbnail(const int& index) noexcept
 {
 
 
 }
 
-void ThumbnailView::setHighlightIndex(const int row) noexcept
+void ThumbnailView::setHighlightIndex(const int& row) noexcept
 {
     setCurrentIndex(currentIndex().siblingAtRow(row));
 }
 
-int ThumbnailView::currentHighlightIndex() noexcept
+int ThumbnailView::currentHighlightIndex() const noexcept
 {
     return currentIndex().row();
 }
 
-Thumbnail ThumbnailView::thumbnail(const int index) noexcept
+Thumbnail ThumbnailView::thumbnail(int&& index) const noexcept
 {
     if (index > m_model->rowCount() || index < 0)
         return Thumbnail();
@@ -272,7 +293,16 @@ Thumbnail ThumbnailView::thumbnail(const int index) noexcept
     return m_model->getThumbnail(index);
 }
 
-QVector<Thumbnail>& ThumbnailView::getAllThumbnails() noexcept
+Thumbnail ThumbnailView::thumbnail(const int& index) const noexcept
+{
+    if (index > m_model->rowCount() || index < 0)
+        return Thumbnail();
+
+    return m_model->getThumbnail(index);
+}
+
+
+QVector<Thumbnail>& ThumbnailView::getAllThumbnails() const noexcept
 {
     return m_model->thumbnails();
 }

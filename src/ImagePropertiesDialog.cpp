@@ -1,6 +1,6 @@
 #include "ImagePropertiesDialog.hpp"
 
-ImagePropertiesDialog::ImagePropertiesDialog(QString _filename, QWidget *parent)
+ImagePropertiesDialog::ImagePropertiesDialog(const QString& _filename, QWidget *parent)
     : QDialog(parent)
 {
 
@@ -54,7 +54,7 @@ ImagePropertiesDialog::ImagePropertiesDialog(QString _filename, QWidget *parent)
     connect(ok_btn, &QPushButton::clicked, this, &QDialog::done);
 }
 
-void ImagePropertiesDialog::showEXIFProperties(const QString filename) noexcept
+void ImagePropertiesDialog::showEXIFProperties(const QString& filename) noexcept
 {
     using namespace easyexif;
     EXIFInfo exifInfo;

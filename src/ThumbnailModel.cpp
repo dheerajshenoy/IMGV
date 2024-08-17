@@ -26,15 +26,21 @@ void ThumbnailModel::setNote(const QModelIndex &index, const QString &note) noex
     emit dataChanged(index, index, {Thumbnail::Note});
 }
 
+void ThumbnailModel::setNote(const QModelIndex &index, QString &&note) noexcept
+{
+    m_thumbnails[index.row()].setNote(note);
+    emit dataChanged(index, index, {Thumbnail::Note});
+}
+
 void ThumbnailModel::setTag(const QModelIndex &index, const QString &tagname) noexcept
 {
     m_thumbnails[index.row()].setTag(tagname);
     emit dataChanged(index, index, {Thumbnail::Tag});
 }
 
-Thumbnail ThumbnailModel::getThumbnail(const int index) noexcept
+Thumbnail ThumbnailModel::getThumbnail(const int& index) const noexcept
 {
-    return m_thumbnails[index];
+    return m_thumbnails.at(index);
 }
 
 QVariant ThumbnailModel::data(const QModelIndex &index, int role) const noexcept
@@ -75,11 +81,11 @@ void ThumbnailModel::removeIndexes(const QList<QModelIndex> &indexes) noexcept
     endRemoveRows();
 }
 
-QStringList ThumbnailModel::getFiles() noexcept
+QStringList ThumbnailModel::getFiles() const noexcept
 {
     QStringList filenames;
     filenames.resize(m_thumbnails.size());
     for(int i=0; i < m_thumbnails.size(); i++)
-        filenames[i] = m_thumbnails[i].filename();
+        filenames[i] = m_thumbnails.at(i).filename();
     return filenames;
 }

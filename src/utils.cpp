@@ -67,7 +67,7 @@ QImage utils::decodeWebPToImage(const QString &filePath) noexcept
     return image;
 }
 
-QString utils::imageFormatToString(const QImage::Format format) noexcept
+QString utils::imageFormatToString(QImage::Format&& format) noexcept
 {
     switch (format) {
         case QImage::Format_Invalid: return "Invalid";
@@ -134,7 +134,7 @@ QStringList utils::getImagesFromSessionFile(const QString &sessionfilepath) noex
                 auto file = files_arr[i].GetObject();
                 if (file.HasMember("path") && file["path"].IsString() && file.HasMember("note") && file["note"].IsString())
                 {
-                    imgfiles << file["path"].GetString();
+                    imgfiles.emplaceBack(file["path"].GetString());
                 }
             }
         }
@@ -173,7 +173,7 @@ Custom utils::getInfoFromSessionFile(const QString &sessionfilepath) noexcept
                 auto file = files_arr[i].GetObject();
                 if (file.HasMember("path") && file["path"].IsString() && file.HasMember("note") && file["note"].IsString())
                 {
-                    imgfiles << file["path"].GetString();
+                    imgfiles.emplaceBack(file["path"].GetString());
                 }
             }
         }
@@ -184,7 +184,7 @@ Custom utils::getInfoFromSessionFile(const QString &sessionfilepath) noexcept
     {
         const Value& tags_arr = doc["tags"];
         for(SizeType i=0; i < tags_arr.Size(); i++)
-            tags.push_back(QString::fromStdString(tags_arr[i].GetString()));
+            tags.emplaceBack(QString::fromStdString(tags_arr[i].GetString()));
     }
 
     QString date;

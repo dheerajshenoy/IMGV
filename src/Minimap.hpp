@@ -16,7 +16,6 @@ class Minimap : public QGraphicsView
     Q_OBJECT
 public:
     Minimap(QWidget *parent = nullptr);
-    ~Minimap() {}
 
     enum Location
     {
@@ -31,39 +30,69 @@ public:
     void updateRect(const QRectF rect) noexcept;
     Location location() noexcept { return m_location; }
 
-    inline void setVisibleIfNotAutoHideMode(const bool state) noexcept
+    inline void setVisibleIfNotAutoHideMode(const bool &state) noexcept
     {
         if (!isVisible() && !m_auto_hide)
             this->setVisible(state);
         emit visibilityChanged(true);
     }
 
-    inline void setSize(const QSize size) noexcept
+    inline void setSize(const QSize& size) noexcept
     {
         m_pix_scale_size = size;
     }
 
-    inline void setRectColor(const QString color) noexcept
+    inline void setSize(const QSize&& size) noexcept
+    {
+        m_pix_scale_size = size;
+    }
+
+    inline void setRectColor(const QString& color) noexcept
     {
         m_rectitem->setColor(color);
     }
 
-    inline void setRectFillColor(const QString color) noexcept
+    inline void setRectColor(const QString&& color) noexcept
+    {
+        m_rectitem->setColor(color);
+    }
+
+    inline void setRectFillColor(const QString& color) noexcept
     {
         m_rectitem->setFill(color);
     }
 
-    inline void setLocation(const Location loc) noexcept
+    inline void setRectFillColor(const QString&& color) noexcept
+    {
+        m_rectitem->setFill(color);
+    }
+
+    inline void setLocation(const Location& loc) noexcept
     {
         m_location = loc;
     }
 
-    inline void setRectAlpha(const float alpha) noexcept
+    inline void setLocation(const Location&& loc) noexcept
+    {
+        m_location = loc;
+    }
+
+    inline void setRectAlpha(const float& alpha) noexcept
     {
         m_rectitem->setAlpha(alpha);
     }
 
-    inline void setAutoHide(const bool state) noexcept
+    inline void setRectAlpha(const float&& alpha) noexcept
+    {
+        m_rectitem->setAlpha(alpha);
+    }
+
+    inline void setAutoHide(const bool& state) noexcept
+    {
+        m_auto_hide = state;
+    }
+
+    inline void setAutoHide(const bool&& state) noexcept
     {
         m_auto_hide = state;
     }

@@ -60,59 +60,59 @@ protected:
     void closeEvent(QCloseEvent *e) noexcept override;
 
 private:
-    void initConfigDirectory();
-    void initDefaultConfig();
-    void initMenu();
-    void initConnections();
-    void initKeybinds();
-    void openImage();
+    void initConfigDirectory() noexcept;
+    void initDefaultConfig() noexcept;
+    void initMenu() noexcept;
+    void initConnections() const noexcept;
+    void initKeybinds() noexcept;
+    void openImage() noexcept;
     void slideShow() noexcept;
-    void toggleSlideshow() noexcept;
-    void saveSession();
-    void openImageInNewWindow();
-    void parseCommandLineArguments(argparse::ArgumentParser &);
-    QStringList getSessionFiles();
-    QStringList getSessionTags();
-    void readSessionFile(QString filepath);
-    void openSessionInNewWindow(const QString &);
+    void toggleSlideshow() const noexcept;
+    void saveSession() noexcept;
+    void openImageInNewWindow() noexcept;
+    void parseCommandLineArguments(const argparse::ArgumentParser &) noexcept;
+    QStringList getSessionFiles() const noexcept;
+    QStringList getSessionTags() noexcept;
+    void readSessionFile(QString& filepath) noexcept;
+    void readSessionFile(QString&& filepath) noexcept;
+    void openSessionInNewWindow(const QString &) noexcept;
     void maximizeImage() noexcept;
     void closeSession() noexcept;
-    void openSession(const QString &) noexcept;
+    void openSession(QString &) noexcept;
     void newSession() noexcept;
     void addNote() noexcept;
-    void searchThumbnails() noexcept;
+    void searchThumbnails() const noexcept;
     void filterThumbnails() noexcept;
-    void toggleNotes() noexcept;
+    void toggleNotes() const noexcept;
     void createTag() noexcept;
     void assignTagToImage() noexcept;
-    void manageTags(const bool state) noexcept;
+    void manageTags(const bool &state) noexcept;
     void processStdin() noexcept;
     void addSessionsToOpenSessionMenu() noexcept;
     void addSessionToOpenSessionMenu(const QString &sessionName) noexcept;
     void cleanUp() noexcept;
 
-    inline void setMsg(const QString &msg, const int sec = 1) noexcept
+    inline void setMsg(const QString &msg, const int sec = 1) const noexcept
     {
         m_statusbar->setMsg(msg, sec);
     }
 
-    inline void toggleThumbnailPanel() noexcept
+    inline void toggleThumbnailPanel() const noexcept
     {
         m_thumbnail_view->setVisible(!m_thumbnail_view->isVisible());
     }
 
-    inline void toggleStatusbar() noexcept
+    inline void toggleStatusbar() const noexcept
     {
         m_statusbar->setVisible(!m_statusbar->isVisible());
     }
 
-    inline void toggleMenubar() noexcept
+    inline void toggleMenubar() const noexcept
     {
         m_menuBar->setVisible(!m_menuBar->isVisible());
     }
 
-
-    inline void ThumbSearchTextChanged(const QString text) noexcept
+    inline void ThumbSearchTextChanged(const QString text) const noexcept
     {
         m_thumbnail_view->search(text);
     }
@@ -123,6 +123,9 @@ private:
     }
 
 
+    QStringList m_slideshow_files;
+    QStringList m_tags;
+    QStringList m_temp_files;
 
     ThumbnailView *m_thumbnail_view  = new ThumbnailView();
     ImageWidget *m_img_widget = new ImageWidget();
@@ -213,12 +216,9 @@ private:
     bool m_auto_notes_popup = false;
 
     int m_slideshow_index = -1;
-    QStringList m_slideshow_files;
 
     ManageTagDialog *m_manage_tag_dialog = nullptr;
-    QStringList m_tags;
     bool m_stdin = false;
-    QStringList m_temp_files;
 };
 
 

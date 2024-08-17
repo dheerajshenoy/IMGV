@@ -14,7 +14,6 @@ class ManageTagDialog : public QDialog
     Q_OBJECT
 public:
     ManageTagDialog(const QStringList &tags, QVector<Thumbnail> &thumbnails, QWidget *parent = nullptr);
-    ~ManageTagDialog() {}
     void renameTag() noexcept;
     void deleteTag() noexcept;
 

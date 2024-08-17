@@ -15,7 +15,6 @@ class AboutDialog : public QDialog
 
 public:
     AboutDialog(QWidget *parent = nullptr);
-    ~AboutDialog(){}
 
 };
 

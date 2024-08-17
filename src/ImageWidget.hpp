@@ -34,30 +34,33 @@ class ImageWidget : public QGraphicsView
 public:
 
     ImageWidget(QWidget *parent = nullptr);
-    ~ImageWidget(){}
 
-    void loadFile(QString file) noexcept;
-    void closeFile() noexcept;
+    void loadFile(const QString& file) noexcept;
+    void loadFile(QString&& file) noexcept;
+    void closeFile() const noexcept;
     void zoomIn() noexcept;
     void zoomOut() noexcept;
     void zoomOriginal() noexcept;
     void zoomFit() noexcept;
     void flipVertical() noexcept;
     void flipHorizontal() noexcept;
-    void rotate(qreal degrees) noexcept;
+    void rotate(const qreal& degrees) noexcept;
+    void rotate(qreal&& degrees) noexcept;
     void fitToWidth() noexcept;
     void fitToHeight() noexcept;
     void resetRotation() noexcept;
-    void setScrollBarsVisibility(bool state) noexcept;
+    void setScrollBarsVisibility(const bool &state) noexcept;
+    void setScrollBarsVisibility(bool&& state) noexcept;
     void moveLeft() noexcept;
     void moveRight() noexcept;
     void moveUp() noexcept;
     void moveDown() noexcept;
-    void resetScrollbars() noexcept;
-    void setMinimapMode(const bool state) noexcept;
-    void setPixAnalyseMode(const bool state, const bool closeDialog = true) noexcept;
-    const QRectF visibleRect() noexcept;
-    void setVisibleRectFromMinimap(const QRectF rect) noexcept;
+    void resetScrollbars() const noexcept;
+    void setMinimapMode(const bool &state) noexcept;
+    void setPixAnalyseMode(const bool &state, const bool&& closeDialog = true) noexcept;
+    const QRectF visibleRect() const noexcept;
+    void setVisibleRectFromMinimap(const QRectF& rect) noexcept;
+    void setVisibleRectFromMinimap(const QRectF&& rect) noexcept;
 
     enum FitOnLoad {
         None,
@@ -65,59 +68,105 @@ public:
         FitToHeight,
     };
 
-    inline void setHorizontalScrollFactor(const qreal factor) noexcept
+    inline void setHorizontalScrollFactor(const qreal&& factor) noexcept
     {
         m_horizontal_scroll_factor = factor;
     }
 
-    inline void setVerticalScrollFactor(const qreal factor) noexcept
+    inline void setHorizontalScrollFactor(qreal& factor) noexcept
+    {
+        m_horizontal_scroll_factor = factor;
+    }
+
+    inline void setVerticalScrollFactor(const qreal& factor) noexcept
     {
         m_vertical_scroll_factor = factor;
     }
 
-    inline void setZoomFactor(const qreal zoom) noexcept
+    inline void setVerticalScrollFactor(qreal&& factor) noexcept
+    {
+        m_vertical_scroll_factor = factor;
+    }
+
+    inline void setZoomFactor(const qreal& zoom) noexcept
     {
         m_zoomFactor = zoom;
     }
 
-    inline void setFitImageOnLoad(const bool fit, FitOnLoad fitMode = FitOnLoad::None) noexcept
+    inline void setZoomFactor(qreal&& zoom) noexcept
+    {
+        m_zoomFactor = zoom;
+    }
+
+    inline void setFitImageOnLoad(const bool& fit, FitOnLoad&& fitMode = FitOnLoad::None) noexcept
     {
         m_fit_image_on_load = fit;
         m_fit_image_on_load_mode = fitMode;
     }
 
-    inline void setMinimapRectColor(const QString color) noexcept
+    inline void setMinimapRectColor(const QString& color) const noexcept
     {
         m_minimap->setRectColor(color);
     }
 
-    inline void setMinimapRectFillColor(const QString color) noexcept
+    inline void setMinimapRectColor(QString&& color) const noexcept
+    {
+        m_minimap->setRectColor(color);
+    }
+
+    inline void setMinimapRectFillColor(const QString& color) const noexcept
     {
         if (color.isEmpty()) return;
         m_minimap->setRectFillColor(color);
     }
 
-    inline void setMinimapRectAlpha(const float alpha) noexcept
+    inline void setMinimapRectFillColor(QString&& color) const noexcept
+    {
+        if (color.isEmpty()) return;
+        m_minimap->setRectFillColor(color);
+    }
+
+    inline void setMinimapRectAlpha(const float& alpha) const noexcept
     {
         m_minimap->setRectAlpha(alpha);
     }
 
-    inline void setMinimapAutoHide(const bool state) noexcept
+    inline void setMinimapRectAlpha(float&& alpha) const noexcept
+    {
+        m_minimap->setRectAlpha(alpha);
+    }
+
+    inline void setMinimapAutoHide(const bool& state) const noexcept
     {
         m_minimap->setAutoHide(state);
     }
 
-    inline void setMinimapSize(const QSize size) noexcept
+    inline void setMinimapAutoHide(bool&& state) const noexcept
+    {
+        m_minimap->setAutoHide(state);
+    }
+
+    inline void setMinimapSize(const QSize& size) const noexcept
     {
         m_minimap->setSize(size);
     }
 
-    inline void setMinimapLocation(const Minimap::Location loc) noexcept
+    inline void setMinimapSize(QSize&& size) const noexcept
+    {
+        m_minimap->setSize(size);
+    }
+
+    inline void setMinimapLocation(const Minimap::Location& loc) const noexcept
     {
         m_minimap->setLocation(loc);
     }
 
-    inline const QPixmap getPixmap() noexcept
+    inline void setMinimapLocation(Minimap::Location&& loc) const noexcept
+    {
+        m_minimap->setLocation(loc);
+    }
+
+    inline const QPixmap getPixmap() const noexcept
     {
         return m_pixmapItem->pixmap();
     }
@@ -131,7 +180,6 @@ public:
     {
         rotate(90);
     }
-
 
 signals:
     void fileLoaded(QString);
@@ -157,7 +205,7 @@ protected:
 private:
 
     void updateView() noexcept;
-    void GifLoopHandler(int frameNumber) noexcept;
+    void GifLoopHandler(const int& frameNumber) noexcept;
     qreal scale() const noexcept;
     void setMatrix() noexcept;
 

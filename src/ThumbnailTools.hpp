@@ -12,7 +12,6 @@ class ThumbnailTools : public QWidget
     Q_OBJECT
 public:
     ThumbnailTools(QWidget *parent = nullptr);
-    ~ThumbnailTools() {}
 
 signals:
     void search();
