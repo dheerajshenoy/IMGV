@@ -5,7 +5,7 @@ int main (int argc, char *argv[]) {
     QApplication app(argc, argv);
     argparse::ArgumentParser parser("imgv", APP_VERSION);
 
-    parser.add_description("Image viewer no one asked for.\n\n")
+    parser.add_description("Image viewer no one asked for.\n\n");
 
     parser.add_argument("-i", "--input")
         .help("Open Image files(s)")
