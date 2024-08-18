@@ -6,12 +6,7 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 {
 
     // 100 MB cache limit
-    QPixmapCache::setCacheLimit(10240 * 100);
     setWindowIcon(QIcon(":/resources/images/logo.svg"));
-
-    QWidget *centralWidget = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout();
-    QSplitter *splitter = new QSplitter();
 
     m_note_holder->setAcceptRichText(true);
     helpMenu->addAction(help__about);
@@ -20,27 +15,21 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
         AboutDialog *about = new AboutDialog(this);
         about->open();
     });
-
-    centralWidget->setLayout(layout);
-
     m_note_holder->setVisible(false);
 
-    splitter->setHandleWidth(0);
-    splitter->addWidget(m_left_pane);
+    m_splitter->setHandleWidth(0);
 
-    m_left_pane_layout = new QVBoxLayout();
-    m_left_pane->setLayout(m_left_pane_layout);
-
-    m_left_pane_layout->addWidget(m_thumbnail_tools_widget);
-    m_left_pane_layout->addWidget(m_thumbnail_search_edit);
-    m_left_pane_layout->addWidget(m_thumbnail_view);
+    m_right_pane_layout = new QVBoxLayout();
     m_right_pane->setLayout(m_right_pane_layout);
-
-    m_left_pane_layout->setContentsMargins(0, 0, 0, 0);
     m_right_pane_layout->setContentsMargins(0, 0, 0, 0);
 
     m_right_pane_splitter->addWidget(m_img_widget);
     m_right_pane_splitter->addWidget(m_note_holder);
+
+    parseCommandLineArguments(parser);
+    initMenu();
+    initConnections();
+    addSessionsToOpenSessionMenu();
 
     connect(m_note_holder, &NoteWidget::modificationChanged, m_statusbar, &StatusBar::setNoteModified);
     connect(m_thumbnail_tools_widget, &ThumbnailTools::search, this, &IMGV::searchThumbnails);
@@ -53,7 +42,6 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     m_right_pane_layout->addWidget(m_right_pane_splitter);
 
     m_thumbnail_search_edit->setVisible(false);
-    splitter->addWidget(m_right_pane);
 
     connect(m_img_widget, &ImageWidget::zoomChanged, [&](const qreal &zoom) {
         m_statusbar->setZoom("Zoom: " + QString::number(4 * zoom)); // map zoom from (-50 to 200) to (0 to 500) ish
@@ -65,17 +53,18 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
         m_thumbnail_search_edit->setVisible(false);
     });
 
-    splitter->setStretchFactor(1, 1);
-    layout->addWidget(splitter);
-    layout->addWidget(m_statusbar);
-    setCentralWidget(centralWidget);
 
-    layout->setContentsMargins(5, 5, 5, 5);
-    centralWidget->setContentsMargins(0, 0, 0, 0);
+    m_centralWidget->setLayout(m_layout);
+    m_splitter->setStretchFactor(1, 1);
+    m_layout->addWidget(m_splitter);
+    m_layout->addWidget(m_statusbar);
+    setCentralWidget(m_centralWidget);
+    m_layout->setContentsMargins(5, 5, 5, 5);
+    m_centralWidget->setContentsMargins(0, 0, 0, 0);
     this->setContentsMargins(0, 0, 0, 0);
 
     connect(m_thumbnail_view, &ThumbnailView::fileChangeRequested, m_img_widget, [&](const QString &filepath) {
-        m_img_widget->loadFile(filepath);
+        loadFile(filepath);
         m_note_holder->setMarkdown(m_thumbnail_view->currentIndex().data(Thumbnail::Note).toString());
     });
 
@@ -83,15 +72,90 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
         m_statusbar->setImgDimension(w, h);
     });
 
-    parseCommandLineArguments(parser);
-    initMenu();
-    initConnections();
-    addSessionsToOpenSessionMenu();
-
     if (m_stdin && !isatty(fileno(stdin)))
         processStdin();
 
     this->show();
+}
+
+void IMGV::thumbnailPanel__bottom() noexcept
+{
+
+    m_thumbnail_bottom_pane = new QWidget();
+    m_splitter->addWidget(m_thumbnail_bottom_pane);
+    m_thumbnail_bottom_pane_layout = new QHBoxLayout();
+    m_thumbnail_bottom_pane->setLayout(m_thumbnail_bottom_pane_layout);
+
+    m_thumbnail_tools_bottom_layout = new QVBoxLayout();
+    m_thumbnail_tools_widget = new ThumbnailTools(Qt::Orientation::Vertical);
+    m_thumbnail_tools_bottom_layout->addWidget(m_thumbnail_tools_widget);
+    m_thumbnail_tools_bottom_layout->addWidget(m_thumbnail_search_edit);
+
+    m_thumbnail_bottom_pane_layout->addLayout(m_thumbnail_tools_bottom_layout);
+    m_thumbnail_bottom_pane_layout->addWidget(m_thumbnail_view);
+
+    m_thumbnail_bottom_pane->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+    m_thumbnail_tools_widget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    m_right_pane->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+    m_thumbnail_view->setFlow(QListView::Flow::LeftToRight);
+    m_splitter->setOrientation(Qt::Orientation::Vertical);
+    m_splitter->addWidget(m_right_pane);
+    m_splitter->addWidget(m_thumbnail_bottom_pane);
+
+}
+
+void IMGV::thumbnailPanel__left() noexcept
+{
+    m_thumbnail_left_pane = new QWidget();
+    m_thumbnail_left_pane_layout = new QVBoxLayout();
+    m_thumbnail_left_pane->setLayout(m_thumbnail_left_pane_layout);
+    m_thumbnail_tools_widget = new ThumbnailTools(Qt::Orientation::Horizontal);
+    m_thumbnail_left_pane_layout->addWidget(m_thumbnail_tools_widget);
+    m_thumbnail_left_pane_layout->addWidget(m_thumbnail_search_edit);
+    m_thumbnail_left_pane_layout->addWidget(m_thumbnail_view);
+    m_splitter->addWidget(m_thumbnail_left_pane);
+    m_splitter->addWidget(m_right_pane);
+
+}
+
+void IMGV::thumbnailPanel__right() noexcept
+{
+
+    m_thumbnail_left_pane = new QWidget();
+    m_thumbnail_left_pane_layout = new QVBoxLayout();
+    m_thumbnail_left_pane->setLayout(m_thumbnail_left_pane_layout);
+    m_thumbnail_tools_widget = new ThumbnailTools(Qt::Orientation::Horizontal);
+    m_thumbnail_left_pane_layout->addWidget(m_thumbnail_tools_widget);
+    m_thumbnail_left_pane_layout->addWidget(m_thumbnail_search_edit);
+    m_thumbnail_left_pane_layout->addWidget(m_thumbnail_view);
+    m_splitter->addWidget(m_right_pane);
+    m_splitter->addWidget(m_thumbnail_left_pane);
+}
+
+void IMGV::thumbnailPanel__top() noexcept
+{
+
+    m_thumbnail_bottom_pane = new QWidget();
+    m_splitter->addWidget(m_thumbnail_bottom_pane);
+    m_thumbnail_bottom_pane_layout = new QHBoxLayout();
+    m_thumbnail_bottom_pane->setLayout(m_thumbnail_bottom_pane_layout);
+
+    m_thumbnail_tools_bottom_layout = new QVBoxLayout();
+    m_thumbnail_tools_widget = new ThumbnailTools(Qt::Orientation::Vertical);
+    m_thumbnail_tools_bottom_layout->addWidget(m_thumbnail_tools_widget);
+    m_thumbnail_tools_bottom_layout->addWidget(m_thumbnail_search_edit);
+
+    m_thumbnail_bottom_pane_layout->addLayout(m_thumbnail_tools_bottom_layout);
+    m_thumbnail_bottom_pane_layout->addWidget(m_thumbnail_view);
+
+
+    m_thumbnail_view->setFlow(QListView::Flow::LeftToRight);
+    m_splitter->setOrientation(Qt::Orientation::Vertical);
+
+    m_splitter->addWidget(m_thumbnail_bottom_pane);
+    m_splitter->addWidget(m_right_pane);
+
 }
 
 void IMGV::initDefaultConfig() noexcept
@@ -140,6 +204,10 @@ void IMGV::initConfigDirectory() noexcept
         sol::table defaults_table = defaults_table_exist.value();
         m_menuBar->setVisible(defaults_table["menubar"].get_or(true));
         m_img_widget->setZoomFactor(defaults_table["zoom_factor"].get_or(2.0));
+
+        // set pixmap cache
+        QPixmapCache::setCacheLimit(defaults_table["image_cache"].get_or(10240));
+
         auto fit_on_load = defaults_table["fit_on_load"].get_or(false);
 
         if (fit_on_load)
@@ -182,6 +250,19 @@ void IMGV::initConfigDirectory() noexcept
         if (thumbnails_table_exist)
         {
             sol::table thumbnails_table = thumbnails_table_exist.value();
+
+            // thumbnail layout
+            
+            auto layout = thumbnails_table["layout"].get_or<std::string>("left");
+
+            if (layout == "left")
+                thumbnailPanel__left();
+            else if (layout == "bottom")
+                thumbnailPanel__bottom();
+            else if (layout == "right")
+                thumbnailPanel__right();
+            else if (layout == "top")
+                thumbnailPanel__top();
 
             m_thumbnail_view->setVisible(thumbnails_table["show"].get_or(true));
             m_thumbnail_view->setUniformItemSizes(thumbnails_table["uniform"].get_or(false));
@@ -710,9 +791,9 @@ void IMGV::initKeybinds() noexcept
         m_menuBar->setVisible(!m_menuBar->isVisible());
     });
 
-    connect(kb_thumbnail_panel, &QShortcut::activated, [&]() {
-        m_left_pane->setVisible(!m_left_pane->isVisible());
-    });
+    /*connect(kb_thumbnail_panel, &QShortcut::activated, [&]() {*/
+    /*    m_left_pane->setVisible(!m_left_pane->isVisible());*/
+    /*});*/
 
     connect(kb_goto_next, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoNext);
     connect(kb_goto_prev, &QShortcut::activated, m_thumbnail_view, &ThumbnailView::gotoPrev);
@@ -726,15 +807,15 @@ void IMGV::initKeybinds() noexcept
 
 }
 
-void IMGV::initConnections() const noexcept
+void IMGV::initConnections() noexcept
 {
-    connect(m_thumbnail_view, &ThumbnailView::doubleClicked, [&](const QModelIndex &index) {
+    connect(m_thumbnail_view, &ThumbnailView::doubleClicked, [this](const QModelIndex &index) {
 
         // Don't load the image if already in the current image
         //TODO: /*if (m_thumbnail_view->currentThumbnail().filename() == text) return;*/
 
         const QString text = index.data(Qt::UserRole).toString();
-        m_img_widget->loadFile(text);
+        loadFile(text);
         m_note_holder->blockSignals(true); // FIX : is this necessary ?
         m_note_holder->setMarkdown(index.data(Thumbnail::Note).toString());
         m_note_holder->blockSignals(false);
@@ -768,7 +849,7 @@ void IMGV::openImage() noexcept
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp *.heic *.heif)"));
     if (!files.isEmpty()) {
         m_thumbnail_view->createThumbnails(files);
-        m_img_widget->loadFile(files[0]);
+        loadFile(files.at(0));
     }
 }
 
@@ -778,7 +859,7 @@ void IMGV::slideShow() noexcept
     if (m_slideshow_index >= m_slideshow_files.length())
         m_slideshow_index = 0;
     m_thumbnail_view->setHighlightIndex(m_slideshow_index);
-    m_img_widget->loadFile(m_slideshow_files.at(m_slideshow_index));
+    loadFile(m_slideshow_files.at(m_slideshow_index));
 }
 
 void IMGV::toggleSlideshow() const noexcept
@@ -1027,7 +1108,8 @@ void IMGV::readSessionFile(QString& filename) noexcept
             }
         }
         m_thumbnail_view->createThumbnails(files_stringlist);
-        m_img_widget->loadFile(m_thumbnail_view->getFile(0));
+        loadFile(m_thumbnail_view->getFile(0));
+
     }
     else
         QMessageBox::information(this, "Session Info", "No files found in the session file");
@@ -1110,7 +1192,7 @@ void IMGV::readSessionFile(QString&& filename) noexcept
             }
         }
         m_thumbnail_view->createThumbnails(files_stringlist);
-        m_img_widget->loadFile(m_thumbnail_view->getFile(0));
+        loadFile(m_thumbnail_view->getFile(0));
     }
     else
         QMessageBox::information(this, "Session Info", "No files found in the session file");
@@ -1168,7 +1250,7 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
             m_thumbnail_view->createThumbnails(dirfiles);
             return;
         }
-        m_img_widget->loadFile(file);
+        loadFile(file);
 
         QStringList dd;
         dd.reserve(files.size());
@@ -1203,7 +1285,7 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
             for(const auto &file : files)
                 _files << QString::fromStdString(file);
             m_thumbnail_view->createThumbnails(_files);
-            m_img_widget->loadFile(_files.at(0));
+            loadFile(_files.at(0));
         }
     }
 
@@ -1227,7 +1309,7 @@ void IMGV::openSessionInNewWindow(const QString &file) noexcept
 void IMGV::maximizeImage() noexcept
 {
     m_image_maximize_mode = !m_image_maximize_mode;
-    m_left_pane->setVisible(!m_image_maximize_mode);
+    /*m_left_pane->setVisible(!m_image_maximize_mode);*/
     m_menuBar->setVisible(!m_image_maximize_mode);
     m_statusbar->setVisible(!m_image_maximize_mode);
     m_img_widget->setScrollBarsVisibility(!m_image_maximize_mode);
@@ -1452,7 +1534,7 @@ void IMGV::processStdin() noexcept
         QString filename = tempPixFile.fileName();
         m_temp_files.push_back(filename);
         m_thumbnail_view->createThumbnail(filename);
-        m_img_widget->loadFile(filename);
+        loadFile(filename);
     }
     else
         qDebug() << "Unable to read the image from stdin";
@@ -1488,4 +1570,18 @@ void IMGV::closeEvent(QCloseEvent *e) noexcept
             f.remove();
         }
     }
+}
+
+void IMGV::loadFile(const QString& fileName) noexcept
+{
+    QString title = QString(" %1 (Session: %2) | IMGV ").arg(fileName).arg(m_session_name);
+    setWindowTitle(title);
+    m_img_widget->loadFile(fileName);
+}
+
+void IMGV::loadFile(QString&& fileName) noexcept
+{
+    QString title = QString(" %1 (Session: %2) | IMGV ").arg(fileName).arg(m_session_name);
+    setWindowTitle(title);
+    m_img_widget->loadFile(fileName);
 }

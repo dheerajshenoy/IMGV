@@ -8,7 +8,7 @@
 #include <QDesktopServices>
 #include <QString>
 
-const std::string APP_VERSION = "2.0";
+const std::string APP_VERSION = "2.1";
 
 class AboutDialog : public QDialog
 {

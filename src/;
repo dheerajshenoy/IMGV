@@ -47,7 +47,6 @@
 #include <QCloseEvent>
 #include <unistd.h>
 #include <QActionGroup>
-#include <QSizePolicy>
 
 class IMGV : public QMainWindow
 {
@@ -94,11 +93,6 @@ private:
     void loadFile(const QString& file) noexcept;
     void loadFile(QString&& file) noexcept;
 
-    void thumbnailPanel__left() noexcept;
-    void thumbnailPanel__right() noexcept;
-    void thumbnailPanel__bottom() noexcept;
-    void thumbnailPanel__top() noexcept;
-
     inline void setMsg(const QString &msg, const int sec = 1) const noexcept
     {
         m_statusbar->setMsg(msg, sec);
@@ -129,10 +123,6 @@ private:
         this->showFullScreen();
     }
 
-
-    QWidget *m_centralWidget = new QWidget();
-    QVBoxLayout *m_layout = new QVBoxLayout();
-    QSplitter *m_splitter = new QSplitter();
 
     QStringList m_slideshow_files;
     QStringList m_tags;
@@ -218,22 +208,16 @@ private:
     QLineEdit *m_thumbnail_search_edit = new QLineEdit();
 
     QWidget *m_right_pane = new QWidget();
-    QWidget *m_thumbnail_left_pane = nullptr;
-    QWidget *m_thumbnail_right_pane = nullptr;
-    QWidget *m_thumbnail_bottom_pane = nullptr;
+    QWidget *m_left_pane = new QWidget();
+    QWidget *m_bottom_pane = new QWidget();
 
-    QVBoxLayout *m_thumbnail_left_pane_layout = nullptr;
-    QVBoxLayout *m_thumbnail_right_pane_layout = nullptr;
-    QHBoxLayout *m_thumbnail_bottom_pane_layout = nullptr;
+    QVBoxLayout *m_left_pane_layout = new QVBoxLayout();
+    QVBoxLayout *m_right_pane_layout = new QVBoxLayout();
+    QVBoxLayout *m_bottom_pane_layout = new QVBoxLayout();
 
-    QVBoxLayout *m_thumbnail_tools_bottom_layout = nullptr;
-    QVBoxLayout *m_thumbnail_tools_left_layout = nullptr;
-
-    QVBoxLayout *m_right_pane_layout = nullptr;
-
-    ThumbnailTools *m_thumbnail_tools_widget;
+    ThumbnailTools *m_thumbnail_tools_widget = new ThumbnailTools();
     NoteWidget *m_note_holder = new NoteWidget();
-    QSplitter *m_right_pane_splitter = new QSplitter(Qt::Orientation::Horizontal);
+    QSplitter *m_right_pane_splitter = new QSplitter(Qt::Orientation::Vertical);
     bool m_auto_notes_popup = false;
 
     int m_slideshow_index = -1;

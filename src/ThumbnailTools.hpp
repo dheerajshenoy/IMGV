@@ -2,7 +2,7 @@
 #define THUMBNAIL_TOOLS__HPP
 
 #include <QWidget>
-#include <QHBoxLayout>
+#include <QBoxLayout>
 #include <QPushButton>
 #include <QLabel>
 
@@ -11,7 +11,7 @@ class ThumbnailTools : public QWidget
 
     Q_OBJECT
 public:
-    ThumbnailTools(QWidget *parent = nullptr);
+    explicit ThumbnailTools(Qt::Orientation&& orientation, QWidget *parent = nullptr);
 
 signals:
     void search();
@@ -20,7 +20,7 @@ signals:
 
 
 private:
-    QHBoxLayout *m_layout = new QHBoxLayout();
+    QBoxLayout *m_layout;
     QPushButton *m_search_btn = new QPushButton(QIcon(":/resources/images/search.svg"), "");
     QPushButton *m_filter_tag_btn = new QPushButton(QIcon(":/resources/images/filter.svg"), "");
     QPushButton *m_reset_filter_btn = new QPushButton(QIcon(":/resources/images/filter_reset.svg"), "");

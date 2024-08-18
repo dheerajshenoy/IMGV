@@ -1,5 +1,6 @@
 #include "ImagePropertiesDialog.hpp"
 #include "rapidjson/document.h"
+#include <numbers>
 #include <qtablewidget.h>
 
 ImagePropertiesDialog::ImagePropertiesDialog(const QString& _filename, QWidget *parent)
@@ -100,7 +101,6 @@ void ImagePropertiesDialog::showEXIFProperties(const QString& filename) noexcept
     // Load the image
     Magick::Image image;
 
-
     image.read(filename.toStdString());
 
     QDialog *d = new QDialog(this);
@@ -183,6 +183,7 @@ void ImagePropertiesDialog::showEXIFProperties(const QString& filename) noexcept
         QMessageBox mini_or_readable_msg_box;
         QAbstractButton *miniBtn = mini_or_readable_msg_box.addButton("Mini Verson", QMessageBox::YesRole);
         QAbstractButton *readableBtn = mini_or_readable_msg_box.addButton("Readable Version", QMessageBox::NoRole);
+        QAbstractButton *cancelBtn = mini_or_readable_msg_box.addButton("Cancel Export", QMessageBox::RejectRole);
 
         mini_or_readable_msg_box.setText("Do you want the \"mini\" version of the JSON file or file which is pretty and readable ? If you don't know what \"mini\" files are, go with the pretty version.");
         mini_or_readable_msg_box.setWindowTitle("JSON write mode");
@@ -200,6 +201,12 @@ void ImagePropertiesDialog::showEXIFProperties(const QString& filename) noexcept
         {
             rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
             document.Accept(writer);
+        }
+        
+        else if (mini_or_readable_msg_box.clickedButton() == cancelBtn)
+        {
+
+            return;
         }
         
         // Write JSON string to file

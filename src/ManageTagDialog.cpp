@@ -21,7 +21,6 @@ ManageTagDialog::ManageTagDialog(const QStringList &tags, QVector<Thumbnail> &th
 void ManageTagDialog::renameTag() noexcept
 {
 
-
 }
 
 void ManageTagDialog::deleteTag() noexcept

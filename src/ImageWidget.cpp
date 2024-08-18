@@ -203,6 +203,9 @@ void ImageWidget::loadFile(QString&& file) noexcept
         m_scene->setSceneRect(m_movieItem->boundingRect());
         if (m_pix_analyse_mode)
             m_pix_analyser->setPixmap(m_movieItem->currentPixmap());
+
+        if (m_minimap_mode)
+            m_minimap->setPixmap(m_movieItem->currentPixmap());
     }
     else
     {
@@ -219,6 +222,9 @@ void ImageWidget::loadFile(QString&& file) noexcept
         m_scene->setSceneRect(m_pixmapItem->boundingRect());
         if (m_pix_analyse_mode)
             m_pix_analyser->setPixmap(pix);
+
+        if (m_minimap_mode)
+            m_minimap->setPixmap(m_pixmapItem->pixmap());
     }
     emit fileLoaded(file);
     emit fileDim(w, h);
@@ -259,6 +265,9 @@ void ImageWidget::loadFile(const QString& file) noexcept
         h = m_movie->currentPixmap().height();
         m_movie->start();
         m_scene->setSceneRect(m_movieItem->boundingRect());
+        if (m_minimap_mode)
+            m_minimap->setPixmap(m_movieItem->currentPixmap());
+
         if (m_pix_analyse_mode)
             m_pix_analyser->setPixmap(m_movieItem->currentPixmap());
     }
@@ -270,10 +279,7 @@ void ImageWidget::loadFile(const QString& file) noexcept
 
         if (!QPixmapCache::find(file, &pix))
         {
-            auto format = utils::detectImageFormat(file);
-            qDebug() << format;
             pix = utils::decodeToPixmap(file);
-
             QPixmapCache::insert(file, pix);
         }
         w = pix.width(); h = pix.height();
@@ -281,6 +287,9 @@ void ImageWidget::loadFile(const QString& file) noexcept
         m_scene->setSceneRect(m_pixmapItem->boundingRect());
         if (m_pix_analyse_mode)
             m_pix_analyser->setPixmap(pix);
+
+        if (m_minimap_mode)
+            m_minimap->setPixmap(m_pixmapItem->pixmap());
     }
     emit fileLoaded(file);
     emit fileDim(w, h);
