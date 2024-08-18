@@ -5,7 +5,7 @@ int main (int argc, char *argv[]) {
     QApplication app(argc, argv);
     argparse::ArgumentParser parser("imgv", APP_VERSION);
 
-    parser.add_description("Image viewer no one asked for.\n\nSupports following image formats: JPG/JPEG, PNG, BMP, SVG, GIF, WEBP, PBM, PGM, PPM, XBM, XPM");
+    parser.add_description("Image viewer no one asked for.\n\n")
 
     parser.add_argument("-i", "--input")
         .help("Open Image files(s)")
@@ -37,7 +37,7 @@ int main (int argc, char *argv[]) {
     parser.add_argument("files")
         .remaining();
 
-    parser.add_epilog("For more information about the program usage please check the project page at https://github.com/dheerajshenoy/IMGV");
+    parser.add_epilog("For more information about the program usage and for the list of all supported image formats please check the project page at https://github.com/dheerajshenoy/IMGV");
 
 
     try {
