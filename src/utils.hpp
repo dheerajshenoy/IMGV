@@ -15,6 +15,7 @@
 #include "rapidjson/reader.h"
 #include "rapidjson/istreamwrapper.h"
 #include "rapidjson/document.h"
+#include <Magick++.h>
 
 struct Dimension
 {
@@ -38,8 +39,13 @@ public:
     ~utils(){}
 
     static QString detectImageFormat(const QString &filePath) noexcept;
+
     static QPixmap decodeWebPToPixmap(const QString &filePath) noexcept;
     static QImage decodeWebPToImage(const QString &filePath) noexcept;
+    static QPixmap decodeHeicToPixmap(const QString &filePath) noexcept;
+
+    static QPixmap decodeToPixmap(const QString &filePath) noexcept;
+
     static QString imageFormatToString(QImage::Format&& format) noexcept;
     static QStringList getImagesFromSessionFile(const QString &session_file) noexcept;
     static Custom getInfoFromSessionFile(const QString &session_file) noexcept;

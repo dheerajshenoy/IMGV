@@ -12,7 +12,31 @@
 #include <QShowEvent>
 #include <QCloseEvent>
 #include <QResizeEvent>
+#include <QLineEdit>
 #include <QPushButton>
+#include <QApplication>
+#include <QMouseEvent>
+#include <QEnterEvent>
+#include <QToolTip>
+#include <Magick++.h>
+
+class PixLineEdit : public QLineEdit
+{
+public:
+    PixLineEdit(QWidget *parent = nullptr)
+        : QLineEdit(parent)
+    {
+        this->setReadOnly(true);
+    }
+    
+protected:
+    void mouseDoubleClickEvent(QMouseEvent *e) override
+    {
+        this->selectAll();
+        this->copy();
+        this->deselect();
+    }
+};
 
 class PixAnalyser : public QWidget
 {
@@ -53,10 +77,14 @@ protected:
 
 private:
     QFormLayout *m_layout = new QFormLayout();
-    QLabel *m_color_name = new QLabel();
-    QLabel *m_color_rgb = new QLabel();
-    QLabel *m_color_hsv = new QLabel();
+    PixLineEdit *m_pos = new PixLineEdit();
+    PixLineEdit *m_color_hex = new PixLineEdit();
+    PixLineEdit *m_color_rgb = new PixLineEdit();
+    PixLineEdit *m_color_hsv = new PixLineEdit();
+    PixLineEdit *m_color_cmyk = new PixLineEdit();
+    PixLineEdit *m_color_hsl = new PixLineEdit();
     QLabel *m_color = new QLabel();
+    QLabel *m_copy_info = new QLabel("Double click to copy color to clipboard");
     QPushButton *m_pick_btn = new QPushButton("Pick Again");
     QPushButton *m_done_btn = new QPushButton("Done");
     QImage m_img;

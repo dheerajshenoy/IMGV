@@ -8,9 +8,12 @@ PixAnalyser::PixAnalyser(QWidget *parent)
     this->setWindowFlag(Qt::WindowType::Dialog);
 
     m_layout->addRow(m_color);
-    m_layout->addRow("HEX:", m_color_name);
-    m_layout->addRow("RGB:", m_color_rgb);
-    m_layout->addRow("HSV:", m_color_hsv);
+    m_layout->addRow("HEX:", m_color_hex);
+    m_layout->addRow("RGBA:", m_color_rgb);
+    m_layout->addRow("HSVA:", m_color_hsv);
+    m_layout->addRow("CMYK:", m_color_cmyk);
+    m_layout->addRow("HSLA:", m_color_hsl);
+    m_layout->addRow(m_copy_info);
     m_layout->addRow(m_pick_btn);
     m_layout->addRow(m_done_btn);
 
@@ -23,9 +26,6 @@ PixAnalyser::PixAnalyser(QWidget *parent)
 
     connect(m_done_btn, &QPushButton::clicked, this, &QWidget::close);
 
-    m_color_name->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse | Qt::TextInteractionFlag::TextSelectableByKeyboard);
-    m_color_rgb->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse | Qt::TextInteractionFlag::TextSelectableByKeyboard);
-    m_color_hsv->setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByMouse | Qt::TextInteractionFlag::TextSelectableByKeyboard);
 }
 
 void PixAnalyser::analysePix(const QPointF &loc) const noexcept
@@ -35,12 +35,17 @@ void PixAnalyser::analysePix(const QPointF &loc) const noexcept
     if ( (x < 0 || x > m_img.width()) || (y < 0 || y > m_img.height()) ) return;
 
     QColor color = QColor(m_img.pixelColor(x, y));
-    m_color_name->setText(color.name());
-    m_color_rgb->setText(QString("(%1, %2, %3)").arg(color.red()).arg(color.green()).arg(color.blue()));
+    m_color_hex->setText(color.name());
+    m_color_rgb->setText(QString("%1, %2, %3, %4").arg(color.red()).arg(color.green()).arg(color.blue()).arg(color.alpha()));
 
     QColor hsv = color.toHsv();
-    m_color_hsv->setText(QString("(%1, %2, %3)").arg(hsv.hue()).arg(hsv.saturation()).arg(hsv.value()));
+    m_color_hsv->setText(QString("%1, %2, %3, %4").arg(hsv.hue()).arg(hsv.saturation()).arg(hsv.value()).arg(hsv.alpha()));
+
+    QColor cmyk = color.toCmyk();
+    m_color_cmyk->setText(QString("%1, %2, %3, %4").arg(cmyk.cyan()).arg(cmyk.magenta()).arg(cmyk.yellow()).arg(cmyk.black()));
+
+    QColor hsl = color.toHsl();
+    m_color_hsl->setText(QString("%1, %2, %3, %4").arg(hsl.hue()).arg(hsl.saturation()).arg(hsl.lightness()).arg(hsl.alpha()));
 
     m_color->setStyleSheet(QString("background-color: %1").arg(color.name()));
 }
-

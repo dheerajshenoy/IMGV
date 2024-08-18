@@ -26,6 +26,7 @@
 #include "Minimap.hpp"
 #include "PixAnalyser.hpp"
 #include "Thumbnail.hpp"
+#include <Magick++.h>
 
 class ImageWidget : public QGraphicsView
 {
@@ -34,6 +35,7 @@ class ImageWidget : public QGraphicsView
 public:
 
     ImageWidget(QWidget *parent = nullptr);
+    ~ImageWidget();
 
     void loadFile(const QString& file) noexcept;
     void loadFile(QString&& file) noexcept;

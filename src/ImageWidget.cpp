@@ -201,6 +201,8 @@ void ImageWidget::loadFile(QString&& file) noexcept
         h = m_movie->currentPixmap().height();
         m_movie->start();
         m_scene->setSceneRect(m_movieItem->boundingRect());
+        if (m_pix_analyse_mode)
+            m_pix_analyser->setPixmap(m_movieItem->currentPixmap());
     }
     else
     {
@@ -209,15 +211,14 @@ void ImageWidget::loadFile(QString&& file) noexcept
         QPixmap pix;
         if (!QPixmapCache::find(file, &pix))
         {
-            if (utils::detectImageFormat(file) == "WEBP")
-                pix = utils::decodeWebPToPixmap(file);
-            else
-                pix.load(file);
+            pix = utils::decodeToPixmap(file);
             QPixmapCache::insert(file, pix);
         }
         w = pix.width(); h = pix.height();
         m_pixmapItem->setPixmap(pix);
         m_scene->setSceneRect(m_pixmapItem->boundingRect());
+        if (m_pix_analyse_mode)
+            m_pix_analyser->setPixmap(pix);
     }
     emit fileLoaded(file);
     emit fileDim(w, h);
@@ -258,23 +259,28 @@ void ImageWidget::loadFile(const QString& file) noexcept
         h = m_movie->currentPixmap().height();
         m_movie->start();
         m_scene->setSceneRect(m_movieItem->boundingRect());
+        if (m_pix_analyse_mode)
+            m_pix_analyser->setPixmap(m_movieItem->currentPixmap());
     }
     else
     {
         m_movieItem->hide();
         m_pixmapItem->show();
         QPixmap pix;
+
         if (!QPixmapCache::find(file, &pix))
         {
-            if (utils::detectImageFormat(file) == "WEBP")
-                pix = utils::decodeWebPToPixmap(file);
-            else
-                pix.load(file);
+            auto format = utils::detectImageFormat(file);
+            qDebug() << format;
+            pix = utils::decodeToPixmap(file);
+
             QPixmapCache::insert(file, pix);
         }
         w = pix.width(); h = pix.height();
         m_pixmapItem->setPixmap(pix);
         m_scene->setSceneRect(m_pixmapItem->boundingRect());
+        if (m_pix_analyse_mode)
+            m_pix_analyser->setPixmap(pix);
     }
     emit fileLoaded(file);
     emit fileDim(w, h);

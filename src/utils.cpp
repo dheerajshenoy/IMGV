@@ -67,6 +67,50 @@ QImage utils::decodeWebPToImage(const QString &filePath) noexcept
     return image;
 }
 
+QPixmap utils::decodeHeicToPixmap(const QString &filePath) noexcept
+{
+    Magick::InitializeMagick(nullptr);
+    Magick::Image image;
+    image.read(filePath.toStdString());
+
+    if (!image.isValid())
+        return QPixmap();
+
+    int width = image.columns(), height = image.rows();
+
+    // Ensure the image is in RGB format for compatibility with QImage
+    Magick::Blob blob;
+    image.write(&blob, "RGBA");  // Convert to RGBA
+
+    // Create a QImage using the raw data from the Magick::Image
+    const uchar *data = reinterpret_cast<const uchar *>(blob.data());
+    QImage qimage(data, width, height, QImage::Format_RGBA8888);
+
+    return QPixmap::fromImage(qimage.copy());
+}
+
+QPixmap utils::decodeToPixmap(const QString &filePath) noexcept
+{
+    Magick::InitializeMagick(nullptr);
+    Magick::Image image;
+    image.read(filePath.toStdString());
+
+    if (!image.isValid())
+        return QPixmap();
+
+    int width = image.columns(), height = image.rows();
+
+    // Ensure the image is in RGB format for compatibility with QImage
+    Magick::Blob blob;
+    image.write(&blob, "RGBA");  // Convert to RGBA
+
+    // Create a QImage using the raw data from the Magick::Image
+    const uchar *data = reinterpret_cast<const uchar *>(blob.data());
+    QImage qimage(data, width, height, QImage::Format_RGBA8888);
+
+    return QPixmap::fromImage(qimage.copy());
+}
+
 QString utils::imageFormatToString(QImage::Format&& format) noexcept
 {
     switch (format) {

@@ -3,11 +3,16 @@ project(imgv)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui)
 find_package(WebP REQUIRED)
 find_package(Lua REQUIRED)
+find_package(ImageMagick REQUIRED COMPONENTS Magick++)
+
 qt_standard_project_setup()
 
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++20")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+
+add_definitions( -DMAGICKCORE_QUANTUM_DEPTH=16 )
+add_definitions( -DMAGICKCORE_HDRI_ENABLE=0 )
 
 qt_add_executable(${PROJECT_NAME}
     src/main.cpp
@@ -29,6 +34,7 @@ qt_add_executable(${PROJECT_NAME}
     src/HoverLabel.cpp
     src/ThumbnailTools.cpp
     src/ManageTagDialog.cpp
+    ${IMAGEMAGICK_INCLUDE_DIR}
 
     src/ImageWidget.hpp
     src/imgv.hpp
@@ -73,25 +79,19 @@ qt_add_resources(${PROJECT_NAME}
         resources/fonts/ShureTechMono.ttf
 )
 
-qt_add_plugin(qtiff
-    STATIC
-    MANUAL_FINALIZATION
-    PLUGIN_TYPE imageformats
-)
-
-# qt_add_plugin(${PROJECT_NAME} STATIC ImageFormats MANUAL_FINALIZATION)
+target_include_directories(${PROJECT_NAME} PRIVATE 
+    ${WebP_INCLUDE_DIR}
+    ${LUA_INCLUDE_DIR}
+    ${ImageMagick_INCLUDE_DIRS})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
     ${CMAKE_SOURCE_DIR}/lib/liblua.a
-    ${CMAKE_SOURCE_DIR}/lib/libwebp.a)
+    ${CMAKE_SOURCE_DIR}/lib/libwebp.a
+    ${ImageMagick_LIBRARIES})
 
-
-target_include_directories(${PROJECT_NAME} PRIVATE 
-    ${WebP_INCLUDE_DIR}
-    ${LUA_INCLUDE_DIR})
 
 install(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION bin)

@@ -15,12 +15,13 @@ Total lines of code excluding the external libraries (Sol, rapidjson, qmarkdownt
 2. [Demo](#demo)
 3. [Introduction](#introduction)
 4. [Features](#features)
-5. [Installation](#installation)
-6. [Theming](#theming)
-7. [Configuration](#configuration)
-7. [Changelogs and Bug fixes](#changelogs)
-8. [Todo](#todo)
-9. [Thanks](#thanks)
+5. [Supported Image Formats](#supported_image_formats)
+6. [Installation](#installation)
+7. [Theming](#theming)
+8. [Configuration](#configuration)
+8. [Changelogs and Bug fixes](#changelogs)
+9. [Todo](#todo)
+10. [Thanks](#thanks)
 
 <a name="screenshots" />
 
@@ -60,19 +61,6 @@ IMaGe Viewer ~ IMGV. **Original**.
 
     Session files allow you to group images together to open it at a later point. *NOTE*: Previously session files were just plain text files, but since the addition of notes features, session files are now stored as json files with the extension .imgv.
    
-5. Image format support
-    1. JPG/JPEG (Joint Photographic Experts Group)
-    2. PNG (Portable Network Graphics)
-    3. BMP (Bitmap)
-    4. SVG (Scalable Vector Graphics)
-    5. GIF (Graphic Interchange Format)
-    6. WEBP (Web Picture Format)
-    7. PBM (Portable Bitmap)
-    8. PGM (Portable Graymap)
-    9. PPM (Portable Pixmap)
-    10. XBM (X11 Bitmap)
-    11. XPM (X11 Pixmap)
-
 6. Command line arguments support.
     - `-i` or `--input` takes in path to one or more image files of the supported format.
     - `-n` or `--no-config` load the software without any lua configuration
@@ -106,6 +94,87 @@ You can "pipe into" imgv to open the files. Best example is editing image using 
 ```shell
 magick some-file.jpg -blur 0x8 - | imgv -
 ```
+
+<a name="supported_image_formats" />
+
+# Supported Image Formats
+
+IMGV uses [ImageMagick](https://imagemagick.org/) image library for decoding image formats, which therefore means that imgv supports all the image formats supported by ImageMagick. Check [this](https://imagemagick.org/script/formats.php#supported) page for the list of all supported Image Format.
+
+(Before imgv 2.0l Qts default image decoders were used to load the images.)
+
+<details>
+
+- **3FR**: Hasselblad 3F RAW image
+- **AI**: Adobe Illustrator file
+- **ART**: AROPA ART image
+- **ARW**: Sony Alpha RAW image
+- **AVS**: AVS (American Virtual Space) image
+- **BMP**: Microsoft Windows Bitmap
+- **BRF**: Braille
+- **BRK**: Braille
+- **CALS**: CALS Raster format
+- **CGM**: Computer Graphics Metafile
+- **CR2**: Canon RAW version 2 image
+- **CRW**: Canon RAW image
+- **CUR**: Microsoft Windows cursor
+- **DIB**: Device Independent Bitmap
+- **DJVU**: DjVu image
+- **DPX**: Digital Picture Exchange image
+- **DNG**: Adobe Digital Negative
+- **DOT**: DOT graph file
+- **EPI**: Encapsulated PostScript image
+- **EPX**: EPX image
+- **EXR**: OpenEXR image
+- **FITS**: Flexible Image Transport System
+- **FLIF**: Free Lossless Image Format
+- **FLV**: Flash Video
+- **GIF**: Graphics Interchange Format
+- **HEIC**: High Efficiency Image Coding
+- **HEIF**: High Efficiency Image Format
+- **ICO**: Microsoft Windows Icon
+- **IMAGE**: Generic image
+- **INFO**: Image metadata
+- **IPTC**: IPTC metadata
+- **J2K**: JPEG 2000 image
+- **JNG**: JPEG Network Graphics
+- **JPEG**: JPEG image
+- **JPG**: JPEG image
+- **JXR**: JPEG XR image
+- **K25**: Kodak K25 image
+- **KDC**: Kodak DC120 image
+- **MAP**: Image map
+- **MNG**: Multiple-image Network Graphics
+- **MOS**: Leaf RAW image
+- **MRW**: Minolta RAW image
+- **MTV**: MTV video
+- **NEF**: Nikon Electronic Format image
+- **ORF**: Olympus RAW image
+- **PBM**: Portable Bitmap
+- **PCD**: Kodak Photo CD image
+- **PCL**: Printer Command Language
+- **PCX**: PC Paintbrush image
+- **PGM**: Portable Graymap
+- **PNG**: Portable Network Graphics
+- **PPM**: Portable Pixmap
+- **PSD**: Adobe Photoshop image
+- **RAS**: Sun Raster image
+- **RGB**: RGB image
+- **RGBA**: RGB image with alpha channel
+- **RW2**: Panasonic RAW image
+- **SGI**: Silicon Graphics image
+- **SPP**: Sony RAW image
+- **SVG**: Scalable Vector Graphics
+- **TGA**: Truevision TARGA image
+- **TIFF**: Tagged Image File Format
+- **WEBP**: WebP image
+- **WMF**: Windows Metafile
+- **XBM**: X Bitmap
+- **XPM**: X PixMap
+- **XWD**: X Window Dump
+- **YUV**: YUV image
+</details>
+
 
 <a name="installation" />
 
@@ -179,6 +248,13 @@ IMGV can be configured using the lua programming language. `config.lua` file sho
 Note that if the `keybindings` table is present in the `Defaults` table, then default keybindings will not be loaded.
 
 # Changelogs and Bug Fixes
+
+- 18 Aug 2024
+
+    - Added CMYK, HSLA, and alpha to HSV, RGB for the color picker
+    - Fix: Reload color picker pixmap on loading an image
+    - Added copy to clipboard on doubleclick support for color picker colors
+    - Use ImageMagick library to load images and not use Qt6 in-built image decoders. This allows for larger support of images for imgv. Check [here](https://imagemagick.org/script/formats.php#supported) for the supported formats.
 
 - 17 Aug 2024
 

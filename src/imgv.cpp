@@ -5,8 +5,8 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     : QMainWindow(parent)
 {
 
-    // 50 MB cache limit
-    /*QPixmapCache::setCacheLimit(10240 * 5);*/
+    // 100 MB cache limit
+    QPixmapCache::setCacheLimit(10240 * 100);
     setWindowIcon(QIcon(":/resources/images/logo.svg"));
 
     QWidget *centralWidget = new QWidget();
@@ -748,7 +748,7 @@ void IMGV::initConnections() const noexcept
 
 void IMGV::openImageInNewWindow() noexcept
 {
-    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp)"));
+    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp *.heic *.heif)"));
     if (!files.isEmpty()) {
 
         QString program = QCoreApplication::applicationFilePath();
@@ -765,7 +765,7 @@ void IMGV::openImageInNewWindow() noexcept
 
 void IMGV::openImage() noexcept
 {
-    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp)"));
+    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp *.heic *.heif)"));
     if (!files.isEmpty()) {
         m_thumbnail_view->createThumbnails(files);
         m_img_widget->loadFile(files[0]);
@@ -1157,7 +1157,7 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
 
         if (QFileInfo(file).isDir())
         {
-            QStringList dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files);
+            QStringList dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif" << "*.heic" << "*.heif", QDir::Files);
             for(int i=0; i < dirfiles.size(); i++)
                 dirfiles[i] = QString("%1%2%3").arg(file).arg(QDir::separator()).arg(dirfiles.at(i));
 
@@ -1188,7 +1188,7 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
         // If directory is mentioned, try to read all the compatible files from the directory
         if (QFileInfo(file).isDir())
         {
-            m_thumbnail_view->createThumbnails(QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif", QDir::Files));
+            m_thumbnail_view->createThumbnails(QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif" << "*.heic" << "*.heif", QDir::Files));
             /*for(const auto &f: dirfiles)*/
             /*    m_thumbnail_view->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));*/
             /*return;*/
