@@ -5,8 +5,19 @@
 </a>
 </p>
 
-**IMGV**. The Image Viewer no one asked for. Written in C++. Only for **Linux**. With [features](#features) I wanted in my dream image viewer.
+**IMGV**.
+The Image Viewer no one asked for.
 
+Written in C++.
+
+Only for **Linux**.
+
+With [features](#features) I wanted in my dream image viewer.
+
+Supports more than **100** file formats.
+
+<br/>
+<br/>libmagick++-dev
 Total lines of code excluding the external libraries (Sol, rapidjson, qmarkdowntextedit) is 4617 lines (source and header file).
 
 # Table of Contents
