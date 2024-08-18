@@ -999,8 +999,9 @@ void IMGV::readSessionFile(QString& filename) noexcept
     if (doc.HasMember("tags") && doc["tags"].IsArray())
     {
         const Value &tags_arr = doc["tags"];
+        m_tags.reserve(tags_arr.Size());
         for(SizeType i=0; i < tags_arr.Size(); i++)
-            m_tags.emplaceBack(QString::fromStdString(tags_arr[i].GetString()));
+            m_tags[i] = QString::fromStdString(tags_arr[i].GetString());
     }
 
     // Read Files
@@ -1008,6 +1009,7 @@ void IMGV::readSessionFile(QString& filename) noexcept
     {
         const Value& files_arr = doc["files"];
         QList<Thumbnail> files_stringlist;
+        files_stringlist.reserve(files_arr.Size());
         for(SizeType i=0; i < files_arr.Size(); i++)
         {
             if (files_arr[i].IsObject())
@@ -1018,9 +1020,9 @@ void IMGV::readSessionFile(QString& filename) noexcept
                     (file.HasMember("note") && file["note"].IsString()) &&
                     (file.HasMember("tag") && file["tag"].IsString()))
                 {
-                    files_stringlist.emplaceBack(Thumbnail(QString::fromStdString(file["path"].GetString()),
+                    files_stringlist.emplace_back(QString::fromStdString(file["path"].GetString()),
                                                   QString::fromStdString(file["note"].GetString()),
-                                                  QString::fromStdString(file["tag"].GetString())));
+                                                  QString::fromStdString(file["tag"].GetString()));
                 }
             }
         }
@@ -1080,8 +1082,9 @@ void IMGV::readSessionFile(QString&& filename) noexcept
     if (doc.HasMember("tags") && doc["tags"].IsArray())
     {
         const Value &tags_arr = doc["tags"];
+        m_tags.reserve(tags_arr.Size());
         for(SizeType i=0; i < tags_arr.Size(); i++)
-            m_tags.emplaceBack(QString::fromStdString(tags_arr[i].GetString()));
+            m_tags[i] = QString::fromStdString(tags_arr[i].GetString());
     }
 
     // Read Files
@@ -1089,6 +1092,7 @@ void IMGV::readSessionFile(QString&& filename) noexcept
     {
         const Value& files_arr = doc["files"];
         QList<Thumbnail> files_stringlist;
+        files_stringlist.reserve(files_arr.Size());
         for(SizeType i=0; i < files_arr.Size(); i++)
         {
             if (files_arr[i].IsObject())
@@ -1099,9 +1103,9 @@ void IMGV::readSessionFile(QString&& filename) noexcept
                     (file.HasMember("note") && file["note"].IsString()) &&
                     (file.HasMember("tag") && file["tag"].IsString()))
                 {
-                    files_stringlist.emplaceBack(Thumbnail(QString::fromStdString(file["path"].GetString()),
+                    files_stringlist.emplace_back(QString::fromStdString(file["path"].GetString()),
                                                   QString::fromStdString(file["note"].GetString()),
-                                                  QString::fromStdString(file["tag"].GetString())));
+                                                  QString::fromStdString(file["tag"].GetString()));
                 }
             }
         }
@@ -1167,6 +1171,7 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
         m_img_widget->loadFile(file);
 
         QStringList dd;
+        dd.reserve(files.size());
 
         for (const auto &file : files)
             dd.push_back(QString::fromStdString(file));
@@ -1383,7 +1388,7 @@ void IMGV::createTag() noexcept
         return;
     }
 
-    m_tags.emplaceBack(new_tag_name);
+    m_tags.push_back(new_tag_name);
 }
 
 void IMGV::assignTagToImage() noexcept
@@ -1445,7 +1450,7 @@ void IMGV::processStdin() noexcept
     {
         tempPixFile.write(data);
         QString filename = tempPixFile.fileName();
-        m_temp_files.emplaceBack(filename);
+        m_temp_files.push_back(filename);
         m_thumbnail_view->createThumbnail(filename);
         m_img_widget->loadFile(filename);
     }

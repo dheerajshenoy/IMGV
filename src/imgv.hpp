@@ -30,7 +30,6 @@
 #include "StatusBar.hpp"
 #include "sol/sol.hpp"
 #include "AboutDialog.hpp"
-#include "exif.hpp"
 #include "ThumbnailView.hpp"
 #include "ThumbnailModel.hpp"
 #include "rapidjson/rapidjson.h"

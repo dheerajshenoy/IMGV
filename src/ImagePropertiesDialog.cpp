@@ -1,4 +1,6 @@
 #include "ImagePropertiesDialog.hpp"
+#include "rapidjson/document.h"
+#include <qtablewidget.h>
 
 ImagePropertiesDialog::ImagePropertiesDialog(const QString& _filename, QWidget *parent)
     : QDialog(parent)
@@ -6,10 +8,7 @@ ImagePropertiesDialog::ImagePropertiesDialog(const QString& _filename, QWidget *
 
     QString _format = utils::detectImageFormat(_filename);
     QImage img;
-    if (_format == "WEBP")
-        img = utils::decodeWebPToImage(_filename);
-    else
-        img = QImage(_filename);
+    img = utils::decodeToPixmap(_filename).toImage();
 
     QLocale locale;
     QFormLayout *layout = new QFormLayout(this);
@@ -56,63 +55,164 @@ ImagePropertiesDialog::ImagePropertiesDialog(const QString& _filename, QWidget *
 
 void ImagePropertiesDialog::showEXIFProperties(const QString& filename) noexcept
 {
-    using namespace easyexif;
-    EXIFInfo exifInfo;
-    QFile file(filename);
-    file.open(QIODevice::ReadOnly);
-    auto data = file.readAll();
-    file.close();
-    exifInfo.parseFrom(reinterpret_cast<const unsigned char*>(data.constData()), data.size());
-    QString exifData = QString("Camera make       : %1\n"
-                               "Camera model      : %2\n"
-                               "Software          : %3\n"
-                               "Bits per sample   : %4\n"
-                               "Image width       : %5\n"
-                               "Image height      : %6\n"
-                               "Image description : %7\n"
-                               "Image orientation : %8\n"
-                               "Image copyright   : %9\n"
-                               "Image date/time   : %10\n"
-                               "Original date/time: %11\n"
-                               "Digitize date/time: %12\n"
-                               "Subsecond time    : %13\n"
-                               "Exposure time     : 1/%14 s\n"
-                               "F-stop            : f/%15\n"
-                               "ISO speed         : %16\n"
-                               "Subject distance  : %17 m\n"
-                               "Exposure bias     : %18 EV\n"
-                               "Flash used?       : %19\n"
-                               "Metering mode     : %20\n"
-                               "Lens focal length : %21 mm\n"
-                               "35mm focal length : %22 mm\n"
-                               "GPS Latitude      : %23 deg\n"
-                               "GPS Longitude     : %24 deg\n"
-                               "GPS Altitude      : %25 m")
-        .arg(QString::fromStdString(exifInfo.Make))
-        .arg(QString::fromStdString(exifInfo.Model))
-        .arg(QString::fromStdString(exifInfo.Software))
-        .arg(exifInfo.BitsPerSample)
-        .arg(exifInfo.ImageWidth)
-        .arg(exifInfo.ImageHeight)
-        .arg(QString::fromStdString(exifInfo.ImageDescription))
-        .arg(exifInfo.Orientation)
-        .arg(QString::fromStdString(exifInfo.Copyright))
-        .arg(QString::fromStdString(exifInfo.DateTime))
-        .arg(QString::fromStdString(exifInfo.DateTimeOriginal))
-        .arg(QString::fromStdString(exifInfo.DateTimeDigitized))
-        .arg(QString::fromStdString(exifInfo.SubSecTimeOriginal))
-        .arg(static_cast<unsigned>(1.0 / exifInfo.ExposureTime))
-        .arg(exifInfo.FNumber, 0, 'f', 1)
-        .arg(exifInfo.ISOSpeedRatings)
-        .arg(exifInfo.SubjectDistance, 0, 'f', 2)
-        .arg(exifInfo.ExposureBiasValue, 0, 'f', 2)
-        .arg(exifInfo.Flash)
-        .arg(exifInfo.MeteringMode)
-        .arg(exifInfo.FocalLength, 0, 'f', 2)
-        .arg(exifInfo.FocalLengthIn35mm)
-        .arg(exifInfo.GeoLocation.Latitude, 0, 'f', 6)
-        .arg(exifInfo.GeoLocation.Longitude, 0, 'f', 6)
-        .arg(exifInfo.GeoLocation.Altitude, 0, 'f', 2);
+    std::vector<std::string> exifAttributes = {
+        "EXIF:Make",
+        "EXIF:Model",
+        "EXIF:ExposureTime",
+        "EXIF:FNumber",
+        "EXIF:ISOSpeedRatings",
+        "EXIF:DateTime",
+        "EXIF:ShutterSpeedValue",
+        "EXIF:ApertureValue",
+        "EXIF:ExposureBiasValue",
+        "EXIF:MeteringMode",
+        "EXIF:Flash",
+        "EXIF:FocalLength",
+        "EXIF:WhiteBalance",
+        "EXIF:GPSLatitude",
+        "EXIF:GPSLongitude",
+        "EXIF:GPSAltitude",
+        "EXIF:Software",
+        "EXIF:Copyright",
+        "EXIF:Artist",
+        "EXIF:Orientation",
+        "EXIF:ImageWidth",
+        "EXIF:ImageHeight",
+        "EXIF:ResolutionUnit",
+        "EXIF:ExifImageWidth",
+        "EXIF:ExifImageHeight",
+        "EXIF:ExposureProgram",
+        "EXIF:DigitalZoomRatio",
+        "EXIF:Contrast",
+        "EXIF:Saturation",
+        "EXIF:Sharpness",
+        "EXIF:SubjectDistance",
+        "EXIF:SceneCaptureType",
+        "EXIF:GainControl",
+        "EXIF:MaxApertureValue",
+        "EXIF:LightSource"
+    };
 
-    QMessageBox::information(this, "Metadata", exifData);
+    constexpr unsigned int size = 34;
+
+    Magick::InitializeMagick(nullptr);
+
+    // Load the image
+    Magick::Image image;
+
+
+    image.read(filename.toStdString());
+
+    QDialog *d = new QDialog(this);
+    QFormLayout *layout = new QFormLayout(d);
+    QTableWidget *exifTable = new QTableWidget(size, 2, this);
+    QPushButton *export_to_json_btn = new QPushButton("Export to JSON");
+    layout->addWidget(exifTable);
+    layout->addWidget(export_to_json_btn);
+
+    exifTable->setHorizontalHeaderLabels({"EXIF Attribute", "Value"});
+    exifTable->horizontalHeader()->setStretchLastSection(true);
+    exifTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Stretch);
+    exifTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    exifTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+    for(int i=0; i < size; i++)
+    {
+        auto attribute = exifAttributes.at(i);
+        QTableWidgetItem *attribute_name_item = new QTableWidgetItem(QString::fromStdString(attribute));
+        auto value = QString::fromStdString(image.attribute(attribute));
+        QTableWidgetItem *attribute_value_item = new QTableWidgetItem(value);
+        exifTable->setItem(i, 0, attribute_name_item);
+        exifTable->setItem(i, 1, attribute_value_item);
+    }
+
+    QCheckBox *m_toggle_no_data_rows_cb = new QCheckBox("Hide rows with no values");
+    layout->addWidget(m_toggle_no_data_rows_cb);
+
+    connect(m_toggle_no_data_rows_cb, &QCheckBox::toggled, [exifTable](const bool &state) {
+        exifTable->setUpdatesEnabled(false);
+        for (int row = 0; row < exifTable->rowCount(); row++)
+            if (exifTable->item(row, 1)->text().isEmpty())
+                exifTable->setRowHidden(row, state);
+        exifTable->setUpdatesEnabled(true);
+    });
+
+    connect(export_to_json_btn, &QPushButton::clicked, this, [&, exifTable]() {
+        QString filename = QFileDialog::getSaveFileName(this, "Save EXIF Metadata", "Select file", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp *.heic *.heif)"));
+        if (filename.isEmpty())
+            return;
+
+        // Initialize RapidJSON document
+        rapidjson::Document document;
+        document.SetObject();
+        rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+
+        // Create a JSON array to hold EXIF attributes and values
+        rapidjson::Value exifArray(rapidjson::kArrayType);
+
+        // Create a single JSON object to hold all EXIF key-value pairs
+        rapidjson::Value exifObject(rapidjson::kObjectType);
+
+        // Iterate over rows of the QTableWidget
+        for (int i = 0; i < size; ++i)
+        {
+            QTableWidgetItem *attributeItem = exifTable->item(i, 0);
+            QTableWidgetItem *valueItem = exifTable->item(i, 1);
+
+            // Ensure items are valid
+            if (attributeItem && valueItem)
+            {
+                QString attribute = attributeItem->text();
+                QString value = valueItem->text();
+
+                // Add the attribute and its value to the EXIF object
+                exifObject.AddMember(
+                    rapidjson::Value(attribute.toStdString().c_str(), allocator),
+                    rapidjson::Value(value.toStdString().c_str(), allocator),
+                    allocator
+                );
+            }
+        }
+
+        // Add the EXIF object to the array
+        exifArray.PushBack(exifObject, allocator);
+
+        // Add the EXIF array to the document with the key "exif"
+        document.AddMember("exif", exifArray, allocator);
+
+        QMessageBox mini_or_readable_msg_box;
+        QAbstractButton *miniBtn = mini_or_readable_msg_box.addButton("Mini Verson", QMessageBox::YesRole);
+        QAbstractButton *readableBtn = mini_or_readable_msg_box.addButton("Readable Version", QMessageBox::NoRole);
+
+        mini_or_readable_msg_box.setText("Do you want the \"mini\" version of the JSON file or file which is pretty and readable ? If you don't know what \"mini\" files are, go with the pretty version.");
+        mini_or_readable_msg_box.setWindowTitle("JSON write mode");
+        mini_or_readable_msg_box.exec();
+
+        // Convert JSON document to string
+        rapidjson::StringBuffer buffer;
+
+        if (mini_or_readable_msg_box.clickedButton() == miniBtn)
+        {
+            rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+            document.Accept(writer);
+        }
+        else if (mini_or_readable_msg_box.clickedButton() == readableBtn)
+        {
+            rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+            document.Accept(writer);
+        }
+        
+        // Write JSON string to file
+        QFile file(filename);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(&file);
+            out << QString::fromUtf8(buffer.GetString(), buffer.GetSize());
+            file.close();
+        } else {
+            qWarning() << "Unable to open file for writing:" << filename;
+        }
+        });
+
+
+    d->open();
 }

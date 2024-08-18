@@ -308,6 +308,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Fix: Reload color picker pixmap on loading an image
     - Added copy to clipboard on doubleclick support for color picker colors
     - Use ImageMagick library to load images and not use Qt6 in-built image decoders. This allows for larger support of images for imgv. Check [here](https://imagemagick.org/script/formats.php#supported) for the supported formats.
+    - Export image EXIF metadata into JSON with mini and readable version.
 
 - 17 Aug 2024
 

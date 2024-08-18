@@ -22,7 +22,6 @@ qt_add_executable(${PROJECT_NAME}
     src/Thumbnail.cpp
     src/AboutDialog.cpp
     src/utils.cpp
-    src/exif.cpp
     src/ThumbnailView.cpp
     src/ThumbnailModel.cpp
     src/NoteWidget.cpp
@@ -44,7 +43,6 @@ qt_add_executable(${PROJECT_NAME}
     src/AboutDialog.hpp
     src/MovieItem.hpp
     src/utils.hpp
-    src/exif.hpp
     src/ThumbnailView.hpp
     src/ThumbnailModel.hpp
     src/ThumbnailFilterProxy.hpp

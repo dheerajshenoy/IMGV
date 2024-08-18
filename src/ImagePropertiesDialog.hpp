@@ -4,10 +4,16 @@
 #include <QDialog>
 #include <QFormLayout>
 #include <QPushButton>
+#include <QCheckBox>
 #include <QMessageBox>
+#include <QTableWidget>
+#include <QHeaderView>
 #include <QLabel>
+#include <QFileDialog>
 #include "utils.hpp"
-#include "exif.hpp"
+#include <Magick++.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/prettywriter.h>
 
 class ImagePropertiesDialog : public QDialog
 {
