@@ -104,7 +104,10 @@ IMGV uses [ImageMagick](https://imagemagick.org/) image library for decoding ima
 (Before imgv 2.0l Qts default image decoders were used to load the images.)
 
 <details>
-
+<summary>
+    Exhaustive supported image format
+</summary>
+    
 - **3FR**: Hasselblad 3F RAW image
 - **AI**: Adobe Illustrator file
 - **ART**: AROPA ART image
