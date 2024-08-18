@@ -108,74 +108,113 @@ IMGV uses [ImageMagick](https://imagemagick.org/) image library for decoding ima
     Exhaustive supported image format
 </summary>
     
-- **3FR**: Hasselblad 3F RAW image
-- **AI**: Adobe Illustrator file
-- **ART**: AROPA ART image
-- **ARW**: Sony Alpha RAW image
-- **AVS**: AVS (American Virtual Space) image
-- **BMP**: Microsoft Windows Bitmap
-- **BRF**: Braille
-- **BRK**: Braille
-- **CALS**: CALS Raster format
+- **ART**: PFS: 1st Publisher
+- **AVI**: Microsoft Audio/Visual Interleaved
+- **AVS**: AVS X image
+- **BMP**: Microsoft Windows bitmap
 - **CGM**: Computer Graphics Metafile
-- **CR2**: Canon RAW version 2 image
-- **CRW**: Canon RAW image
-- **CUR**: Microsoft Windows cursor
-- **DIB**: Device Independent Bitmap
-- **DJVU**: DjVu image
-- **DPX**: Digital Picture Exchange image
-- **DNG**: Adobe Digital Negative
-- **DOT**: DOT graph file
-- **EPI**: Encapsulated PostScript image
-- **EPX**: EPX image
-- **EXR**: OpenEXR image
+- **CIN**: Kodak Cineon Image Format
+- **CMYK**: Raw cyan, magenta, yellow, and black samples
+- **CMYKA**: Raw cyan, magenta, yellow, black, and alpha samples
+- **CUR**: Microsoft Cursor Icon
+- **CUT**: DR Halo
+- **DCM**: Digital Imaging and Communications in Medicine (DICOM) image
+- **DCX**: ZSoft IBM PC multi-page Paintbrush image
+- **DIB**: Microsoft Windows Device Independent Bitmap
+- **DNG**: Digital Negative
+- **DOT**: Graph Visualization
+- **DPX**: SMPTE Digital Moving Picture Exchange
+- **EMF**: Microsoft Enhanced Metafile (32-bit)
+- **EPDF**: Encapsulated Portable Document Format
+- **EPI**: Adobe Encapsulated PostScript Interchange format
+- **EPS**: Adobe Encapsulated PostScript
+- **EPS2**: Adobe Level II Encapsulated PostScript
+- **EPS3**: Adobe Level III Encapsulated PostScript
+- **EPSF**: Adobe Encapsulated PostScript
+- **EPSI**: Adobe Encapsulated PostScript Interchange format
+- **EPT**: Adobe Encapsulated PostScript Interchange format with TIFF preview
+- **FAX**: Group 3 TIFF
+- **FIG**: FIG graphics format
 - **FITS**: Flexible Image Transport System
-- **FLIF**: Free Lossless Image Format
-- **FLV**: Flash Video
-- **GIF**: Graphics Interchange Format
-- **HEIC**: High Efficiency Image Coding
-- **HEIF**: High Efficiency Image Format
-- **ICO**: Microsoft Windows Icon
-- **IMAGE**: Generic image
-- **INFO**: Image metadata
-- **IPTC**: IPTC metadata
-- **J2K**: JPEG 2000 image
-- **JNG**: JPEG Network Graphics
-- **JPEG**: JPEG image
-- **JPG**: JPEG image
-- **JXR**: JPEG XR image
-- **K25**: Kodak K25 image
-- **KDC**: Kodak DC120 image
-- **MAP**: Image map
+- **FPX**: FlashPix Format
+- **GIF**: CompuServe Graphics Interchange Format
+- **GPLT**: Gnuplot plot files
+- **GRAY**: Raw gray samples
+- **HPGL**: HP-GL plotter language
+- **HTML**: Hypertext Markup Language with a client-side image map
+- **ICO**: Microsoft icon
+- **INFO**: Format and characteristics of the image
+- **JBIG**: Joint Bi-level Image experts Group file interchange format
+- **JNG**: Multiple-image Network Graphics
+- **JP2**: JPEG-2000 JP2 File Format Syntax
+- **JPC**: JPEG-2000 Code Stream Syntax
+- **JPEG**: Joint Photographic Experts Group JFIF format
+- **MAN**: Unix reference manual pages
+- **MAT**: MATLAB image format
+- **MIFF**: Magick image file format
+- **MONO**: Bi-level bitmap in least-significant-byte first order
 - **MNG**: Multiple-image Network Graphics
-- **MOS**: Leaf RAW image
-- **MRW**: Minolta RAW image
-- **MTV**: MTV video
-- **NEF**: Nikon Electronic Format image
-- **ORF**: Olympus RAW image
-- **PBM**: Portable Bitmap
-- **PCD**: Kodak Photo CD image
-- **PCL**: Printer Command Language
-- **PCX**: PC Paintbrush image
-- **PGM**: Portable Graymap
+- **MPEG**: Motion Picture Experts Group file interchange format (version 1)
+- **M2V**: Motion Picture Experts Group file interchange format (version 2)
+- **MPC**: Magick Persistent Cache image file format
+- **MSL**: Magick Scripting Language
+- **MTV**: MTV Raytracing image format
+- **MVG**: Magick Vector Graphics
+- **OTB**: On-the-air Bitmap
+- **P7**: Xv's Visual Schnauzer thumbnail format
+- **PALM**: Palm pixmap
+- **PAM**: Common 2-dimensional bitmap format
+- **PBM**: Portable bitmap format (black and white)
+- **PCD**: Photo CD
+- **PCL**: HP Page Control Language
+- **PCX**: ZSoft IBM PC Paintbrush file
+- **PDB**: Palm Database ImageViewer Format
+- **PDF**: Portable Document Format
+- **PFA**: Postscript Type 1 font (ASCII)
+- **PFB**: Postscript Type 1 font (binary)
+- **PGM**: Portable graymap format (gray scale)
+- **PICON**: Personal Icon
+- **PICT**: Apple Macintosh QuickDraw/PICT file
+- **PIX**: Alias/Wavefront RLE image format
 - **PNG**: Portable Network Graphics
-- **PPM**: Portable Pixmap
-- **PSD**: Adobe Photoshop image
-- **RAS**: Sun Raster image
-- **RGB**: RGB image
-- **RGBA**: RGB image with alpha channel
-- **RW2**: Panasonic RAW image
-- **SGI**: Silicon Graphics image
-- **SPP**: Sony RAW image
+- **PNM**: Portable anymap
+- **PPM**: Portable pixmap format (color)
+- **PS**: Adobe PostScript file
+- **PS2**: Adobe Level II PostScript file
+- **PS3**: Adobe Level III PostScript file
+- **PSD**: Adobe Photoshop bitmap file
+- **PTIF**: Pyramid encoded TIFF
+- **PWP**: Seattle File Works multi-image file
+- **RAD**: Radiance image file
+- **RGB**: Raw red, green, and blue samples
+- **RGBA**: Raw red, green, blue, and alpha samples
+- **RLA**: Alias/Wavefront image file
+- **RLE**: Utah Run length encoded image file
+- **SCT**: Scitex Continuous Tone Picture
+- **SFW**: Seattle File Works image
+- **SGI**: Irix RGB image
+- **SHTML**: Hypertext Markup Language client-side image map
+- **SUN**: SUN Rasterfile
 - **SVG**: Scalable Vector Graphics
-- **TGA**: Truevision TARGA image
+- **TGA**: Truevision Targa image
 - **TIFF**: Tagged Image File Format
-- **WEBP**: WebP image
+- **TIM**: PSX TIM file
+- **TTF**: TrueType font file
+- **TXT**: Raw text file
+- **UIL**: X-Motif UIL table
+- **UYVY**: Interleaved YUV raw image
+- **VICAR**: VICAR rasterfile format
+- **VIFF**: Khoros Visualization Image File Format
+- **WBMP**: Wireless bitmap
 - **WMF**: Windows Metafile
-- **XBM**: X Bitmap
-- **XPM**: X PixMap
-- **XWD**: X Window Dump
-- **YUV**: YUV image
+- **WPG**: Word Perfect Graphics File
+- **XBM**: X Windows system bitmap, black and white only
+- **XCF**: GIMP image
+- **XPM**: X Windows system pixmap
+- **XWD**: X Windows system window dump
+- **YCbCr**: Raw Y, Cb, and Cr samples
+- **YCbCrA**: Raw Y, Cb, Cr, and alpha samples
+- **YUV**: CCIR 601 4:1:1
 </details>
 
 
