@@ -75,11 +75,11 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     });
 
     connect(m_thumbnail_search_edit, &QLineEdit::textChanged, this, &IMGV::ThumbSearchTextChanged);
+
     connect(m_thumbnail_search_edit, &QLineEdit::returnPressed, this, [&]() {
         m_thumbnail_view->searchMode(false);
         m_thumbnail_search_edit->setVisible(false);
     });
-
 
     m_centralWidget->setLayout(m_layout);
     m_splitter->setStretchFactor(1, 1);

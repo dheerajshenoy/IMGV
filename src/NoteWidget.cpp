@@ -18,6 +18,7 @@ NoteWidget::NoteWidget(QWidget *parent)
 
     connect(this->document(), &QTextDocument::modificationChanged, this, [&](bool state) { emit modificationChanged(state); });
 
+    this->setPlaceholderText("Type your notes here");
 }
 void NoteWidget::keyPressEvent(QKeyEvent *e) noexcept
 {

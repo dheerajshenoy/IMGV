@@ -311,6 +311,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Fix: Imagewidget drop image crash
     - Alternate colors option for thumbnail background
     - text wrap option for filename in thumbnail panel
+    - Show mouse position in color picker
 
 - 18 Aug 2024
 

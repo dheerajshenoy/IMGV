@@ -8,6 +8,7 @@ PixAnalyser::PixAnalyser(QWidget *parent)
     this->setWindowFlag(Qt::WindowType::Dialog);
 
     m_layout->addRow(m_color);
+    m_layout->addRow("Position: ", m_pos);
     m_layout->addRow("HEX:", m_color_hex);
     m_layout->addRow("RGBA:", m_color_rgb);
     m_layout->addRow("HSVA:", m_color_hsv);
@@ -33,6 +34,8 @@ void PixAnalyser::analysePix(const QPointF &loc) const noexcept
     auto x = loc.x();
     auto y = loc.y();
     if ( (x < 0 || x > m_img.width()) || (y < 0 || y > m_img.height()) ) return;
+
+    m_pos->setText(QString("%1, %2").arg(loc.x()).arg(loc.y()));
 
     QColor color = QColor(m_img.pixelColor(x, y));
     m_color_hex->setText(color.name());
