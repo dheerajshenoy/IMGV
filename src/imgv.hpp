@@ -165,6 +165,7 @@ private:
     QAction *session__saveSession = new QAction("Save");
     QAction *session__closeSession = new QAction("Close");
     QMenu *session__tags = new QMenu("Tag");
+    QAction *session__manage_sessions = new QAction("Manage Sessions");
 
     QAction *tags_assign = new QAction("Assign");
     QAction *tags_new = new QAction("New");
@@ -206,7 +207,6 @@ private:
     QAction *view__notes = new QAction("Notes");
     QAction *view__maximize_image = new QAction("Maximize Image");
 
-    QAction *tools__manage_sessions = new QAction("Manage Sessions");
     QAction *tools__pix_analyser = new QAction("Pixel Analyser");
     QAction *tools__slideshow = new QAction("Slideshow");
 
@@ -240,6 +240,9 @@ private:
 
     ManageTagDialog *m_manage_tag_dialog = nullptr;
     bool m_stdin = false;
+
+    QString m_supported_image_formats;
+    QStringList m_supported_image_formats_list;
 };
 
 

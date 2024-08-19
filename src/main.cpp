@@ -7,20 +7,21 @@ int main (int argc, char *argv[]) {
 
     parser.add_description("Image viewer no one asked for.\n\n");
 
+    parser.add_argument("-s", "--session")
+        .help("Open session file providing name of the session or it's path")
+        .nargs(1)
+        .metavar("session-name/session-path");
+
     parser.add_argument("-i", "--input")
         .help("Open Image files(s)")
         .nargs(argparse::nargs_pattern::at_least_one)
         .metavar("files")
         .append();
 
-    parser.add_argument("-s", "--session")
-        .help("Open session file providing name of the session or path to a session file")
-        .nargs(1)
-        .metavar("session-name/session-path");
-
     parser.add_argument("-S", "--new-session")
         .help("Open in new session")
-        .nargs(1);
+        .nargs(1)
+        .metavar("session-name");
 
     parser.add_argument("-n", "--no-config")
         .help("Load without any lua configuration")

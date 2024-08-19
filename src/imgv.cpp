@@ -26,6 +26,33 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     m_right_pane_splitter->addWidget(m_img_widget);
     m_right_pane_splitter->addWidget(m_note_holder);
 
+    m_supported_image_formats = 
+        "Images ("
+        "*.art *.avi *.avs *.bmp *.cgm *.cin *.cmyk *.cmyka *.cur *.cut "
+        "*.dcm *.dcx *.dib *.dng *.dot *.dpx *.emf *.epdf *.epi *.eps *.eps2 "
+        "*.eps3 *.epsf *.epsi *.ept *.fax *.fig *.fits *.fpx *.gif *.gplt *.gray "
+        "*.hpgl *.html *.ico *.info *.jbig *.jng *.jp2 *.jpc *.jpeg *.jpg *.man "
+        "*.mat *.miff *.mono *.mng *.mpeg *.m2v *.mpc *.msl *.mtv *.mvg *.otb "
+        "*.p7 *.palm *.pam *.pbm *.pcd *.pcl *.pcx *.pdb *.pdf *.pfa *.pfb *.pgm "
+        "*.picon *.pict *.pix *.png *.pnm *.ppm *.ps *.ps2 *.ps3 *.psd *.ptif "
+        "*.pwp *.rad *.rgb *.rgba *.rla *.rle *.sct *.sfw *.sgi *.shtml *.sun "
+        "*.svg *.tga *.tiff *.tim *.ttf *.txt *.uil *.uyvy *.vicar *.viff *.wbmp "
+        "*.wmf *.wpg *.xbm *.xcf *.xpm *.xwd *.ycbcr *.ycbcra *.yuv"
+        ")";
+
+    m_supported_image_formats_list = {
+        "art", "avi", "avs", "bmp", "cgm", "cin", "cmyk", "cmyka", "cur", "cut",
+        "dcm", "dcx", "dib", "dng", "dot", "dpx", "emf", "epdf", "epi", "eps", "eps2",
+        "eps3", "epsf", "epsi", "ept", "fax", "fig", "fits", "fpx", "gif", "gplt", "gray",
+        "hpgl", "html", "ico", "info", "jbig", "jng", "jp2", "jpc", "jpeg", "jpg", "man",
+        "mat", "miff", "mono", "mng", "mpeg", "m2v", "mpc", "msl", "mtv", "mvg", "otb",
+        "p7", "palm", "pam", "pbm", "pcd", "pcl", "pcx", "pdb", "pdf", "pfa", "pfb", "pgm",
+        "picon", "pict", "pix", "png", "pnm", "ppm", "ps", "ps2", "ps3", "psd", "ptif",
+        "pwp", "rad", "rgb", "rgba", "rla", "rle", "sct", "sfw", "sgi", "shtml", "sun",
+        "svg", "tga", "tiff", "tim", "ttf", "txt", "uil", "uyvy", "vicar", "viff", "wbmp",
+        "wmf", "wpg", "xbm", "xcf", "xpm", "xwd", "ycbcr", "ycbcra", "yuv"
+    };
+
     parseCommandLineArguments(parser);
     initMenu();
     initConnections();
@@ -535,6 +562,7 @@ void IMGV::initMenu() noexcept
     sessionMenu->addAction(session__saveSession);
     sessionMenu->addAction(session__closeSession);
     sessionMenu->addMenu(session__tags);
+    sessionMenu->addAction(session__manage_sessions);
 
     session__tags->addAction(tags_assign);
     session__tags->addAction(tags_new);
@@ -589,7 +617,6 @@ void IMGV::initMenu() noexcept
     view__notes->setCheckable(true);
     view__minimap->setCheckable(true);
 
-    toolsMenu->addAction(tools__manage_sessions);
     toolsMenu->addAction(tools__pix_analyser);
     toolsMenu->addAction(tools__slideshow);
 
@@ -655,7 +682,7 @@ void IMGV::initMenu() noexcept
 
     connect(session__saveSession, &QAction::triggered, this, &IMGV::saveSession);
 
-    connect(tools__manage_sessions, &QAction::triggered, [&]() {
+    connect(session__manage_sessions, &QAction::triggered, [&]() {
         ManageSessionsDialog *md = new ManageSessionsDialog(m_sessions_dir_path, this);
         connect(md, &ManageSessionsDialog::openSession, [&](QString name) { openSession(name); });
         md->open();
@@ -829,7 +856,7 @@ void IMGV::initConnections() noexcept
 
 void IMGV::openImageInNewWindow() noexcept
 {
-    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp *.heic *.heif)"));
+    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", m_supported_image_formats);
     if (!files.isEmpty()) {
 
         QString program = QCoreApplication::applicationFilePath();
@@ -846,7 +873,7 @@ void IMGV::openImageInNewWindow() noexcept
 
 void IMGV::openImage() noexcept
 {
-    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", tr("Images (*.png *.jpg *.bmp *.gif *.svg *.webp *.heic *.heif)"));
+    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", m_supported_image_formats);
     if (!files.isEmpty()) {
         m_thumbnail_view->createThumbnails(files);
         loadFile(files.at(0));
@@ -1233,8 +1260,10 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
         /*saveSession();*/
     }
 
-    if (parser.is_used("--session"))
+    if (parser.present("--session"))
+    {
         readSessionFile(QString::fromStdString(parser.get<std::string>("--session")));
+    }
 
     if (parser.is_used("--input"))
     {
@@ -1243,7 +1272,7 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
 
         if (QFileInfo(file).isDir())
         {
-            QStringList dirfiles = QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif" << "*.heic" << "*.heif", QDir::Files);
+            QStringList dirfiles = QDir(file).entryList(m_supported_image_formats_list, QDir::Files);
             for(int i=0; i < dirfiles.size(); i++)
                 dirfiles[i] = QString("%1%2%3").arg(file).arg(QDir::separator()).arg(dirfiles.at(i));
 
@@ -1275,7 +1304,7 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
         // If directory is mentioned, try to read all the compatible files from the directory
         if (QFileInfo(file).isDir())
         {
-            m_thumbnail_view->createThumbnails(QDir(file).entryList(QStringList() << "*.jpg" << "*.svg" << "*.jpeg" << "*.webp" << "*.png" << "*.bmp" << "*.gif" << "*.heic" << "*.heif", QDir::Files));
+            m_thumbnail_view->createThumbnails(QDir(file).entryList(m_supported_image_formats_list, QDir::Files));
             /*for(const auto &f: dirfiles)*/
             /*    m_thumbnail_view->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));*/
             /*return;*/
@@ -1547,7 +1576,7 @@ void IMGV::addSessionsToOpenSessionMenu() noexcept
 
     for(const auto &file: session_files)
     {
-        QAction *action = new QAction(file);
+        QAction *action = new QAction(QFileInfo(file).baseName());
         connect(action, &QAction::triggered, [&]() {
             QString filename = reinterpret_cast<QAction*>(sender())->text();
             QString file = QString("%1%2%3").arg(m_sessions_dir_path).arg(QDir::separator()).arg(filename);

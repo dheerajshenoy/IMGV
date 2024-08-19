@@ -302,6 +302,11 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 
 # Changelogs and Bug Fixes
 
+- 19 Aug 2024
+
+    - Started working on the Wiki page
+
+
 - 18 Aug 2024
 
     - Added CMYK, HSLA, and alpha to HSV, RGB for the color picker
