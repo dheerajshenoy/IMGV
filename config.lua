@@ -28,7 +28,7 @@ Defaults = {
         layout = "left", -- "left", "bottom", "top", "right"
         mode = "list", -- icon or list
         resize = true,
-        uniform = false,
+        uniform = true,
         selection = "extended", -- "extended", "multi", "single", "contiguous",
         spacing = 0,
         icon_size = { width = 400, height = 400 },

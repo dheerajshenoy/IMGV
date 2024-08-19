@@ -437,6 +437,8 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 6. [ ] Sort options for sorting the images in the thumbnail panel like sorting by size, name, date modified etc.
 7. [ ] Fix the grid size and icon size options
 8. [ ] Custom thumbnail style
+9. [ ] Play-pause feature for gif images
+10. [ ] Use threading to open large set of images.
 
 <a name="thanks" />
 

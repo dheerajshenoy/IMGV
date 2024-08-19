@@ -65,6 +65,7 @@ qt_add_executable(${PROJECT_NAME}
     src/HoverLabel.hpp
     src/ThumbnailTools.hpp
     src/ManageTagDialog.hpp
+    src/ThumbnailViewStyledItemDelegate.hpp
 )
 
 qt_add_resources(${PROJECT_NAME}
