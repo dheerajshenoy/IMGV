@@ -941,6 +941,8 @@ void IMGV::saveSession() noexcept
             file.AddMember("path", rapidjson::Value(m_thumbnail_view->item(i, Qt::UserRole).toStdString().c_str(), allocator),
                            allocator);
 
+            qDebug() << m_thumbnail_view->item(i, Qt::UserRole);
+
             file.AddMember("note", rapidjson::Value(m_thumbnail_view->item(i, Thumbnail::Note).toStdString().c_str(), allocator),
                            allocator);
 
@@ -1081,9 +1083,7 @@ void IMGV::readSessionFile(QString& filename) noexcept
 
     Document doc;
     doc.ParseStream(isw);
-
-    if (doc.HasParseError())
-    {
+if (doc.HasParseError()) {
         QMessageBox::critical(this, "Error Parsing Session File", "There seems to be a problem reading the session file");
         return;
     }
@@ -1141,6 +1141,7 @@ void IMGV::readSessionFile(QString& filename) noexcept
     else
         QMessageBox::information(this, "Session Info", "No files found in the session file");
     ifs.close();
+
 }
 
 void IMGV::readSessionFile(QString&& filename) noexcept
@@ -1577,10 +1578,10 @@ void IMGV::addSessionsToOpenSessionMenu() noexcept
     for(const auto &file: session_files)
     {
         QAction *action = new QAction(QFileInfo(file).baseName());
-        connect(action, &QAction::triggered, [&]() {
-            QString filename = reinterpret_cast<QAction*>(sender())->text();
-            QString file = QString("%1%2%3").arg(m_sessions_dir_path).arg(QDir::separator()).arg(filename);
-            openSession(file);
+        connect(action, &QAction::triggered, [&, action]() {
+            QString filename = action->text() + ".imgv";
+            QString f = QString("%1%2%3").arg(m_sessions_dir_path).arg(QDir::separator()).arg(filename);
+            openSession(f);
             /*openSessionInNewWindow(file);*/
         });
 
