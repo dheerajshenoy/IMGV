@@ -354,8 +354,8 @@ void ImageWidget::dropEvent(QDropEvent *e) noexcept
             {
                 QString filepath = url.toLocalFile();
                 loadFile(filepath);
-                emit fileLoaded(filepath);
                 emit droppedImage(filepath);
+                emit fileLoaded(filepath);
             }
         }
     }

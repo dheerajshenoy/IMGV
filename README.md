@@ -427,6 +427,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 2. [ ] Highlight currently displayed file in the thumbnail panel
 3. [x] Color picker for gifs (currently works only on static images)
 4. [ ] Slideshow show current progress, pause and play instead of starting from the beginning each time
+5. [ ] Imagewidget drop image crash
 
 <a name="thanks" />
 

@@ -695,7 +695,7 @@ void IMGV::initMenu() noexcept
         if (m_thumbnail_view->currentThumbnail().hasNote())
         {
             // Auto Popup
-            if (!m_note_holder->isVisible() && m_auto_notes_popup)
+            if (m_auto_notes_popup && !m_note_holder->isVisible())
                 m_note_holder->setVisible(true);
 
             m_note_holder->setMarkdown(m_thumbnail_view->currentThumbnail().note());
@@ -704,7 +704,7 @@ void IMGV::initMenu() noexcept
         else
         {
             // Popup close
-            if (m_note_holder->isVisible() && m_auto_notes_popup)
+            if (m_auto_notes_popup && m_note_holder->isVisible())
                 m_note_holder->setVisible(false);
             m_statusbar->setHasNote(false);
         }

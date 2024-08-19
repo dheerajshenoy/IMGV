@@ -65,8 +65,8 @@ void ThumbnailView::createThumbnail(const QString &fileName) noexcept
     Thumbnail thumb(fileName);
     
     m_model->addThumbnail(thumb);
-    if (m_model->rowCount() >= 0)
-        setCurrentIndex(m_model->index(0));
+    /*if (m_model->rowCount() >= 0)*/
+    /*    setCurrentIndex(m_model->index(0));*/
 }
 
 void ThumbnailView::createThumbnail(QString&& fileName) noexcept
