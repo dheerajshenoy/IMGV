@@ -941,8 +941,6 @@ void IMGV::saveSession() noexcept
             file.AddMember("path", rapidjson::Value(m_thumbnail_view->item(i, Qt::UserRole).toStdString().c_str(), allocator),
                            allocator);
 
-            qDebug() << m_thumbnail_view->item(i, Qt::UserRole);
-
             file.AddMember("note", rapidjson::Value(m_thumbnail_view->item(i, Thumbnail::Note).toStdString().c_str(), allocator),
                            allocator);
 
@@ -1068,6 +1066,8 @@ void IMGV::readSessionFile(QString& filename) noexcept
     if (!filename.endsWith(".imgv"))
         filename = filename + ".imgv";
 
+
+
     auto sessions = getSessionFiles();
     if (sessions.indexOf(filename)> -1)
         filename = m_sessions_dir_path + QDir::separator() + filename;
@@ -1083,7 +1083,7 @@ void IMGV::readSessionFile(QString& filename) noexcept
 
     Document doc;
     doc.ParseStream(isw);
-if (doc.HasParseError()) {
+    if (doc.HasParseError()) {
         QMessageBox::critical(this, "Error Parsing Session File", "There seems to be a problem reading the session file");
         return;
     }
@@ -1374,7 +1374,6 @@ void IMGV::openSession(QString &file) noexcept
 {
     if (m_session_name.isEmpty() && m_thumbnail_view->count() == 0)
     {
-        closeSession();
         readSessionFile(file);
     }
     else

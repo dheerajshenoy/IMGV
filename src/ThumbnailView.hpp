@@ -31,7 +31,6 @@ public:
     void createThumbnail(QString&& fileName) noexcept;
     void createThumbnails(const QStringList &fileNames) noexcept;
     void createThumbnails(const QList<Thumbnail> &thumbnails) noexcept;
-    void loadFile(const QString &path) const noexcept;
     void gotoNext() noexcept;
     void gotoPrev() noexcept;
     int count() const noexcept;

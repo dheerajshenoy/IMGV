@@ -308,6 +308,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Dropped .imgv extension from the session name in the session open menu
     - Fix: Crash when opening session files from the session open menu
     - Fix: no files session open crash
+    - Fix: Imagewidget drop image crash
 
 
 - 18 Aug 2024
@@ -430,7 +431,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 2. [ ] Highlight currently displayed file in the thumbnail panel
 3. [x] Color picker for gifs (currently works only on static images)
 4. [ ] Slideshow show current progress, pause and play instead of starting from the beginning each time
-5. [ ] Imagewidget drop image crash
+5. [x] Imagewidget drop image crash
 
 <a name="thanks" />
 
