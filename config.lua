@@ -25,14 +25,18 @@ Defaults = {
 
     thumbnails = {
         show = true, -- show panel or not
-        layout = "bottom", -- "left", "bottom", "top", "right"
+        layout = "left", -- "left", "bottom", "top", "right"
         mode = "list", -- icon or list
         resize = true,
-        uniform = true,
+        uniform = false,
         selection = "extended", -- "extended", "multi", "single", "contiguous",
         spacing = 0,
-        icon_size = { width = 100, height = 100 },
-        text_elide = "middle", -- "none", "left", "right", "middle"
+        icon_size = { width = 400, height = 400 },
+        text = {
+            elide = "middle", -- "none", "left", "right", "middle"
+            wrap = false,
+        },
+        alternate_colors = true,
     },
 
     keybindings = {
