@@ -14,10 +14,10 @@ Only for **Linux**.
 
 With [features](#features) I wanted in my dream image viewer.
 
-Supports more than **100** file formats.
+Supports more than **100** file formats, thanks to ImageMagick integration.
 
 <br/>
-<br/>libmagick++-dev
+<br/>
 Total lines of code excluding the external libraries (Sol, rapidjson, qmarkdowntextedit) is 4617 lines (source and header file).
 
 # Table of Contents
