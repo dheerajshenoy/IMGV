@@ -20,6 +20,7 @@
 #include "ThumbnailFilterProxy.hpp"
 #include "Thumbnail.hpp"
 #include "ImagePropertiesDialog.hpp"
+#include "ThumbnailViewStyledItemDelegate.hpp"
 
 class ThumbnailView : public QListView
 {
@@ -53,6 +54,28 @@ public:
     int currentHighlightIndex() const noexcept;
     void setFilterByTag(const QString& tagname) noexcept;
 
+    /*inline void setIconSize(QSize&& size) const noexcept*/
+    /*{*/
+    /*    m_item_delegate->setIconSize(size);*/
+    /*}*/
+    /**/
+    /*inline void setIconSize(const QSize& size) const noexcept*/
+    /*{*/
+    /*    m_item_delegate->setIconSize(size);*/
+    /*}*/
+    /**/
+    /*inline void setTextElideMode(const Qt::TextElideMode &mode) const noexcept*/
+    /*{*/
+    /*    m_item_delegate->setTextElideMode(mode);*/
+    /*}*/
+    /**/
+    /*inline void setTextElideMode(Qt::TextElideMode&& mode) const noexcept*/
+    /*{*/
+    /*    m_item_delegate->setTextElideMode(mode);*/
+    /*}*/
+
+
+
 signals:
     void fileChangeRequested(QString);
     void visibilityChanged(bool);
@@ -83,6 +106,8 @@ private:
     QAction *m_action__show_in_explorer = new QAction("Show in File Explorer");
     QAction *m_action__image_properties = new QAction("Properties");
 
+
+    ThumbnailViewStyledItemDelegate *m_item_delegate = new ThumbnailViewStyledItemDelegate();
     ThumbnailFilterProxy *m_filter_proxy = new ThumbnailFilterProxy();
 };
 

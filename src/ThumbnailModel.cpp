@@ -51,17 +51,17 @@ QVariant ThumbnailModel::data(const QModelIndex &index, int role) const noexcept
     const Thumbnail &thumbnail = m_thumbnails.at(index.row());
 
     if (role == Thumbnail::FileName)
-        return const_cast<Thumbnail &>(thumbnail).filename();
+        return thumbnail.filename();
     else if (role == Qt::DisplayRole)
-        return QFileInfo(const_cast<Thumbnail &>(thumbnail).filename()).fileName();
+        return QFileInfo(thumbnail.filename()).fileName();
     else if (role == Qt::DecorationRole)
-        return QIcon(const_cast<Thumbnail&>(thumbnail).pixmap());
+        return QIcon((thumbnail).pixmap());
     else if (role == Thumbnail::Note)
-        return const_cast<Thumbnail&>(thumbnail).note();
+        return thumbnail.note();
     else if (role == Thumbnail::Tag)
-        return const_cast<Thumbnail&>(thumbnail).tag();
+        return thumbnail.tag();
     else if (role == Qt::ToolTipRole)
-        return const_cast<Thumbnail &>(thumbnail).filename();
+        return thumbnail.filename();
 
     return QVariant();
 }

@@ -4,63 +4,37 @@ Thumbnail::Thumbnail()
 {}
 
 Thumbnail::Thumbnail(const QString &fileName) noexcept
+    : m_filename(fileName)
 {
-    auto format = utils::detectImageFormat(fileName);
-
-    if (format == "WEBP")
-    {
-        m_pix = utils::decodeWebPToPixmap(fileName).scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-    else if (format == "HEIC" || format == "HEIF")
-    {
-        m_pix = utils::decodeHeicToPixmap(fileName).scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-
-    else
-    {
-        QPixmap pixmap(fileName);
-        if (pixmap.isNull()) return;
-        m_pix = pixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-
-    m_filename = fileName;
-    m_note = "";
+    m_pix = utils::decodeToPixmap(fileName);
+    if (!m_pix.isNull())
+        m_pix = m_pix.scaled(m_pix_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 Thumbnail::Thumbnail(const QString &fileName, const QPixmap &pix) noexcept
+    : m_filename(fileName)
 {
-    if (pix.isNull()) return;
-    m_pix = pix.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    m_filename = fileName;
-    m_note = "";
+    if (!pix.isNull())
+        m_pix = pix.scaled(m_pix_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 Thumbnail::Thumbnail(const QString &fileName, const QString &note) noexcept
+    : m_filename(fileName), m_note(note)
 {
-    if (utils::detectImageFormat(fileName) != "WEBP")
-    {
-        QPixmap pixmap(fileName);
-        if (pixmap.isNull()) return;
-        m_pix = pixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-    else
-        m_pix = utils::decodeWebPToPixmap(fileName).scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    m_filename = fileName;
-    m_note = note;
+    m_pix = utils::decodeToPixmap(fileName);
+    if (!m_pix.isNull())
+        m_pix = m_pix.scaled(m_pix_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 Thumbnail::Thumbnail(const QString &fileName, const QString &note, const QString &tag) noexcept
+    : m_filename(fileName), m_note(note), m_tag(tag)
 {
-    if (utils::detectImageFormat(fileName) != "WEBP")
-    {
-        QPixmap pixmap(fileName);
-        if (pixmap.isNull()) return;
-        m_pix = pixmap.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-    else
-        m_pix = utils::decodeWebPToPixmap(fileName).scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    m_filename = fileName;
-    m_note = note;
-    m_tag = tag;
+    m_pix = utils::decodeToPixmap(fileName);
+    if (!m_pix.isNull())
+        m_pix = m_pix.scaled(m_pix_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
+void Thumbnail::setThumbnailSize(const QSize& size) noexcept
+{
+    m_pix_size = size;
+}

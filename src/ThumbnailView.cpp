@@ -10,6 +10,10 @@ ThumbnailView::ThumbnailView(QWidget *parent)
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setModel(m_model);
 
+    /*setItemDelegate(m_item_delegate);*/
+    setWordWrap(true);
+    setIconSize(QSize(500, 500));
+
     connect(this, &ThumbnailView::customContextMenuRequested, this, &ThumbnailView::showContextMenu);
 
     m_contextMenu->addAction(m_action__remove);

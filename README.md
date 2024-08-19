@@ -309,7 +309,8 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Fix: Crash when opening session files from the session open menu
     - Fix: no files session open crash
     - Fix: Imagewidget drop image crash
-
+    - Alternate colors option for thumbnail background
+    - text wrap option for filename in thumbnail panel
 
 - 18 Aug 2024
 
@@ -432,6 +433,9 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
 3. [x] Color picker for gifs (currently works only on static images)
 4. [ ] Slideshow show current progress, pause and play instead of starting from the beginning each time
 5. [x] Imagewidget drop image crash
+6. [ ] Sort options for sorting the images in the thumbnail panel like sorting by size, name, date modified etc.
+7. [ ] Fix the grid size and icon size options
+8. [ ] Custom thumbnail style
 
 <a name="thanks" />
 

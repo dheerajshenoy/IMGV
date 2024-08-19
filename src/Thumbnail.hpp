@@ -13,6 +13,7 @@ public:
     Thumbnail(const QString &filename, const QPixmap &pixmap) noexcept;
     Thumbnail(const QString &filename, const QString &note) noexcept;
     Thumbnail(const QString &filename, const QString &note, const QString &tag) noexcept;
+    void setThumbnailSize(const QSize& size) noexcept;
 
     enum Data {
         FileName = Qt::UserRole,
@@ -63,9 +64,10 @@ public:
 
 private:
     QPixmap m_pix;
-    QString m_note;
+    QString m_note = "";
     QString m_filename = "";
-    QString m_tag;
+    QString m_tag = "";
+    QSize m_pix_size = QSize(100, 100);
 };
 
 #endif

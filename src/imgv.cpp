@@ -328,7 +328,8 @@ void IMGV::initConfigDirectory() noexcept
             {
                 auto icon_size_table = icon_size_table_optional.value();
 
-                m_thumbnail_view->setIconSize(QSize(icon_size_table["width"].get_or(100), icon_size_table["height"].get_or(100)));  // Set the size for thumbnails
+                // TODO:
+                /*m_thumbnail_view->setIconSize(QSize(icon_size_table["width"].get_or(100), icon_size_table["height"].get_or(100)));  // Set the size for thumbnails*/
             }
 
             auto resize = thumbnails_table["resize"].get_or(false);
@@ -342,23 +343,44 @@ void IMGV::initConfigDirectory() noexcept
                 m_thumbnail_view->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
             }
 
-            auto elide = thumbnails_table["text_elide"].get_or<std::string>("none");
+            sol::optional<sol::table> text_table_optional = thumbnails_table["text"];
 
-            if (elide == "none")
-                m_thumbnail_view->setTextElideMode(Qt::ElideNone);
+            if (text_table_optional)
+            {
+                sol::table text_table = text_table_optional.value();
 
-            else if (elide == "right")
-                m_thumbnail_view->setTextElideMode(Qt::ElideRight);
+                auto elide = text_table["elide"].get_or<std::string>("middle");
 
-            else if (elide == "left")
-                m_thumbnail_view->setTextElideMode(Qt::ElideLeft);
+                if (elide == "none")
+                    m_thumbnail_view->setTextElideMode(Qt::ElideNone);
 
-            else if (elide == "middle")
-                m_thumbnail_view->setTextElideMode(Qt::ElideMiddle);
+                else if (elide == "right")
+                    m_thumbnail_view->setTextElideMode(Qt::ElideRight);
 
-            else
-                m_thumbnail_view->setTextElideMode(Qt::ElideNone);
+                else if (elide == "left")
+                    m_thumbnail_view->setTextElideMode(Qt::ElideLeft);
 
+                else if (elide == "middle")
+                    m_thumbnail_view->setTextElideMode(Qt::ElideMiddle);
+
+                else
+                    m_thumbnail_view->setTextElideMode(Qt::ElideNone);
+
+                auto wrap = text_table["wrap"].get_or(true);
+
+                if (wrap)
+                    m_thumbnail_view->setWordWrap(wrap);
+
+            }
+
+
+            auto alternate_colors = thumbnails_table["alternate_colors"].get_or(false);
+
+            if (alternate_colors)
+            {
+                m_thumbnail_view->setAlternatingRowColors(true);
+                qDebug() << "DD";
+            }
 
         }
 
