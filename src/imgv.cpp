@@ -1116,6 +1116,7 @@ if (doc.HasParseError()) {
     if (doc.HasMember("files") && doc["files"].IsArray())
     {
         const Value& files_arr = doc["files"];
+        if (files_arr.Size() == 0) return;
         QList<Thumbnail> files_stringlist;
         files_stringlist.reserve(files_arr.Size());
         for(SizeType i=0; i < files_arr.Size(); i++)

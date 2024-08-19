@@ -307,6 +307,7 @@ Note that if the `keybindings` table is present in the `Defaults` table, then de
     - Started working on the Wiki page
     - Dropped .imgv extension from the session name in the session open menu
     - Fix: Crash when opening session files from the session open menu
+    - Fix: no files session open crash
 
 
 - 18 Aug 2024
