@@ -18,7 +18,7 @@ Supports more than **100** file formats, thanks to ImageMagick integration.
 
 <br/>
 <br/>
-Total lines of code excluding the external libraries (Sol, rapidjson, qmarkdowntextedit) is 4617 lines (source and header file).
+Total lines of code excluding the external libraries (Sol, rapidjson, qmarkdowntextedit) is 5300 lines (source and header file).
 
 # Table of Contents
 
