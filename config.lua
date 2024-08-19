@@ -2,13 +2,14 @@
 -- Check out the documentation for more information about configuring IMGV
 
 Defaults = {
+    image_cache = 10240 * 2, -- image caching in kilobytes
     menubar = true,
     auto_notes_popup = false,
     scrollbars = true,
     start_in_minimal_mode = false,
     scroll_factor = { horizontal = 40.0, vertical = 40.0 },
-    zoom_factor = 5.0, 
-    fit_on_load = true, 
+    zoom_factor = 5.0, -- (default : 2.0)
+    fit_on_load = true, -- (default : false)
     fit_on_load_mode = "height", -- fit to "height" or "width" or "none" ; (default : "none")
     minimap = {
         show = false,
@@ -24,13 +25,14 @@ Defaults = {
 
     thumbnails = {
         show = true, -- show panel or not
+        layout = "bottom", -- "left", "bottom", "top", "right"
         mode = "list", -- icon or list
         resize = true,
         uniform = true,
         selection = "extended", -- "extended", "multi", "single", "contiguous",
-        spacing = 20,
-        icon_size = { width = 200, height = 200 },
-        text_elide = "left", -- "none", "left", "right", "middle"
+        spacing = 0,
+        icon_size = { width = 100, height = 100 },
+        text_elide = "middle", -- "none", "left", "right", "middle"
     },
 
     keybindings = {
