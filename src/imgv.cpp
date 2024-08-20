@@ -379,7 +379,6 @@ void IMGV::initConfigDirectory() noexcept
             if (alternate_colors)
             {
                 m_thumbnail_view->setAlternatingRowColors(true);
-                qDebug() << "DD";
             }
 
         }
@@ -609,6 +608,15 @@ void IMGV::initMenu() noexcept
     editMenu->addMenu(edit__zoom);
     editMenu->addMenu(edit__fit);
     editMenu->addMenu(edit__fit_on_load);
+    editMenu->addMenu(edit__sort);
+
+    edit__sort->addAction(sort__name);
+    edit__sort->addAction(sort__size);
+    edit__sort->addAction(sort__date);
+
+    sort__name->setCheckable(true);
+    sort__size->setCheckable(true);
+    sort__date->setCheckable(true);
 
     edit__fit->addAction(fit__width);
     edit__fit->addAction(fit__height);
@@ -645,17 +653,27 @@ void IMGV::initMenu() noexcept
     tools__pix_analyser->setCheckable(true);
     tools__slideshow->setCheckable(true);
 
-    connect(fit_on_load__width, &QAction::triggered, m_img_widget, [&](const bool &state) {
+    connect(sort__name, &QAction::triggered, [&](const bool &state) {
+
+        if (state)
+        {
+            m_thumbnail_view->sort(ThumbnailView::Sort::Name);
+        } else {
+        }
+
+    });
+
+    connect(fit_on_load__width, &QAction::triggered, [&](const bool &state) {
         if (state)
             m_img_widget->setFitImageOnLoad(true, ImageWidget::FitOnLoad::FitToWidth);
     });
 
-    connect(fit_on_load__height, &QAction::triggered, m_img_widget, [&](const bool &state) {
+    connect(fit_on_load__height, &QAction::triggered, [&](const bool &state) {
         if (state)
             m_img_widget->setFitImageOnLoad(true, ImageWidget::FitOnLoad::FitToHeight);
     });
 
-    connect(fit_on_load__none, &QAction::triggered, m_img_widget, [&](const bool &state) {
+    connect(fit_on_load__none, &QAction::triggered, [&](const bool &state) {
         if (state)
             m_img_widget->setFitImageOnLoad(false);
     });
@@ -671,7 +689,7 @@ void IMGV::initMenu() noexcept
     connect(zoom__out, &QAction::triggered, m_img_widget, &ImageWidget::zoomOut);
     connect(zoom__reset, &QAction::triggered, m_img_widget, &ImageWidget::zoomOriginal);
 
-    connect(tools__slideshow, &QAction::triggered, this, [&](const bool &state) {
+    connect(tools__slideshow, &QAction::triggered, [&](const bool &state) {
         if (state)
         {
             if (!m_slideshow_timer)
@@ -701,7 +719,6 @@ void IMGV::initMenu() noexcept
     connect(session__newSession, &QAction::triggered, this, &IMGV::newSession);
     connect(session__closeSession, &QAction::triggered, this, &IMGV::closeSession);
 
-
     connect(session__saveSession, &QAction::triggered, this, &IMGV::saveSession);
 
     connect(session__manage_sessions, &QAction::triggered, [&]() {
@@ -712,7 +729,7 @@ void IMGV::initMenu() noexcept
 
     connect(file__openAction, &QAction::triggered, this, &IMGV::openImage);
     connect(file__openNewWindowAction, &QAction::triggered, this, &IMGV::openImageInNewWindow);
-    connect(m_img_widget, &ImageWidget::fileLoaded, m_statusbar, [&](const QString &filename) {
+    connect(m_img_widget, &ImageWidget::fileLoaded, [&](const QString &filename) {
         m_statusbar->updateFileInfo(filename);
         if (m_thumbnail_view->currentThumbnail().hasNote())
         {
@@ -736,7 +753,6 @@ void IMGV::initMenu() noexcept
         m_thumbnail_view->createThumbnail(file);
     });
 
-
     connect(flip__horizontal, &QAction::triggered, m_img_widget, &ImageWidget::flipHorizontal);
     connect(flip__vertical, &QAction::triggered, m_img_widget, &ImageWidget::flipVertical);
 
@@ -754,11 +770,11 @@ void IMGV::initMenu() noexcept
         m_img_widget->resetRotation();
     });
 
-    connect(view__minimap, &QAction::triggered, this, [&](const bool &state) {
+    connect(view__minimap, &QAction::triggered, [&](const bool &state) {
         m_img_widget->setMinimapMode(state);
     });
 
-    connect(tools__pix_analyser, &QAction::triggered, m_img_widget, [&](const bool &state) {
+    connect(tools__pix_analyser, &QAction::triggered, [&](const bool &state) {
         if (state)
             setMsg("Click to save picked color", -1);
         m_img_widget->setPixAnalyseMode(state);
@@ -773,22 +789,21 @@ void IMGV::initMenu() noexcept
 
     connect(m_img_widget, &ImageWidget::minimapVisibilityChanged, view__minimap, &QAction::setChecked);
 
-    connect(view__thumbnails, &QAction::triggered, this, [&](const bool &state) {
+    connect(view__thumbnails, &QAction::triggered, [&](const bool &state) {
         m_thumbnail_view->setVisible(state);
     });
 
-    connect(view__statusbar, &QAction::triggered, this, [&](const bool &state) {
+    connect(view__statusbar, &QAction::triggered, [&](const bool &state) {
         m_statusbar->setVisible(state);
     });
 
-    connect(view__menubar, &QAction::triggered, this, [&](const bool &state) {
+    connect(view__menubar, &QAction::triggered, [&](const bool &state) {
         m_menuBar->setVisible(state);
     });
 
-    connect(view__notes, &QAction::triggered, this, [&](const bool &state) {
+    connect(view__notes, &QAction::triggered, [&](const bool &state) {
         m_note_holder->setVisible(state);
     });
-    
 
     connect(view__maximize_image, &QAction::triggered, this, &IMGV::maximizeImage);
 
@@ -1087,8 +1102,6 @@ void IMGV::readSessionFile(QString& filename) noexcept
 
     if (!filename.endsWith(".imgv"))
         filename = filename + ".imgv";
-
-
 
     auto sessions = getSessionFiles();
     if (sessions.indexOf(filename)> -1)

@@ -1,4 +1,5 @@
 #include "ThumbnailView.hpp"
+#include <mutex>
 
 ThumbnailView::ThumbnailView(QWidget *parent)
     : QListView(parent)
@@ -44,18 +45,24 @@ ThumbnailModel* ThumbnailView::model() const noexcept
 
 void ThumbnailView::createThumbnails(const QStringList &fileNames) noexcept
 {
-    QVector<Thumbnail> thumbnails(fileNames.size());
-    for(int i=0; i < thumbnails.size(); i++)
-    {
-        Thumbnail thumb(fileNames.at(i));
-        thumbnails[i] = thumb;
-    }
-    
+    QVector<Thumbnail> thumbnails;
+    thumbnails.reserve(fileNames.size());
+    for(int i=0; i < fileNames.size(); i++)
+        thumbnails.emplace_back(fileNames.at(i));
+
     setUpdatesEnabled(false);
     m_model->addThumbnails(thumbnails);
+    setUpdatesEnabled(true);
+
     if (m_model->rowCount() >= 0)
         setCurrentIndex(m_model->index(0));
-    setUpdatesEnabled(true);
+}
+
+void ThumbnailView::createThumbnail(const Thumbnail &thumb) noexcept
+{
+    m_model->addThumbnail(thumb);
+    if (m_model->rowCount() >= 0)
+        setCurrentIndex(m_model->index(0));
 }
 
 void ThumbnailView::createThumbnail(const QString &fileName) noexcept
@@ -78,9 +85,9 @@ void ThumbnailView::createThumbnail(QString&& fileName) noexcept
 void ThumbnailView::createThumbnails(const QList<Thumbnail> &thumbnails) noexcept
 {
     setUpdatesEnabled(false);
-    for (const Thumbnail &thumb : thumbnails) {
+
+    for(const auto thumb : thumbnails)
         m_model->addThumbnail(thumb);
-    }
 
     if (m_model->rowCount() >= 0)
         setCurrentIndex(m_model->index(0));
@@ -298,8 +305,34 @@ Thumbnail ThumbnailView::thumbnail(const int& index) const noexcept
     return m_model->getThumbnail(index);
 }
 
-
 QVector<Thumbnail>& ThumbnailView::getAllThumbnails() const noexcept
 {
     return m_model->thumbnails();
+}
+
+void ThumbnailView::sort(const Sort& mode, const bool& desc) noexcept
+{
+    if (m_model->thumbnails().isEmpty())
+        return;
+}
+
+void ThumbnailView::sort(const Sort&& mode, const bool&& desc) noexcept
+{
+    if (m_model->thumbnails().isEmpty())
+        return;
+
+    switch(mode)
+    {
+        case Sort::Name:
+            m_model->sort(ThumbnailModel::Sort::Name);
+        break;
+
+        case Sort::Size:
+            m_model->sort(ThumbnailModel::Sort::Size);
+        break;
+
+        case Sort::Date:
+            m_model->sort(ThumbnailModel::Sort::Date);
+        break;
+    }
 }

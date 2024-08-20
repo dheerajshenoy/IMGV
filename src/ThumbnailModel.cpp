@@ -6,7 +6,7 @@ ThumbnailModel::ThumbnailModel(QObject *parent)
 int ThumbnailModel::addThumbnail(const Thumbnail &thumbnail) noexcept
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_thumbnails.append(thumbnail);
+    m_thumbnails.push_back(thumbnail);
     endInsertRows();
     return m_thumbnails.size();
 }
@@ -15,8 +15,9 @@ int ThumbnailModel::addThumbnails(const QVector<Thumbnail> &thumbnails) noexcept
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     for(const auto &thumbnail: thumbnails)
-        m_thumbnails.append(thumbnail);
+        m_thumbnails.push_back(thumbnail);
     endInsertRows();
+
     return m_thumbnails.size();
 }
 
@@ -88,4 +89,31 @@ QStringList ThumbnailModel::getFiles() const noexcept
     for(int i=0; i < m_thumbnails.size(); i++)
         filenames[i] = m_thumbnails.at(i).filename();
     return filenames;
+}
+
+void ThumbnailModel::sort(const Sort&& mode, const bool& desc) noexcept
+{
+    switch(mode)
+    {
+        
+        case Sort::Name:
+            std::sort(m_thumbnails.begin(), m_thumbnails.end(), [](const Thumbnail& a, const Thumbnail& b) {
+                return a.filename() < b.filename();
+            });
+            qDebug() << "DD";
+        break;
+
+
+        case Sort::Date:
+            std::sort(m_thumbnails.begin(), m_thumbnails.end(), [](const Thumbnail& a, const Thumbnail& b) {
+                return a.filename() < b.filename();
+            });
+        break;
+
+
+        case Sort::Size:
+
+        break;
+
+    }
 }

@@ -15,7 +15,6 @@ ImagePropertiesDialog::ImagePropertiesDialog(const QString& _filename, QWidget *
     QFormLayout *layout = new QFormLayout(this);
     QLabel *filename = new QLabel(QFileInfo(_filename).baseName());
     QLabel *filepath = new QLabel(_filename);
-    QLabel *label_filesize = new QLabel("Filesize:");
     QLabel *width = new QLabel(QString::number(img.width()));
     QLabel *height = new QLabel(QString::number(img.height()));
     QLabel *filesize = new QLabel(locale.formattedDataSize(img.sizeInBytes()));

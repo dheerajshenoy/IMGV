@@ -22,6 +22,10 @@
 #include "ImagePropertiesDialog.hpp"
 #include "ThumbnailViewStyledItemDelegate.hpp"
 
+
+static std::mutex m_thumbnail_mutex;
+
+
 class ThumbnailView : public QListView
 {
     Q_OBJECT
@@ -30,6 +34,7 @@ public:
     ThumbnailModel* model() const noexcept;
     void createThumbnail(const QString &fileName) noexcept;
     void createThumbnail(QString&& fileName) noexcept;
+    void createThumbnail(const Thumbnail &thumnail) noexcept;
     void createThumbnails(const QStringList &fileNames) noexcept;
     void createThumbnails(const QList<Thumbnail> &thumbnails) noexcept;
     void gotoNext() noexcept;
@@ -53,6 +58,15 @@ public:
     void setHighlightIndex(const int& row) noexcept;
     int currentHighlightIndex() const noexcept;
     void setFilterByTag(const QString& tagname) noexcept;
+
+    enum Sort {
+        Date,
+        Size,
+        Name,
+    };
+
+    void sort(const Sort&, const bool& desc = false) noexcept;
+    void sort(const Sort&&, const bool&& desc = false) noexcept;
 
     /*inline void setIconSize(QSize&& size) const noexcept*/
     /*{*/
@@ -106,9 +120,9 @@ private:
     QAction *m_action__show_in_explorer = new QAction("Show in File Explorer");
     QAction *m_action__image_properties = new QAction("Properties");
 
-
     ThumbnailViewStyledItemDelegate *m_item_delegate = new ThumbnailViewStyledItemDelegate();
     ThumbnailFilterProxy *m_filter_proxy = new ThumbnailFilterProxy();
+
 };
 
 #endif

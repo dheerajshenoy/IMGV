@@ -179,6 +179,12 @@ private:
     QMenu *edit__fit = new QMenu("Fit");
     QMenu *edit__fit_on_load = new QMenu("Fit on Load");
 
+    QMenu *edit__sort = new QMenu("Sort");
+
+    QAction *sort__name = new QAction("Name");
+    QAction *sort__size = new QAction("Size");
+    QAction *sort__date = new QAction("Date");
+
     QAction *zoom__in = new QAction("Zoom In");
     QAction *zoom__out = new QAction("Zoom Out");
     QAction *zoom__reset = new QAction("Zoom Reset");

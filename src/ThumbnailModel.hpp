@@ -6,18 +6,28 @@
 #include <QFileInfo>
 #include <QVector>
 #include "Thumbnail.hpp"
+#include <algorithm>
 
 class ThumbnailModel : public QAbstractListModel
 {
 public:
 
-    ThumbnailModel(QObject *parent = nullptr);
 
+
+    enum Sort {
+        Date,
+        Size,
+        Name,
+    };
+
+    ThumbnailModel(QObject *parent = nullptr);
     int addThumbnail(const Thumbnail &thumbnail) noexcept;
     int addThumbnails(const QVector<Thumbnail> &thumbnails) noexcept;
     /*int rowCount(const QModelIndex &parent = QModelIndex()) const noexcept override;*/
     QVariant data(const QModelIndex &index, int role) const noexcept override;
     void clear() noexcept;
+    void sort(const Sort&& sort, const bool& desc = false) noexcept;
+    void sort(const Sort& sort, const bool& desc = false) noexcept;
 
     inline void removeAt(const int &index) noexcept
     {
