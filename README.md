@@ -455,6 +455,5 @@ I want to thank the authors of the following projects I have integrated in this 
 2. [QMarkdownTextEdit](https://github.com/pbek/qmarkdowntextedit)
 3. [ArgParse](https://github.com/p-ranav/argparse)
 4. [libwebp](https://github.com/webmproject/libwebp)
-5. [EasyEXIF](https://github.com/mayanklahiri/easyexif)
-6. [rapidjson](https://github.com/tencent/rapidjson)
-
+5. [rapidjson](https://github.com/tencent/rapidjson)
+6. [imagemagick](https://imagemagick.org/)
