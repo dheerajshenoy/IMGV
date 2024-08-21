@@ -90,30 +90,3 @@ QStringList ThumbnailModel::getFiles() const noexcept
         filenames[i] = m_thumbnails.at(i).filename();
     return filenames;
 }
-
-void ThumbnailModel::sort(const Sort&& mode, const bool& desc) noexcept
-{
-    switch(mode)
-    {
-        
-        case Sort::Name:
-            std::sort(m_thumbnails.begin(), m_thumbnails.end(), [](const Thumbnail& a, const Thumbnail& b) {
-                return a.filename() < b.filename();
-            });
-            qDebug() << "DD";
-        break;
-
-
-        case Sort::Date:
-            std::sort(m_thumbnails.begin(), m_thumbnails.end(), [](const Thumbnail& a, const Thumbnail& b) {
-                return a.filename() < b.filename();
-            });
-        break;
-
-
-        case Sort::Size:
-
-        break;
-
-    }
-}

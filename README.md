@@ -73,7 +73,6 @@ IMaGe Viewer ~ IMGV. **Original**.
     Session files allow you to group images together to open it at a later point. *NOTE*: Previously session files were just plain text files, but since the addition of notes features, session files are now stored as json files with the extension .imgv.
    
 6. Command line arguments support.
-    - `-i` or `--input` takes in path to one or more image files of the supported format.
     - `-n` or `--no-config` load the software without any lua configuration
     - `-l` or `--list-sessions` list all the sessions
     - `-s` or `--session` takes path to a session file. Loads all the images of that session 
@@ -301,6 +300,10 @@ IMGV can be configured using the lua programming language. `config.lua` file sho
 Note that if the `keybindings` table is present in the `Defaults` table, then default keybindings will not be loaded.
 
 # Changelogs and Bug Fixes
+
+- 21 Aug 2024
+
+    - Remove `-i` or `--input` flag. As remaining files are taken as input, no need for this flag, because it's redundant.
 
 - 19 Aug 2024
 

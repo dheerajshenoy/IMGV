@@ -12,12 +12,6 @@ int main (int argc, char *argv[]) {
         .nargs(1)
         .metavar("session-name/session-path");
 
-    parser.add_argument("-i", "--input")
-        .help("Open Image files(s)")
-        .nargs(argparse::nargs_pattern::at_least_one)
-        .metavar("files")
-        .append();
-
     parser.add_argument("-S", "--new-session")
         .help("Open in new session")
         .nargs(1)
@@ -36,6 +30,7 @@ int main (int argc, char *argv[]) {
         .flag();
 
     parser.add_argument("files")
+        .metavar("List of files")
         .remaining();
 
     parser.add_epilog("For more information about the program usage and for the list of all supported image formats please check the project page at https://github.com/dheerajshenoy/IMGV");

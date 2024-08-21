@@ -23,7 +23,6 @@ class ThumbnailFilterProxy : public QSortFilterProxyModel
         m_role = role;
     }
 
-
 protected:
     bool filterAcceptsRow(const int sourceRow, const QModelIndex &sourceParent) const noexcept override
     {
@@ -44,6 +43,14 @@ protected:
 
         QRegularExpression regex(m_filterText, QRegularExpression::CaseInsensitiveOption);
         return regex.match(data).hasMatch();
+    }
+
+
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override {
+        const Thumbnail &leftThumbnail = sourceModel()->data(left, Thumbnail::FileName).value<Thumbnail>();
+        const Thumbnail &rightThumbnail = sourceModel()->data(right, Thumbnail::FileName).value<Thumbnail>();
+
+        return leftThumbnail.filename() < rightThumbnail.filename();
     }
 
 private:

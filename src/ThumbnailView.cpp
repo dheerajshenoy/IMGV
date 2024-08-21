@@ -324,15 +324,14 @@ void ThumbnailView::sort(const Sort&& mode, const bool&& desc) noexcept
     switch(mode)
     {
         case Sort::Name:
-            m_model->sort(ThumbnailModel::Sort::Name);
+            m_filter_proxy->sort(0);
         break;
 
         case Sort::Size:
-            m_model->sort(ThumbnailModel::Sort::Size);
         break;
 
         case Sort::Date:
-            m_model->sort(ThumbnailModel::Sort::Date);
         break;
     }
+    this->setModel(m_filter_proxy);
 }

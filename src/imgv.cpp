@@ -1302,32 +1302,6 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
         readSessionFile(QString::fromStdString(parser.get<std::string>("--session")));
     }
 
-    if (parser.is_used("--input"))
-    {
-        std::vector<std::string> files = parser.get<std::vector<std::string>>("--input");
-        QString file = QString::fromStdString(files[0]);
-
-        if (QFileInfo(file).isDir())
-        {
-            QStringList dirfiles = QDir(file).entryList(m_supported_image_formats_list, QDir::Files);
-            for(int i=0; i < dirfiles.size(); i++)
-                dirfiles[i] = QString("%1%2%3").arg(file).arg(QDir::separator()).arg(dirfiles.at(i));
-
-            m_thumbnail_view->createThumbnails(dirfiles);
-            return;
-        }
-        loadFile(file);
-
-        QStringList dd;
-        dd.reserve(files.size());
-
-        for (const auto &file : files)
-            dd.push_back(QString::fromStdString(file));
-
-        m_thumbnail_view->createThumbnails(dd);
-    }
-
-
     if (parser.is_used("-"))
     {
         m_stdin = true;
