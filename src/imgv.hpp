@@ -1,5 +1,4 @@
-#ifndef IMGV_HPP
-#define IMGV_HPP
+#pragma once
 
 #include "argparse.hpp"
 #include <QApplication>
@@ -48,6 +47,8 @@
 #include <unistd.h>
 #include <QActionGroup>
 #include <QSizePolicy>
+#include <QStringView>
+#include <string_view>
 
 class IMGV : public QMainWindow
 {
@@ -92,7 +93,7 @@ private:
     void addSessionToOpenSessionMenu(const QString &sessionName) noexcept;
     void cleanUp() noexcept;
     void loadFile(const QString& file) noexcept;
-    void loadFile(QString&& file) noexcept;
+    void loadFiles(const QStringList& files) noexcept;
 
     void thumbnailPanel__left() noexcept;
     void thumbnailPanel__right() noexcept;
@@ -247,10 +248,30 @@ private:
     ManageTagDialog *m_manage_tag_dialog = nullptr;
     bool m_stdin = false;
 
-    QString m_supported_image_formats;
-    QStringList m_supported_image_formats_list;
+    const QString m_supported_image_formats =
+        "Images ("
+        "*.art *.avi *.avs *.bmp *.cgm *.cin *.cmyk *.cmyka *.cur *.cut "
+        "*.dcm *.dcx *.dib *.dng *.dot *.dpx *.emf *.epdf *.epi *.eps *.eps2 "
+        "*.eps3 *.epsf *.epsi *.ept *.fax *.fig *.fits *.fpx *.gif *.gplt *.gray "
+        "*.hpgl *.html *.ico *.info *.jbig *.jng *.jp2 *.jpc *.jpeg *.jpg *.man "
+        "*.mat *.miff *.mono *.mng *.mpeg *.m2v *.mpc *.msl *.mtv *.mvg *.otb "
+        "*.p7 *.palm *.pam *.pbm *.pcd *.pcl *.pcx *.pdb *.pdf *.pfa *.pfb *.pgm "
+        "*.picon *.pict *.pix *.png *.pnm *.ppm *.ps *.ps2 *.ps3 *.psd *.ptif "
+        "*.pwp *.rad *.rgb *.rgba *.rla *.rle *.sct *.sfw *.sgi *.shtml *.sun "
+        "*.svg *.tga *.tiff *.tim *.ttf *.txt *.uil *.uyvy *.vicar *.viff *.wbmp "
+        "*.wmf *.wpg *.xbm *.xcf *.xpm *.xwd *.ycbcr *.ycbcra *.yuv"
+        ")";
+
+    const QStringList m_supported_image_formats_list = {
+        "art", "avi", "avs", "bmp", "cgm", "cin", "cmyk", "cmyka", "cur", "cut",
+        "dcm", "dcx", "dib", "dng", "dot", "dpx", "emf", "epdf", "epi", "eps", "eps2",
+        "eps3", "epsf", "epsi", "ept", "fax", "fig", "fits", "fpx", "gif", "gplt", "gray",
+        "hpgl", "html", "ico", "info", "jbig", "jng", "jp2", "jpc", "jpeg", "jpg", "man",
+        "mat", "miff", "mono", "mng", "mpeg", "m2v", "mpc", "msl", "mtv", "mvg", "otb",
+        "p7", "palm", "pam", "pbm", "pcd", "pcl", "pcx", "pdb", "pdf", "pfa", "pfb", "pgm",
+        "picon", "pict", "pix", "png", "pnm", "ppm", "ps", "ps2", "ps3", "psd", "ptif",
+        "pwp", "rad", "rgb", "rgba", "rla", "rle", "sct", "sfw", "sgi", "shtml", "sun",
+        "svg", "tga", "tiff", "tim", "ttf", "txt", "uil", "uyvy", "vicar", "viff", "wbmp",
+        "wmf", "wpg", "xbm", "xcf", "xpm", "xwd", "ycbcr", "ycbcra", "yuv"
+    };
 };
-
-
-#endif
-

@@ -183,6 +183,44 @@ void ImageWidget::zoomFit() noexcept
     /*emit zoomChanged(scale());*/
 }
 
+void ImageWidget::loadPixmap(const QPixmap& pix) noexcept
+{
+    /*m_rotate = 0.0f;*/
+    /*m_zoomLevel = 0.0f;*/
+    /*setMatrix();*/
+    resetScrollbars();
+    int w = 0, h = 0;
+    m_movieItem->hide();
+    m_pixmapItem->show();
+
+    w = pix.width(); h = pix.height();
+    m_pixmapItem->setPixmap(pix);
+    m_scene->setSceneRect(m_pixmapItem->boundingRect());
+    if (m_pix_analyse_mode)
+        m_pix_analyser->setPixmap(pix);
+
+    if (m_minimap_mode)
+        m_minimap->setPixmap(m_pixmapItem->pixmap());
+
+    if (m_fit_image_on_load)
+    {
+        switch(m_fit_image_on_load_mode)
+        {
+            case FitOnLoad::FitToWidth:
+                fitToWidth();
+                break;
+
+            case FitOnLoad::FitToHeight:
+                fitToHeight();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+}
+
 void ImageWidget::loadFile(QString&& file) noexcept
 {
     /*m_rotate = 0.0f;*/

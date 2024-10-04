@@ -39,6 +39,7 @@ public:
 
     void loadFile(const QString& file) noexcept;
     void loadFile(QString&& file) noexcept;
+    void loadPixmap(const QPixmap& pix) noexcept;
     void closeFile() const noexcept;
     void zoomIn() noexcept;
     void zoomOut() noexcept;

@@ -1,11 +1,8 @@
 #include "imgv.hpp"
 
-
 IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
     : QMainWindow(parent)
 {
-
-    // 100 MB cache limit
     setWindowIcon(QIcon(":/resources/images/logo.svg"));
 
     m_note_holder->setAcceptRichText(true);
@@ -15,6 +12,8 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
         AboutDialog *about = new AboutDialog(this);
         about->open();
     });
+
+
     m_note_holder->setVisible(false);
 
     m_splitter->setHandleWidth(0);
@@ -25,33 +24,6 @@ IMGV::IMGV(argparse::ArgumentParser &parser, QWidget *parent)
 
     m_right_pane_splitter->addWidget(m_img_widget);
     m_right_pane_splitter->addWidget(m_note_holder);
-
-    m_supported_image_formats = 
-        "Images ("
-        "*.art *.avi *.avs *.bmp *.cgm *.cin *.cmyk *.cmyka *.cur *.cut "
-        "*.dcm *.dcx *.dib *.dng *.dot *.dpx *.emf *.epdf *.epi *.eps *.eps2 "
-        "*.eps3 *.epsf *.epsi *.ept *.fax *.fig *.fits *.fpx *.gif *.gplt *.gray "
-        "*.hpgl *.html *.ico *.info *.jbig *.jng *.jp2 *.jpc *.jpeg *.jpg *.man "
-        "*.mat *.miff *.mono *.mng *.mpeg *.m2v *.mpc *.msl *.mtv *.mvg *.otb "
-        "*.p7 *.palm *.pam *.pbm *.pcd *.pcl *.pcx *.pdb *.pdf *.pfa *.pfb *.pgm "
-        "*.picon *.pict *.pix *.png *.pnm *.ppm *.ps *.ps2 *.ps3 *.psd *.ptif "
-        "*.pwp *.rad *.rgb *.rgba *.rla *.rle *.sct *.sfw *.sgi *.shtml *.sun "
-        "*.svg *.tga *.tiff *.tim *.ttf *.txt *.uil *.uyvy *.vicar *.viff *.wbmp "
-        "*.wmf *.wpg *.xbm *.xcf *.xpm *.xwd *.ycbcr *.ycbcra *.yuv"
-        ")";
-
-    m_supported_image_formats_list = {
-        "art", "avi", "avs", "bmp", "cgm", "cin", "cmyk", "cmyka", "cur", "cut",
-        "dcm", "dcx", "dib", "dng", "dot", "dpx", "emf", "epdf", "epi", "eps", "eps2",
-        "eps3", "epsf", "epsi", "ept", "fax", "fig", "fits", "fpx", "gif", "gplt", "gray",
-        "hpgl", "html", "ico", "info", "jbig", "jng", "jp2", "jpc", "jpeg", "jpg", "man",
-        "mat", "miff", "mono", "mng", "mpeg", "m2v", "mpc", "msl", "mtv", "mvg", "otb",
-        "p7", "palm", "pam", "pbm", "pcd", "pcl", "pcx", "pdb", "pdf", "pfa", "pfb", "pgm",
-        "picon", "pict", "pix", "png", "pnm", "ppm", "ps", "ps2", "ps3", "psd", "ptif",
-        "pwp", "rad", "rgb", "rgba", "rla", "rle", "sct", "sfw", "sgi", "shtml", "sun",
-        "svg", "tga", "tiff", "tim", "ttf", "txt", "uil", "uyvy", "vicar", "viff", "wbmp",
-        "wmf", "wpg", "xbm", "xcf", "xpm", "xwd", "ycbcr", "ycbcra", "yuv"
-    };
 
     parseCommandLineArguments(parser);
     initMenu();
@@ -912,8 +884,7 @@ void IMGV::openImage() noexcept
 {
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Image"), "", m_supported_image_formats);
     if (!files.isEmpty()) {
-        m_thumbnail_view->createThumbnails(files);
-        loadFile(files.at(0));
+        loadFiles(files);
     }
 }
 
@@ -1271,6 +1242,7 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
     else
         initConfigDirectory();
 
+
     if (parser.is_used("--list-sessions"))
     {
         auto ses_files = getSessionFiles();
@@ -1302,24 +1274,18 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
         readSessionFile(QString::fromStdString(parser.get<std::string>("--session")));
     }
 
-    if (parser.is_used("-"))
+    if (parser.is_used("--input"))
     {
-        m_stdin = true;
-    }
+        std::vector<std::string> files = parser.get<std::vector<std::string>>("--input");
 
-    if (parser.is_used("files"))
-    {
-        std::vector<std::string> files = parser.get<std::vector<std::string>>("files");
+        if (files.size() == 0)
+            return;
+
         QString file = QString::fromStdString(files.at(0));
 
         // If directory is mentioned, try to read all the compatible files from the directory
         if (QFileInfo(file).isDir())
-        {
             m_thumbnail_view->createThumbnails(QDir(file).entryList(m_supported_image_formats_list, QDir::Files));
-            /*for(const auto &f: dirfiles)*/
-            /*    m_thumbnail_view->addThumbnail(QString("%1%2%3").arg(file).arg(QDir::separator()).arg(f));*/
-            /*return;*/
-        }
         else {
             QStringList _files;
             for(const auto &file : files)
@@ -1327,6 +1293,11 @@ void IMGV::parseCommandLineArguments(const argparse::ArgumentParser &parser) noe
             m_thumbnail_view->createThumbnails(_files);
             loadFile(_files.at(0));
         }
+    }
+
+    if (parser.is_used("-"))
+    {
+        m_stdin = true;
     }
 
 }
@@ -1615,12 +1586,46 @@ void IMGV::loadFile(const QString& fileName) noexcept
 {
     QString title = QString(" %1 (Session: %2) | IMGV ").arg(fileName).arg(m_session_name);
     setWindowTitle(title);
-    m_img_widget->loadFile(fileName);
+    QImageReader imreader(fileName);
+    QPixmap pix;
+
+    if (imreader.supportsAnimation())
+    {
+
+
+    }
+
+    else
+    {
+
+        if (!QPixmapCache::find(fileName, &pix))
+        {
+            pix = utils::decodeToPixmap(fileName);
+            QPixmapCache::insert(fileName, pix);
+        }
+
+        m_img_widget->loadPixmap(pix);
+
+    }
+
 }
 
-void IMGV::loadFile(QString&& fileName) noexcept
+void IMGV::loadFiles(const QStringList& files) noexcept
 {
-    QString title = QString(" %1 (Session: %2) | IMGV ").arg(fileName).arg(m_session_name);
-    setWindowTitle(title);
-    m_img_widget->loadFile(fileName);
+    QPixmap pix;
+    QImageReader imreader;
+
+    for(const auto& file: files)
+    {
+        imreader.setFileName(file);
+        if (!QPixmapCache::find(file, &pix))
+        {
+            pix = utils::decodeToPixmap(file);
+            QPixmapCache::insert(file, pix);
+        }
+        Thumbnail thumb(file, pix);
+        m_thumbnail_view->createThumbnail(thumb);
+    }
+    m_img_widget->loadPixmap(pix);
+
 }

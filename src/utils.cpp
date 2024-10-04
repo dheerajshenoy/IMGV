@@ -237,5 +237,7 @@ Custom utils::getInfoFromSessionFile(const QString &sessionfilepath) noexcept
     else
         date = "N/A";
     ifs.close();
+
     return Custom{ imgfiles, date, tags };
+
 }

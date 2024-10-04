@@ -1,3 +1,4 @@
+#include "argparse.hpp"
 #include "imgv.hpp"
 #include <string>
 
@@ -6,6 +7,11 @@ int main (int argc, char *argv[]) {
     argparse::ArgumentParser parser("imgv", APP_VERSION);
 
     parser.add_description("Image viewer no one asked for.\n\n");
+
+    parser.add_argument("-i", "--input")
+        .help("Open files")
+        .nargs(argparse::nargs_pattern::any)
+        .metavar("filepath");
 
     parser.add_argument("-s", "--session")
         .help("Open session file providing name of the session or it's path")
@@ -29,9 +35,10 @@ int main (int argc, char *argv[]) {
         .help("Read from STDIN")
         .flag();
 
-    parser.add_argument("files")
-        .metavar("List of files")
-        .remaining();
+    /*parser.add_argument("files")*/
+    /*    .metavar("List of files")*/
+    /*    .nargs('*')*/
+    /*    .remaining();*/
 
     parser.add_epilog("For more information about the program usage and for the list of all supported image formats please check the project page at https://github.com/dheerajshenoy/IMGV");
 

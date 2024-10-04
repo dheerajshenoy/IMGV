@@ -51,4 +51,5 @@ void PixAnalyser::analysePix(const QPointF &loc) const noexcept
     m_color_hsl->setText(QString("%1, %2, %3, %4").arg(hsl.hue()).arg(hsl.saturation()).arg(hsl.lightness()).arg(hsl.alpha()));
 
     m_color->setStyleSheet(QString("background-color: %1").arg(color.name()));
+
 }
