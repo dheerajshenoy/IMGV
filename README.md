@@ -72,32 +72,32 @@ IMaGe Viewer ~ IMGV. **Original**.
 
     Session files allow you to group images together to open it at a later point. *NOTE*: Previously session files were just plain text files, but since the addition of notes features, session files are now stored as json files with the extension .imgv.
    
-6. Command line arguments support.
+4. Command line arguments support.
     - `-n` or `--no-config` load the software without any lua configuration
     - `-l` or `--list-sessions` list all the sessions
     - `-s` or `--session` takes path to a session file. Loads all the images of that session 
 
-7. Notes
+5. Notes
 
 ![image](https://github.com/user-attachments/assets/59a58073-295a-4e67-9666-e6e26fc8d0f0)
 
-8. Image Properties (with EXIF support)
+6. Image Properties (with EXIF support)
 
 ![image](https://github.com/user-attachments/assets/2b575390-0799-4524-9083-5618538c7a7d)
 
-9. Color Picker
+7. Color Picker
 
 https://github.com/user-attachments/assets/e8c96010-0017-4c47-bb98-c01d3615962a
 
-10. Minimap
+8. Minimap
 
 https://github.com/user-attachments/assets/793d495a-4149-4766-a402-439dbce5320a
 
-11. Tags
+9. Tags
 
 Tags allow you to group images inside a session into a kind of sub-groups so that you can view these groups easily. You can filter them using the filter option in the thumbnail panel to view images beloging to the tags if there are any in the session.
 
-12. STDIN capable (pipe capable)
+10. STDIN capable (pipe capable)
 
 You can "pipe into" imgv to open the files. Best example is editing image using ImageMagick and then pipeing it into imgv to view it.
 
