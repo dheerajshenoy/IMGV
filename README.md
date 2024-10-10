@@ -16,9 +16,6 @@ With [features](#features) I wanted in my dream image viewer.
 
 Supports more than **100** file formats, thanks to ImageMagick integration.
 
-<br/>
-<br/>
-Total lines of code excluding the external libraries (Sol, rapidjson, qmarkdowntextedit) is 5300 lines (source and header file).
 
 # Table of Contents
 
@@ -26,10 +23,11 @@ Total lines of code excluding the external libraries (Sol, rapidjson, qmarkdownt
 2. [Demo](#demo)
 3. [Introduction](#introduction)
 4. [Features](#features)
-5. [Supported Image Formats](#supported_image_formats)
-6. [Installation](#installation)
-7. [Theming](#theming)
-8. [Configuration](#configuration)
+5. [Total Lines of Code](#total_lines_of_code)
+6. [Supported Image Formats](#supported_image_formats)
+7. [Installation](#installation)
+8. [Theming](#theming)
+9. [Configuration](#configuration)
 8. [Changelogs and Bug fixes](#changelogs)
 9. [Todo](#todo)
 10. [Thanks](#thanks)
@@ -104,6 +102,11 @@ You can "pipe into" imgv to open the files. Best example is editing image using 
 ```shell
 magick some-file.jpg -blur 0x8 - | imgv -
 ```
+<a name="total_lines_of_code" />
+
+# Total Lines of Code
+
+Total lines of code excluding the external libraries (Sol, rapidjson, qmarkdowntextedit) is 5300 lines (source and header file).
 
 <a name="supported_image_formats" />
 
