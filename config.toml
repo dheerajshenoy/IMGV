@@ -1,56 +1,53 @@
-# Image Viewer Application Configuration File
+[tabs]
+shown = true
+auto_hide = true
+location  = "top" # "top", "bottom", "left", "right"
 
+[hscrollbar]
+shown = true
+auto_hide = true
 
-[ui] # User Interface settings
+[vscrollbar]
+shown = true
+auto_hide = true
 
-tabs_shown = true
-tabs_auto_hide = true
-tab_bar_position  = "top" # "top", "bottom", "left", "right"
+[menubar]
+shown = true
 
-hscrollbar_shown = true
-hscrollbar_auto_hide = true
+[statusbar]
+shown = true
+location = "bottom" # "top" or "bottom"
+filepath_complete = false # Show full file path in statusbar
 
-vscrollbar_shown = true
-vscrollbar_auto_hide = true
+[minimap]
+shown = false
+auto_hide = true # Automatically hide minimap when not required
+image = true # Show image preview in minimap
+size = { width = 200, height = 200 } # Size of the minimap in pixels
+image_opacity = 0.75
+location = "bottom-right" # "top-left", "top-right", "bottom-left", "bottom-right", "bottom-center", "top-center"
+clickable = true # Allow clicking on the minimap to navigate the main view
+border_color = "#0000AAA" # Border color of the minimap
+border_width = 1
+padding = 10
 
-menubar_shown = true
-statusbar_shown = true
+[minimap.overlay]
+color = "#44FFFFFF"
+border = "#FF5050"
+border_width = 20
+movable = true # Allow clicking on the minimap overlay to navigate the main view
 
-# Minimap settings
-minimap_shown = false
-minimap_auto_hide = true # Automatically hide minimap when not required
-minimap_image = true # Show image preview in minimap
-minimap_size = { width = 200, height = 200 } # Size of the minimap in pixels
-minimap_image_opacity = 0.75
-minimap_location = "bottom-right" # "top-left", "top-right", "bottom-left", "bottom-right", "bottom-center", "top-center"
-minimap_clickable = true # Allow clicking on the minimap to navigate the main view
-minimap_border_color = "#0000AAA" # Border color of the minimap
-minimap_border_width = 1
-minimap_padding = 10
+[rendering]
+# Device Pixel Ratio for high-DPI displays; can be a single float value or a map of display names to DPR values
+dpr = { "eDP-1" = 1.25, "DP-5" = 1.0, "DP-7" = 1.0 }
 
-# Minimap overlay settings
-minimap_overlay_color = "#44FFFFFF"
-minimap_overlay_border = "#FF5050"
-minimap_overlay_border_width = 20
-minimap_overlay_movable = true # Allow clicking on the minimap overlay to navigate the main view
-
-# Statusbar settings
-statusbar_position = "bottom" # "top" or "bottom"
-statusbar_filepath_complete = false # Show full file path in statusbar
-
-[rendering] # Rendering settings
-
-dpr = { "eDP-1" = 1.25, "DP-5" = 1.0, "DP-7" = 1.0 } # Device Pixel Ratio for high-DPI displays; can be a single float value or a map of display names to DPR values
-
-[behavior] # Behavior settings
-
+[behavior]
 auto_reload = true
 config_hot_reload = true
 keybind_conflict_warning = true
 copy_transformed_image = true # Copy the currently viewed (transformed) image when copying instead of the original image
 
 [focus_mode] # Focus mode settings
-
 statusbar_shown = false
 menubar_shown = false
 tabs_shown = false
