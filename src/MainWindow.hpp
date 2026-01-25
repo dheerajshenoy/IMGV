@@ -98,8 +98,6 @@ private:
     void handleTabClose(int index) noexcept;
     void updateMenuActions(bool state) noexcept;
     void handleCurrentTabChanged(int index) noexcept;
-    void onConfigFileChanged(const QString &filePath) noexcept;
-    void applyConfigChanges() noexcept;
     void updateTabBarVisibility() noexcept;
     bool m_default_keybindings{true}, m_not_tabbed{false};
 
