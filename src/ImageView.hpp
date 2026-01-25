@@ -78,11 +78,6 @@ public:
         return m_auto_fit;
     }
 
-    inline void setConfig(const Config &config) noexcept
-    {
-        m_config = config;
-    }
-
     void UpdateFromConfig() noexcept;
 
     QString fileName() noexcept;
@@ -228,7 +223,7 @@ private:
     QMovie *m_movie{nullptr};
     Minimap *m_minimap{nullptr};
     OverlayRect *m_overlay_rect{nullptr};
-    Config m_config;
+    const Config &m_config;
     QString m_mimeType;
     QFileSystemWatcher *m_file_watcher{nullptr};
     FitMode m_fit_mode;
