@@ -17,6 +17,91 @@
 #include <QTimer>
 #include <QWindow>
 
+namespace
+{
+
+static inline void
+set_title_format_if_present(toml::node_view<toml::node> n, QString &title_format)
+{
+    if (auto v = n.value<std::string>())
+    {
+        QString window_title = QString::fromStdString(*v);
+        window_title.replace("{}", "%1");
+        title_format = window_title;
+    }
+}
+
+template <typename T>
+static inline void
+set_if_present(toml::node_view<toml::node> node, T &target)
+{
+    if (auto v = node.value<T>())
+        target = *v;
+}
+
+static inline void
+set_qstring_if_present(toml::node_view<toml::node> n, QString &dst)
+{
+    if (auto v = n.value<std::string>())
+        dst = QString::fromStdString(*v);
+}
+
+static bool
+parseHexColor(std::string_view s, uint32_t &out)
+{
+    if (s.empty())
+        return false;
+    if (s[0] == '#')
+        s.remove_prefix(1);
+    if (s.size() != 6 && s.size() != 8)
+        return false;
+
+    auto hex = [](char c) -> int
+    {
+        if (c >= '0' && c <= '9')
+            return c - '0';
+        if (c >= 'a' && c <= 'f')
+            return 10 + (c - 'a');
+        if (c >= 'A' && c <= 'F')
+            return 10 + (c - 'A');
+        return -1;
+    };
+
+    auto byte = [&](size_t i) -> int
+    {
+        int hi = hex(s[i]), lo = hex(s[i + 1]);
+        if (hi < 0 || lo < 0)
+            return -1;
+        return (hi << 4) | lo;
+    };
+
+    int r = byte(0), g = byte(2), b = byte(4);
+    if (r < 0 || g < 0 || b < 0)
+        return false;
+    int a = 255;
+    if (s.size() == 8)
+    {
+        a = byte(6);
+        if (a < 0)
+            return false;
+    }
+
+    out = (uint32_t(r) << 24) | (uint32_t(g) << 16) | (uint32_t(b) << 8) | uint32_t(a);
+    return true;
+}
+
+static inline void
+set_color_if_present(toml::node_view<toml::node> n, uint32_t &dst)
+{
+    if (auto s = n.value<std::string>())
+    {
+        uint32_t tmp = dst;
+        if (parseHexColor(*s, tmp))
+            dst = tmp;
+    }
+}
+} // namespace
+
 void
 MainWindow::readArgs(argparse::ArgumentParser &parser) noexcept
 {
@@ -83,7 +168,6 @@ MainWindow::construct() noexcept
     initCommandMap();
     initConfig();
     initConnections();
-
     initGui();
 }
 
@@ -93,7 +177,7 @@ MainWindow::initGui() noexcept
 
     QVBoxLayout *layout = new QVBoxLayout();
 
-    if (m_config.ui.statusbar_position == "top")
+    if (m_config.statusbar.location == "top")
     {
         layout->addWidget(m_panel);
         layout->addWidget(m_tab_widget);
@@ -193,32 +277,32 @@ MainWindow::initGui() noexcept
     m_toggle_minimap_action = m_toggle_menu->addAction(
         QString("Minimap\t%1").arg(m_config.shortcutMap["toggle_minimap"]), this, &MainWindow::ToggleMinimap);
     m_toggle_minimap_action->setCheckable(true);
-    m_toggle_minimap_action->setChecked(m_config.ui.minimap_shown);
+    m_toggle_minimap_action->setChecked(m_config.minimap.shown);
 
     m_toggle_menubar_action = m_toggle_menu->addAction(
         QString("Menubar\t%1").arg(m_config.shortcutMap["toggle_menubar"]), this, &MainWindow::ToggleMenubar);
     m_toggle_menubar_action->setCheckable(true);
-    m_toggle_menubar_action->setChecked(m_config.ui.menubar_shown);
+    m_toggle_menubar_action->setChecked(m_config.menubar.shown);
 
     m_toggle_tabbar_action = m_toggle_menu->addAction(QString("Tabs\t%1").arg(m_config.shortcutMap["toggle_tabs"]),
                                                       this, &MainWindow::ToggleTabBar);
     m_toggle_tabbar_action->setCheckable(true);
-    m_toggle_tabbar_action->setChecked(m_config.ui.tabs_shown);
+    m_toggle_tabbar_action->setChecked(m_config.tabs.shown);
 
     m_toggle_hscrollbar_action = m_toggle_menu->addAction(
         QString("H Scrollbar\t%1").arg(m_config.shortcutMap["toggle_hscrollbar"]), this, &MainWindow::ToggleHScrollBar);
     m_toggle_hscrollbar_action->setCheckable(true);
-    m_toggle_hscrollbar_action->setChecked(m_config.ui.tabs_shown);
+    m_toggle_hscrollbar_action->setChecked(m_config.tabs.shown);
 
     m_toggle_vscrollbar_action = m_toggle_menu->addAction(
         QString("V Scrollbar\t%1").arg(m_config.shortcutMap["toggle_vscrollbar"]), this, &MainWindow::ToggleVScrollBar);
     m_toggle_vscrollbar_action->setCheckable(true);
-    m_toggle_vscrollbar_action->setChecked(m_config.ui.tabs_shown);
+    m_toggle_vscrollbar_action->setChecked(m_config.tabs.shown);
 
     m_toggle_panel_action = m_toggle_menu->addAction(
         QString("Statusbar\t%1").arg(m_config.shortcutMap["toggle_statusbar"]), this, &MainWindow::ToggleStatusbar);
     m_toggle_panel_action->setCheckable(true);
-    m_toggle_panel_action->setChecked(m_config.ui.statusbar_shown);
+    m_toggle_panel_action->setChecked(m_config.statusbar.shown);
 
     m_toggle_auto_reload_action = m_toggle_menu->addAction(
         QString("Auto Reload\t%1").arg(m_config.shortcutMap["auto_reload"]), this, &MainWindow::ToggleAutoReload);
@@ -230,7 +314,7 @@ MainWindow::initGui() noexcept
         // TODO: Add custom widget
         QMessageBox::information(
             this, "About iv",
-            QString("iv version %1\n\nA simple and fast image viewer built with Qt and ImageMagick.")
+            QString("iv version %1\n\nA simple and fast image viewer bt with Qt and ImageMagick.")
                 .arg(__IV_VERSION));
     });
 
@@ -243,11 +327,11 @@ MainWindow::initGui() noexcept
     m_tab_widget->tabBar()->setStyleSheet("QTabBar { margin: 0; padding: 0; }");
     layout->setSpacing(0);
     m_tab_widget->setStyleSheet("border: 0;");
-    m_tab_widget->tabBar()->setVisible(m_config.ui.tabs_shown);
-    m_tab_widget->setTabBarAutoHide(m_config.ui.tabs_autohide);
+    m_tab_widget->tabBar()->setVisible(m_config.tabs.shown);
+    m_tab_widget->setTabBarAutoHide(m_config.tabs.autohide);
 
-    menuBar()->setVisible(m_config.ui.menubar_shown);
-    m_panel->setVisible(m_config.ui.statusbar_shown);
+    menuBar()->setVisible(m_config.menubar.shown);
+    m_panel->setVisible(m_config.statusbar.shown);
 
     updateMenuActions(false);
     this->show();
@@ -388,7 +472,7 @@ MainWindow::OpenFile(const QString &filepath) noexcept
         return;
     }
 
-    if (QFileInfo(fp).isRelative() && m_config.ui.statusbar_filepath_complete)
+    if (QFileInfo(fp).isRelative() && m_config.statusbar.filepath_complete)
     {
         fp = QDir::current().absoluteFilePath(fp);
     }
@@ -593,7 +677,7 @@ MainWindow::updateFileinfoInPanel() noexcept
 
     QString filepath = m_imgv->filePath();
 
-    if (m_config.ui.statusbar_filepath_complete && QFileInfo(filepath).isRelative())
+    if (m_config.statusbar.filepath_complete && QFileInfo(filepath).isRelative())
     {
         filepath = QDir::current().absoluteFilePath(filepath);
     }
@@ -625,81 +709,112 @@ MainWindow::initConfig() noexcept
         return;
     }
 
-    // Read tab options
-    auto ui = toml["ui"];
+    auto tabs = toml["tabs"];
 
-    if (ui)
+    if (tabs)
     {
-        m_config.ui.tabs_shown              = ui["tabs_shown"].value_or(true);
-        m_config.ui.tabs_autohide           = ui["tabs_auto_hide"].value_or(true);
-        m_config.ui.tab_bar_position        = ui["tab_bar_position"].value_or("top");
-        m_config.ui.menubar_shown           = ui["menubar_shown"].value_or(true);
-        m_config.ui.statusbar_shown         = ui["statusbar_shown"].value_or(true);
-        m_config.ui.hscrollbar_shown        = ui["hscrollbar_shown"].value_or(true);
-        m_config.ui.hscrollbar_auto_hide    = ui["hscrollbar_auto_hide"].value_or(true);
-        m_config.ui.vscrollbar_shown        = ui["vscrollbar_shown"].value_or(true);
-        m_config.ui.vscrollbar_auto_hide    = ui["vscrollbar_auto_hide"].value_or(true);
-        m_config.ui.minimap_shown           = ui["minimap_shown"].value_or(false);
-        m_config.ui.minimap_auto_hide       = ui["minimap_auto_hide"].value_or(true);
-        m_config.ui.minimap_padding         = ui["minimap_padding"].value_or(10.0f);
-        m_config.ui.minimap_clickable       = ui["minimap_clickable"].value_or(true);
-        m_config.ui.minimap_overlay_movable = ui["minimap_overlay_movable"].value_or(true);
-        m_config.ui.minimap_border_color    = ui["minimap_border_color"].value_or("#550000FF");
-        m_config.ui.minimap_border_width    = ui["minimap_border_width"].value_or(1);
-
-        if (ui["minimap_size"].is_table())
-        {
-            const auto size_table    = ui["minimap_size"];
-            const int width          = size_table["width"].value_or(200);
-            const int height         = size_table["height"].value_or(200);
-            m_config.ui.minimap_size = QSize(width, height);
-        }
-
-        m_config.ui.minimap_image         = ui["minimap_image"].value_or(true);
-        m_config.ui.minimap_image_opacity = ui["minimap_image_opacity"].value_or(0.7f);
-        QString minimap_location          = ui["minimap_location"].value_or("bottom-right");
-
-        {
-            Minimap::Location loc;
-            if (minimap_location == "top-left")
-                loc = Minimap::Location::TOP_LEFT;
-            else if (minimap_location == "top-center")
-                loc = Minimap::Location::TOP_CENTER;
-            else if (minimap_location == "top-right")
-                loc = Minimap::Location::TOP_RIGHT;
-            else if (minimap_location == "bottom-left")
-                loc = Minimap::Location::BOTTOM_LEFT;
-            else if (minimap_location == "bottom-center")
-                loc = Minimap::Location::BOTTOM_CENTER;
-            else if (minimap_location == "center")
-                loc = Minimap::Location::CENTER;
-            else if (minimap_location == "center-left")
-                loc = Minimap::Location::CENTER_LEFT;
-            else if (minimap_location == "center-right")
-                loc = Minimap::Location::CENTER_RIGHT;
-            else
-                loc = Minimap::Location::BOTTOM_RIGHT;
-            m_config.ui.minimap_location = loc;
-        }
-
-        m_config.ui.minimap_overlay_color        = ui["minimap_overlay_color"].value_or("#55FF0000");
-        m_config.ui.minimap_overlay_border_color = ui["minimap_overlay_border"].value_or("#5500FF00");
-        m_config.ui.minimap_overlay_border_width = ui["minimap_overlay_border_width"].value_or(0);
-
-        m_config.ui.statusbar_position          = ui["statusbar_position"].value_or("bottom");
-        m_config.ui.statusbar_filepath_complete = ui["statusbar_filepath_complete"].value_or(true);
+        set_if_present(tabs["shown"], m_config.tabs.shown);
+        set_if_present(tabs["auto_hide"], m_config.tabs.autohide);
+        set_qstring_if_present(tabs["location"], m_config.tabs.location);
     }
+
+    auto menubar = toml["menubar"];
+
+    if (menubar)
+    {
+        set_if_present(menubar["shown"], m_config.menubar.shown);
+    }
+
+    auto statusbar = toml["statusbar"];
+
+    if (statusbar)
+    {
+        set_if_present(statusbar["shown"], m_config.statusbar.shown);
+        set_qstring_if_present(statusbar["position"], m_config.statusbar.location);
+        set_if_present(statusbar["filepath_complete"], m_config.statusbar.filepath_complete);
+    }
+
+    auto hscrollbar = toml["hscrollbar"];
+
+    if (hscrollbar)
+    {
+        set_if_present(hscrollbar["shown"], m_config.hscrollbar.shown);
+        set_if_present(hscrollbar["auto_hide"], m_config.hscrollbar.auto_hide);
+    }
+
+    auto vscrollbar = toml["vscrollbar"];
+
+    if (vscrollbar)
+    {
+        set_if_present(vscrollbar["shown"], m_config.vscrollbar.shown);
+        set_if_present(vscrollbar["auto_hide"], m_config.vscrollbar.auto_hide);
+    }
+
+    auto minimap = toml["minimap"];
+
+    if (minimap)
+    {
+        set_if_present(minimap["shown"], m_config.minimap.shown);
+        set_if_present(minimap["auto_hide"], m_config.minimap.auto_hide);
+        set_if_present(minimap["padding"], m_config.minimap.padding);
+        set_if_present(minimap["clickable"], m_config.minimap.clickable);
+        set_color_if_present(minimap["border_color"], m_config.minimap.border_color);
+        set_if_present(minimap["border_width"], m_config.minimap.border_width);
+
+        if (minimap["size"].is_table())
+        {
+            const auto size_table = minimap["size"];
+            const int width       = size_table["width"].value_or(200);
+            const int height      = size_table["height"].value_or(200);
+            m_config.minimap.size = QSize(width, height);
+        }
+    }
+
+    auto overlay = toml["minimap"]["overlay"];
+
+    if (overlay)
+    {
+        set_if_present(overlay["movable"], m_config.minimap.overlay.movable);
+        set_color_if_present(overlay["color"], m_config.minimap.overlay.color);
+        set_color_if_present(overlay["border"], m_config.minimap.overlay.border_color);
+        set_if_present(overlay["border_width"], m_config.minimap.overlay.border_width);
+    }
+
+    m_config.minimap.image         = minimap["image"].value_or(true);
+    m_config.minimap.image_opacity = minimap["image_opacity"].value_or(0.7f);
+    const QString minimap_location = minimap["location"].value_or("bottom-right");
+
+    Minimap::Location loc;
+    if (minimap_location == "top-left")
+        loc = Minimap::Location::TOP_LEFT;
+    else if (minimap_location == "top-center")
+        loc = Minimap::Location::TOP_CENTER;
+    else if (minimap_location == "top-right")
+        loc = Minimap::Location::TOP_RIGHT;
+    else if (minimap_location == "bottom-left")
+        loc = Minimap::Location::BOTTOM_LEFT;
+    else if (minimap_location == "bottom-center")
+        loc = Minimap::Location::BOTTOM_CENTER;
+    else if (minimap_location == "center")
+        loc = Minimap::Location::CENTER;
+    else if (minimap_location == "center-left")
+        loc = Minimap::Location::CENTER_LEFT;
+    else if (minimap_location == "center-right")
+        loc = Minimap::Location::CENTER_RIGHT;
+    else
+        loc = Minimap::Location::BOTTOM_RIGHT;
+    m_config.minimap.location = loc;
 
     auto focus_mode = toml["focus_mode"];
 
     if (focus_mode)
     {
-        m_config.focus_mode.statusbar_shown  = focus_mode["statusbar_shown"].value_or(false);
-        m_config.focus_mode.menubar_shown    = focus_mode["menubar_shown"].value_or(false);
-        m_config.focus_mode.minimap_shown    = focus_mode["minimap_shown"].value_or(false);
-        m_config.focus_mode.hscrollbar_shown = focus_mode["hscrollbar_shown"].value_or(false);
-        m_config.focus_mode.vscrollbar_shown = focus_mode["vscrollbar_shown"].value_or(false);
-        m_config.focus_mode.tabs_shown       = focus_mode["tabs_shown"].value_or(false);
+        m_config.focus_mode.statusbar_shown  = focus_mode["statusbar"].value_or(false);
+        m_config.focus_mode.menubar_shown    = focus_mode["menubar"].value_or(false);
+        m_config.focus_mode.minimap_shown    = focus_mode["minimap"].value_or(false);
+        m_config.focus_mode.hscrollbar_shown = focus_mode["hscrollbar"].value_or(false);
+        m_config.focus_mode.vscrollbar_shown = focus_mode["vscrollbar"].value_or(false);
+        m_config.focus_mode.tabs_shown       = focus_mode["tabs"].value_or(false);
     }
 
     auto behavior = toml["behavior"];
@@ -710,53 +825,46 @@ MainWindow::initConfig() noexcept
         m_config.behavior.save_recent_files        = behavior["save_recent_files"].value_or(true);
         m_config.behavior.recent_files_limit       = behavior["recent_files_limit"].value_or(10);
         m_config.behavior.auto_fit                 = behavior["auto_fit"].value_or(false);
-        m_config.behavior.config_hot_reload        = behavior["config_hot_reload"].value_or(true);
         m_config.behavior.keybind_conflict_warning = behavior["keybind_conflict_warning"].value_or(true);
         m_config.behavior.copy_transformed_image   = behavior["copy_transformed_image"].value_or(false);
-    }
-
-    if (m_config.behavior.config_hot_reload)
-    {
-        if (!m_config_file_watcher)
-        {
-            m_config_file_watcher = new QFileSystemWatcher(this);
-            m_config_file_watcher->addPath(m_config_file_path);
-            connect(m_config_file_watcher, &QFileSystemWatcher::fileChanged, this, &MainWindow::onConfigFileChanged);
-        }
     }
 
     auto rendering = toml["rendering"];
 
     // If DPR is specified in config, use that (can be scalar or map)
-    if (rendering && rendering["dpr"])
+    if (rendering)
     {
-        if (rendering["dpr"].is_value())
-        {
-            m_config.rendering.dpr = rendering["dpr"].value_or(1.0f); // scalar
-        }
-        else if (rendering["dpr"].is_table())
-        {
-            auto dpr_table = rendering["dpr"];
-            for (auto &[screen_name, value] : *dpr_table.as_table())
+        if (rendering["dpr"]) {
+            if (rendering["dpr"].is_value())
             {
-                float dpr_value          = value.value_or(1.0f);
-                QString screen_str       = QString::fromStdString(std::string(screen_name.str()));
-                QList<QScreen *> screens = QApplication::screens();
-                for (QScreen *screen : screens)
+                m_config.rendering.dpr = rendering["dpr"].value_or(1.0f); // scalar
+            }
+            else if (rendering["dpr"].is_table())
+            {
+                auto dpr_table = rendering["dpr"];
+                for (auto &[screen_name, value] : *dpr_table.as_table())
                 {
-                    if (screen->name() == screen_str)
+                    float dpr_value          = value.value_or(1.0f);
+                    QString screen_str       = QString::fromStdString(std::string(screen_name.str()));
+                    QList<QScreen *> screens = QApplication::screens();
+                    for (QScreen *screen : screens)
                     {
-                        m_screen_dpr_map[screen->name()] = dpr_value;
-                        break;
+                        if (screen->name() == screen_str)
+                        {
+                            m_screen_dpr_map[screen->name()] = dpr_value;
+                            break;
+                        }
                     }
                 }
-            }
 
-            m_config.rendering.dpr = m_screen_dpr_map;
+                m_config.rendering.dpr = m_screen_dpr_map;
+            }
         }
     }
     else
     {
+        m_screen_dpr_map[QApplication::primaryScreen()->name()] =
+            QApplication::primaryScreen()->devicePixelRatio();
         m_config.rendering.dpr = m_screen_dpr_map.value(QApplication::primaryScreen()->name(), 1.0f);
     }
 
@@ -770,7 +878,7 @@ MainWindow::initConfig() noexcept
         {
             if (value.is_value())
                 setupKeybinding(QString::fromStdString(std::string(action.str())),
-                                QString::fromStdString(value.value_or<std::string>("")));
+                        QString::fromStdString(value.value_or<std::string>("")));
         }
     }
 
@@ -1144,85 +1252,6 @@ MainWindow::ShowFileProperties() noexcept
     m_imgv->showFilePropertiesDialog();
 }
 
-void
-MainWindow::onConfigFileChanged(const QString &path) noexcept
-{
-    // Stop watching temporarily to avoid duplicate signals
-    m_config_file_watcher->removePath(path);
-
-    // Use a single-shot timer to debounce rapid changes
-    // and wait for file to be ready after replacement
-    QTimer::singleShot(100, this, [this, path]()
-    {
-        if (!QFile::exists(path))
-        {
-            qWarning() << "Config file does not exist after change:" << path;
-            // Try to re-add watch anyway in case it comes back
-            m_config_file_watcher->addPath(path);
-            return;
-        }
-
-        // Verify file is readable before reloading
-        QFile file(path);
-        if (!file.open(QIODevice::ReadOnly))
-        {
-            qWarning() << "Config file exists but cannot be opened:" << path;
-            m_config_file_watcher->addPath(path);
-            return;
-        }
-        file.close();
-
-        initConfig();
-        applyConfigChanges();
-
-        // Re-add the watch
-        m_config_file_watcher->addPath(path);
-    });
-}
-
-void
-MainWindow::applyConfigChanges() noexcept
-{
-    // m_open_file_action->setShortcut(m_config.shortcutMap["open_file"]);
-    // m_open_containing_folder_action->setShortcut(m_config.shortcutMap["open_containing_folder"]);
-    // m_file_properties_action->setShortcut(m_config.shortcutMap["file_properties"]);
-    // m_close_file_action->setShortcut(m_config.shortcutMap["close_file"]);
-    // m_exit_action->setShortcut(m_config.shortcutMap["exit"]);
-    // m_zoom_in_action->setShortcut(m_config.shortcutMap["zoom_in"]);
-    // m_zoom_out_action->setShortcut(m_config.shortcutMap["zoom_out"]);
-    // m_rotate_clock_action->setShortcut(m_config.shortcutMap["rotate_clock"]);
-    // m_rotate_anticlock_action->setShortcut(m_config.shortcutMap["rotate_anticlock"]);
-    // m_fit_width_action->setShortcut(m_config.shortcutMap["fit_width"]);
-    // m_fit_height_action->setShortcut(m_config.shortcutMap["fit_height"]);
-    // m_fit_window_action->setShortcut(m_config.shortcutMap["fit_window"]);
-    // m_auto_fit_action->setShortcut(m_config.shortcutMap["auto_fit"]);
-    // m_toggle_minimap_action->setShortcut(m_config.shortcutMap["toggle_minimap"]);
-    // m_toggle_panel_action->setShortcut(m_config.shortcutMap["toggle_statusbar"]);
-    // m_toggle_tabbar_action->setShortcut(m_config.shortcutMap["toggle_tabs"]);
-    // m_toggle_auto_reload_action->setShortcut(m_config.shortcutMap["auto_reload"]);
-
-    m_toggle_panel_action->setChecked(m_config.ui.statusbar_shown);
-    m_toggle_minimap_action->setChecked(m_config.ui.minimap_shown);
-    m_auto_fit_action->setChecked(m_config.behavior.auto_fit);
-    m_toggle_auto_reload_action->setChecked(m_config.behavior.auto_reload);
-    m_tab_widget->setTabPosition(tabBarPositionFromString(m_config.ui.tab_bar_position));
-    m_tab_widget->setTabBarAutoHide(m_config.ui.tabs_autohide);
-    updateTabBarVisibility();
-
-    menuBar()->setVisible(m_config.ui.menubar_shown);
-    m_panel->setVisible(m_config.ui.statusbar_shown);
-
-    for (int i = 0; i < m_tab_widget->count(); i++)
-    {
-        auto temp = qobject_cast<ImageView *>(m_tab_widget->widget(i));
-        if (temp)
-        {
-            temp->setConfig(m_config);
-            temp->UpdateFromConfig();
-        }
-    }
-}
-
 QTabWidget::TabPosition
 MainWindow::tabBarPositionFromString(const QString &locationStr) const noexcept
 {
@@ -1282,13 +1311,13 @@ MainWindow::ToggleFocusMode() noexcept
     else
     {
         // Restore previous visibility states
-        m_panel->setVisible(m_config.ui.statusbar_shown);
-        menuBar()->setVisible(m_config.ui.menubar_shown);
-        m_imgv->minimap()->setVisible(m_config.ui.minimap_shown);
+        m_panel->setVisible(m_config.statusbar.shown);
+        menuBar()->setVisible(m_config.menubar.shown);
+        m_imgv->minimap()->setVisible(m_config.minimap.shown);
         updateTabBarVisibility();
         m_tab_widget->update();
-        m_imgv->setHScrollBarVisible(m_config.ui.hscrollbar_shown);
-        m_imgv->setVScrollBarVisible(m_config.ui.vscrollbar_shown);
+        m_imgv->setHScrollBarVisible(m_config.hscrollbar.shown);
+        m_imgv->setVScrollBarVisible(m_config.vscrollbar.shown);
     }
 }
 
