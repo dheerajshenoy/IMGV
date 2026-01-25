@@ -315,7 +315,7 @@ MainWindow::initGui() noexcept
         QMessageBox::information(
             this, "About iv",
             QString("iv version %1\n\nA simple and fast image viewer bt with Qt and ImageMagick.")
-                .arg(__IV_VERSION));
+                .arg(APP_VERSION));
     });
 
     this->setContentsMargins(0, 0, 0, 0);

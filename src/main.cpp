@@ -8,7 +8,7 @@ main(int argc, char *argv[])
     QApplication app(argc, argv);
     MainWindow mw;
 
-    argparse::ArgumentParser program("iv", __IV_VERSION);
+    argparse::ArgumentParser program("iv", APP_VERSION);
     // program.add_argument("version").flag().help("Show version information");
     // program.add_argument("commands").flag().help("Show list of available commands, useful for assigning shortcuts");
     // program.add_argument("files").remaining().metavar("FILE_PATH(s)");
