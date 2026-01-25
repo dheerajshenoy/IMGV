@@ -109,7 +109,7 @@ MainWindow::readArgs(argparse::ArgumentParser &parser) noexcept
     // Check if version or commands flag is used
     if (parser.is_used("version"))
     {
-        qDebug() << "Iv VERSION " << __IV_VERSION;
+        qDebug() << "Iv VERSION " << APP_VERSION;
         exit(0);
     }
 

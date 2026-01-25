@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
-project(iv VERSION 0.2.0)
+project(iv VERSION 0.3.0)
+
+add_compile_definitions(APP_VERSION="${PROJECT_VERSION}")
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
