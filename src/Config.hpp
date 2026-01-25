@@ -2,47 +2,61 @@
 
 #include "Minimap.hpp"
 
-#include <QMap>
+#include <QHash>
 #include <QSize>
 #include <QString>
 
 struct Config
 {
 
-    struct UI
+    struct Minimap
     {
-        bool minimap_shown{true};
-        bool minimap_auto_hide{true};
-        bool minimap_image{true};
-        float minimap_padding{10.0f};
-        QSize minimap_size{QSize(200, 200)};
-        float minimap_image_opacity{0.7f};
-        Minimap::Location minimap_location{Minimap::Location::BOTTOM_RIGHT};
-        bool minimap_overlay_movable{true};
-        bool minimap_clickable{true};
-        QString minimap_border_color{"#550000FF"};
-        int minimap_border_width{1};
+        bool shown{true};
+        bool auto_hide{true};
+        bool image{true};
+        float padding{10.0f};
+        QSize size{QSize(200, 200)};
+        float image_opacity{0.7f};
+        ::Minimap::Location location{::Minimap::Location::BOTTOM_RIGHT};
+        bool clickable{true};
+        uint32_t border_color{0x550000FF};
+        int border_width{1};
 
-        QString minimap_overlay_color{"#55FF0000"};
-        QString minimap_overlay_border_color{"#5500FF00"};
-        int minimap_overlay_border_width{1};
+        struct Overlay
+        {
+            bool shown{true};
+            bool movable{true};
+            uint32_t color{0x55FF0000};
+            uint32_t border_color{0x5500FF00};
+            int border_width{1};
+        } overlay;
 
-        bool vscrollbar_shown{true};
-        bool vscrollbar_auto_hide{true};
+    };
 
-        bool hscrollbar_shown{true};
-        bool hscrollbar_auto_hide{true};
+    struct Scrollbar
+    {
+        bool shown{true};
+        bool auto_hide{true};
+    };
 
-        bool tabs_shown{true};
-        bool tabs_autohide{true};
-        QString tab_bar_position{"top"};
+    struct Tabs
+    {
+        bool shown{true};
+        bool autohide{true};
+        QString location{"top"};
+    };
 
-        bool statusbar_shown{true};
-        bool menubar_shown{true};
+    struct Statusbar
+    {
+        bool shown{true};
+        QString location{"bottom"};
+        int padding{5};
+        bool filepath_complete{true};
+    };
 
-        QString statusbar_position{"bottom"};
-        int statusbar_padding{5};
-        bool statusbar_filepath_complete{true};
+    struct Menubar
+    {
+        bool shown{true};
     };
 
     struct Rendering
@@ -71,9 +85,14 @@ struct Config
         bool copy_transformed_image{false};
     };
 
-    QMap<QString, QString> shortcutMap;
-    UI ui{};
+    Scrollbar hscrollbar{}, vscrollbar{};
+    Tabs tabs{};
+    Statusbar statusbar{};
+    Menubar menubar{};
     Rendering rendering{};
     Behavior behavior{};
     FocusMode focus_mode{};
+    Minimap minimap{};
+
+    QHash<QString, QString> shortcutMap;
 };
