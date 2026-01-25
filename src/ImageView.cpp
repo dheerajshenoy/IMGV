@@ -724,7 +724,7 @@ ImageView::loadImage(const QImage &img) noexcept
     m_pix_item->setPixmap(pix);
     m_minimap->setPixmap(pix);
 
-    if (!m_config.ui.minimap_image)
+    if (!m_config.minimap.image)
         m_minimap->showOverlayOnly(true);
 
     m_gview->setSceneRect(m_pix_item->boundingRect());
@@ -884,41 +884,42 @@ ImageView::getEXIF() noexcept
 void
 ImageView::UpdateFromConfig() noexcept
 {
-    m_minimap->setForceHidden(!m_config.ui.minimap_shown);
-    m_minimap->setPixmapOpacity(m_config.ui.minimap_image_opacity);
-    m_minimap->setLocation(m_config.ui.minimap_location);
-    m_minimap->setMinimapSize(m_config.ui.minimap_size);
-    m_minimap->setMinimapPadding(m_config.ui.minimap_padding);
-    m_minimap->setBorder(m_config.ui.minimap_border_width, QColor::fromString(m_config.ui.minimap_border_color));
+    m_minimap->setForceHidden(!m_config.minimap.shown);
+    m_minimap->setPixmapOpacity(m_config.minimap.image_opacity);
+    m_minimap->setLocation(m_config.minimap.location);
+    m_minimap->setMinimapSize(m_config.minimap.size);
+    m_minimap->setMinimapPadding(m_config.minimap.padding);
+    m_minimap->setBorder(m_config.minimap.border_width, QColor::fromRgba(m_config.minimap.border_color));
     updateMinimapPosition();
 
-    m_minimap->setClickable(m_config.ui.minimap_clickable);
-    m_overlay_rect->setClickable(m_config.ui.minimap_overlay_movable);
-    setOverlayRectColor(QColor::fromString(m_config.ui.minimap_overlay_color));
-    setOverlayRectBorderWidth(m_config.ui.minimap_overlay_border_width);
-    setOverlayRectBorderColor(QColor::fromString(m_config.ui.minimap_overlay_border_color));
+    m_minimap->setClickable(m_config.minimap.clickable);
+    m_overlay_rect->setClickable(m_config.minimap.overlay.movable);
+
+    setOverlayRectBorderWidth(m_config.minimap.overlay.border_width);
+    setOverlayRectColor(QColor::fromRgba(m_config.minimap.overlay.color));
+    setOverlayRectBorderColor(QColor::fromRgba(m_config.minimap.overlay.border_color));
 
     m_minimap->setPixmap(m_pix_item->pixmap());
-    if (!m_config.ui.minimap_image)
+    if (!m_config.minimap.image)
         m_minimap->showOverlayOnly(true);
 
     // Disconnect old connections to avoid duplicates
     disconnect(m_hscrollbar, &QScrollBar::valueChanged, this, nullptr);
     disconnect(m_vscrollbar, &QScrollBar::valueChanged, this, nullptr);
 
-    if (!m_config.ui.vscrollbar_auto_hide)
+    if (!m_config.vscrollbar.auto_hide)
         m_gview->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-    if (!m_config.ui.vscrollbar_shown)
+    if (!m_config.vscrollbar.shown)
         m_gview->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    if (!m_config.ui.hscrollbar_auto_hide)
+    if (!m_config.hscrollbar.auto_hide)
         m_gview->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-    if (!m_config.ui.hscrollbar_shown)
+    if (!m_config.hscrollbar.shown)
         m_gview->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    if (m_config.ui.minimap_shown)
+    if (m_config.minimap.shown)
     {
         connect(m_hscrollbar, &QScrollBar::valueChanged, this, [&](int /*value */) { updateMinimapRegion(); });
         connect(m_vscrollbar, &QScrollBar::valueChanged, this, [&](int /*value */) { updateMinimapRegion(); });
@@ -1018,7 +1019,7 @@ ImageView::renderWithQMovie() noexcept
         const QPixmap &frame = m_movie->currentPixmap();
         m_pix_item->setPixmap(frame);
         m_minimap->setPixmap(frame);
-        if (!m_config.ui.minimap_image)
+        if (!m_config.minimap.image)
             m_minimap->showOverlayOnly(true);
     }
 
@@ -1081,7 +1082,7 @@ ImageView::startGifPlayback() noexcept
     const QPixmap &frame = m_gifFrames[0];
     m_pix_item->setPixmap(frame);
     m_minimap->setPixmap(frame);
-    if (!m_config.ui.minimap_image)
+    if (!m_config.minimap.image)
         m_minimap->showOverlayOnly(true);
 
     // Start animation
@@ -1104,7 +1105,7 @@ ImageView::updateGifFrame(int frameNumber) noexcept
         m_pix_item->setPixmap(frame);
         m_minimap->setPixmap(frame);
 
-        if (!m_config.ui.minimap_image)
+        if (!m_config.minimap.image)
             m_minimap->showOverlayOnly(true);
 
         // Schedule next frame
@@ -1124,7 +1125,7 @@ ImageView::updateGifFrame(int frameNumber) noexcept
         m_pix_item->setPixmap(frame);
         m_minimap->setPixmap(frame);
 
-        if (!m_config.ui.minimap_image)
+        if (!m_config.minimap.image)
             m_minimap->showOverlayOnly(true);
     }
 }
